@@ -1,7 +1,7 @@
 {
   "name": "astro-portfolio-migration",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Angga Widiarta",
     "url": "https://github.com/anggawidiarta"
@@ -14,9 +14,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/partytown": "^2.1.2",
-    "@astrojs/react": "^3.6.2",
-    "@astrojs/tailwind": "^5.1.2",
+    "@astrojs/partytown": "^2.1.4",
+    "@astrojs/react": "^4.3.0",
+    "@astrojs/tailwind": "^6.0.2",
     "@flaticon/flaticon-uicons": "^3.1.0",
     "@tsparticles/engine": "^3.2.2",
     "@tsparticles/react": "^3.0.0",
@@ -25,7 +25,7 @@
     "@types/react-dom": "^18.2.19",
     "animate.css": "^4.1.1",
     "aos": "^3.0.0-beta.6",
-    "astro": "^4.16.10",
+    "astro": "^5.9.4",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.6",
     "gsap": "^3.12.5",
