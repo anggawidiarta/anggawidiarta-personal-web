@@ -1,64 +1,74 @@
-<section class="home__awards">
-  <div class="home__awards__left">
-    <h2 class="awards__title">
+---
+import { desc12, desc16, paddingHome } from "../utils/classes";
+import { cn } from "../utils/cn";
+
+const experience = [
+  "Fullstack Web Developer - CV Mataram Medika",
+  "Software Developer - PT Oxindo Solution",
+  "Frontend Developer - Inside Lombok",
+  "Fullstack Web Developer - Jalan Digital",
+  "Fullstack Web Developer - Immigration Office of Mataram",
+  "Assistant Lecturer - University of Mataram",
+];
+
+const certifications = [
+  "Solid Programming Principles",
+  "Specialized Google Analytics Data",
+  "AI-900: Microsoft Azure AI Fundamentals",
+  "DP-900: Microsoft Azure Data Fundamentals",
+  "PL-900: Microsoft Power Platform Fundamentals",
+];
+
+const sectionTitle = cn(desc12, "awards__title mb-[24px] text-boulder");
+const item = cn(
+  desc16,
+  "relative border-t-2 border-boulder py-[16px] transition-colors duration-200"
+);
+const contentTitle = cn(desc12, "mb-[2.4rem] text-boulder uppercase");
+const contentDesc = cn(
+  desc16,
+  "w-full max-w-[95rem] tracking-[-0.025em] text-justify over-tablet:mx-auto"
+);
+---
+
+<section
+  class={cn(
+    paddingHome,
+    "mx-auto max-w-[113rem] justify-between py-[9.6rem] home__awards over-tablet:flex over-tablet:py-[24rem]"
+  )}
+>
+  <div
+    class="mb-[9.6rem] over-tablet:mb-0 over-tablet:w-full over-tablet:max-w-[55.5rem]"
+  >
+    <h2 class={sectionTitle}>
       <span>WORK / ORGANIZATION</span><br />
       <span>EXPERIENCE</span>
     </h2>
-    <div class="home__awards__table">
-      <div class="awards__item" data-fade-in>
-        Fullstack Web Developer - CV Mataram Medika
-      </div>
-      <div class="awards__item" data-fade-in>
-        Software Developer - PT Oxindo Solution
-      </div>
-      <div class="awards__item" data-fade-in>
-        Frontend Developer - Inside Lombok
-      </div>
-      <div class="awards__item" data-fade-in>
-        Fullstack Web Developer - Jalan Digital
-      </div>
-      <div class="awards__item" data-fade-in>
-        Fullstack Web Developer - Immigration Office of Mataram
-      </div>
-      <div class="awards__item" data-fade-in>
-        Assistant Lecturer - University of Mataram
-      </div>
+    <div>
+      {experience.map((text) => <div class={item} data-fade-in>{text}</div>)}
     </div>
     <br />
-    <h2 class="awards__title">
+    <h2 class={sectionTitle}>
       <span>CERTIFICATIONS</span><br />
       <span>LIST</span>
     </h2>
-    <div class="home__awards__table">
-      <div class="awards__item" data-fade-in>
-        Solid Programming Principles
-      </div><div class="awards__item" data-fade-in>
-        Specialized Google Analytics Data
-      </div>
-      <div class="awards__item" data-fade-in>
-        AI-900: Microsoft Azure AI Fundamentals
-      </div>
-      <div class="awards__item" data-fade-in>
-        DP-900: Microsoft Azure Data Fundamentals
-      </div>
-      <div class="awards__item" data-fade-in>
-        PL-900: Microsoft Power Platform Fundamentals
-      </div>
+    <div>
+      {certifications.map((text) => <div class={item} data-fade-in>{text}</div>)}
     </div>
   </div>
 
-  <div class="home__awards__right">
-    <div class="home__awards__stack" data-fade-in>
-      <h2 class="home__content__title">Interests</h2>
-      <p class="home__content__desc text-justify">
+  <div class="over-tablet:w-full over-tablet:max-w-[32.5rem]">
+    <div class="mb-[9.6rem]" data-fade-in>
+      <h2 class={contentTitle}>Interests</h2>
+      <p class={contentDesc}>
         Web Development, UI/UX, Computer Hardware, Content Creation, Machine
         Learning, Artificial Intelligence, NLP.
       </p>
     </div>
 
-    <div class="home__awards__ice" data-fade-in>
-      <h2 class="home__content__title">ICEBREAKERS</h2>
-      <p class="home__content__desc text-justify">
+    <div data-fade-in>
+      <h2 class={contentTitle}>ICEBREAKERS</h2>
+      <p class={contentDesc}>
         During free time, indulging in activities like watching anime, reading
         books or comics, and exploring various genres of music that are pleasant
         to the ear is relished. Moreover, maintaining fitness through gym

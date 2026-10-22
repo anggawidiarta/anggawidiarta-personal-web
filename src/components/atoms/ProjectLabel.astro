@@ -1,4 +1,7 @@
 ---
+import { desc12 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
 interface Props {
   category: string;
   technology: string;
@@ -7,9 +10,14 @@ interface Props {
 const { category, technology } = Astro.props;
 ---
 
-<div class="home__projects__project__label">
-  <div class="label__inner">
-    <p>
+<div
+  class={cn(
+    desc12,
+    "mt-[3.2rem] flex justify-end pr-[2.2rem] over-tablet:pr-[17.2rem]"
+  )}
+>
+  <div>
+    <p class="transition-colors duration-300 group-hover/project:text-ash">
       {category} / <br />
       {technology}
     </p>

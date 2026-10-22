@@ -1,15 +1,34 @@
 ---
 import type { EmailButtonProps } from "../../types/contact";
+import { desc16, desc32 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
 
 interface Props extends EmailButtonProps {}
 
 const { email } = Astro.props;
 ---
 
-<div class="home__contact__email">
-  <button class="email">{email}</button>
-  <div class="to-copy">
-    <span class="capitalize">Click To Copy</span>
+<div
+  class="pt-[4.8rem] pb-[7.2rem] text-center phone:ml-auto phone:w-full phone:max-w-[255px] phone:text-left phone:[word-break:break-word]"
+>
+  <button
+    class={cn(
+      desc32,
+      "email peer/email mb-[1.6rem] cursor-pointer border-0 bg-transparent p-0 font-medium text-ash tablet:text-left fine:hover:text-gold"
+    )}
+  >
+    {email}
+  </button>
+  <div
+    class={cn(
+      desc16,
+      "to-copy hidden fine:block fine:translate-y-full fine:uppercase fine:opacity-0 fine:transition-[opacity,translate] fine:duration-300 fine:peer-hover/email:translate-y-0 fine:peer-hover/email:opacity-100"
+    )}
+  >
+    <span
+      class="rounded-[45px] border-2 border-boulder px-[8px] py-[5px] capitalize"
+      >Click To Copy</span
+    >
   </div>
 </div>
 
@@ -31,38 +50,3 @@ const { email } = Astro.props;
     }
   });
 </script>
-
-<style>
-  .copy-tooltip {
-    position: absolute;
-    background: #f6c90e;
-    color: black;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 14px;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: fadeInOut 2s ease-in-out;
-    pointer-events: none;
-  }
-
-  @keyframes fadeInOut {
-    0% {
-      opacity: 0;
-      transform: translate(-50%, 10px);
-    }
-    15% {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-    85% {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -10px);
-    }
-  }
-</style>

@@ -1,0 +1,106 @@
+@import "tailwindcss";
+@import "locomotive-scroll/dist/locomotive-scroll.css";
+
+@font-face {
+  font-family: "Open Sauce";
+  src: url("../fonts/opensauce-medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Open Sauce";
+  src: url("../fonts/opensauce-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-ink: #111111;
+  --color-gold: #f6c90e;
+  --color-boulder: #777777;
+  --color-ash: #aaaaaa;
+
+  --font-bebas: "Bebas Neue", sans-serif;
+  --font-sauce: "Open Sauce", arial, sans-serif;
+  --font-georgia: Georgia, "Times New Roman", Times, serif;
+
+  --animate-marquee: marquee 25s linear infinite;
+  --animate-infinite-arrow: infiniteArrow 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    infinite;
+
+  /* Preloader (duration is driven by the --s custom property) */
+  --animate-mirror-1: mirror1 calc(var(--s) * 2) ease infinite;
+  --animate-mirror-2: mirror2 calc(var(--s) * 2) ease calc(var(--s) / 2) infinite;
+  --animate-bar-grow: barGrow var(--s) ease-in-out infinite alternate;
+
+  @keyframes marquee {
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes infiniteArrow {
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mirror1 {
+    0%,
+    47%,
+    99.99%,
+    100% {
+      transform: rotate(180deg) rotateX(0deg);
+    }
+    47.01%,
+    99.98% {
+      transform: rotate(180deg) rotateX(180deg);
+    }
+  }
+
+  @keyframes mirror2 {
+    0%,
+    47%,
+    99.99%,
+    100% {
+      transform: rotate(90deg) rotateX(180deg);
+    }
+    47.01%,
+    99.98% {
+      transform: rotate(90deg) rotateX(0deg);
+    }
+  }
+
+  @keyframes barGrow {
+    0%,
+    25% {
+      background-position-x: -297%;
+    }
+    45%,
+    55% {
+      background-position-x: -250%;
+    }
+    75%,
+    100% {
+      background-position-x: -203%;
+    }
+  }
+}
+
+/* Breakpoints carried over from the old SCSS `media()` mixin (max-width variants first so smaller wins) */
+@custom-variant tablet (@media (max-width: 768px));
+@custom-variant phone (@media (max-width: 550px));
+@custom-variant over-phone (@media (min-width: 551px));
+@custom-variant over-tablet (@media (min-width: 769px));
+@custom-variant fine (@media (any-pointer: fine));
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    transform-style: preserve-3d;
+  }
+}

@@ -1,18 +1,17 @@
 ---
+import { buttonClass } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+import ButtonLabel from "./ButtonLabel.astro";
+
 interface Props {
   text: string;
   href?: string;
   className?: string;
 }
 
-const { text, href, className = "" } = Astro.props;
+const { text, className = "" } = Astro.props;
 ---
 
-<button class={`nav__button c-button ${className}`} nav-anim>
-  <span class="c-link">
-    <span class="c-link__inner">
-      <span>{text}</span>
-      <span class="c-link__animated">{text}</span>
-    </span>
-  </span>
+<button class={cn(buttonClass, "nav__button shrink-0 grow-0", className)} nav-anim>
+  <ButtonLabel text={text} />
 </button>

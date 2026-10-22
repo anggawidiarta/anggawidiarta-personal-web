@@ -19,7 +19,6 @@ const projects = [
     href: "https://absen.oxindosolution.com/",
     direction: "right",
     speed: 8,
-    className: "right",
   },
   {
     category: "WEB DEVELOPMENT",
@@ -52,7 +51,6 @@ const projects = [
     href: "https://katakita-quotes-sharing.vercel.app/",
     direction: "right",
     speed: 8,
-    className: "gradient",
   },
   {
     category: "CREATIVE DEVELOPMENT",
@@ -73,7 +71,7 @@ const projects = [
 ] as const;
 ---
 
-<section class="home__projects">
+<section class="px-[4rem] phone:px-[1.6rem]">
   {
     projects.map((project, index) => (
       <>

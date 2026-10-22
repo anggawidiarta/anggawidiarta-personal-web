@@ -3,15 +3,19 @@ import NavButton from "../atoms/NavButton.astro";
 import NavText from "../atoms/NavText.astro";
 ---
 
-<div class="home__nav__right">
-  <NavText className="nav__folio hide-desktop">
+<div
+  class="w-full max-w-[350px] justify-between uppercase over-phone:flex phone:ml-auto phone:max-w-[175px] phone:[&_br]:hidden"
+>
+  <NavText
+    className="text-boulder over-phone:hidden phone:mb-[2.4rem] phone:[&_br]:hidden"
+  >
     <span>
       Frontend Developer <br />
       Personal Portfolio / {new Date().getFullYear()}
     </span>
   </NavText>
 
-  <NavText className="nav__availability">
+  <NavText className="text-boulder phone:mb-[2.4rem] phone:[&_br]:hidden">
     <span>
       Available for freelance <br />
       Work / ASAP
@@ -22,7 +26,7 @@ import NavText from "../atoms/NavText.astro";
     <NavButton text="Blog" />
   </a>
 
-  <div class="max-[550px]:mx-0 max-[550px]:my-4">
+  <div class="phone:mx-0 phone:my-4">
     <NavButton text="Contact" className="contact-scroll" />
   </div>
 </div>

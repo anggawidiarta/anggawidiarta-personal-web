@@ -6,6 +6,10 @@ interface Props {
 const { position } = Astro.props;
 ---
 
-<span class={`home__projects__line ${position}`}>
-  <span></span>
+<span class="home__projects__line invisible relative inline-block w-full">
+  <span
+    class:list={[
+      "absolute top-0 left-0 inline-block h-[2px] w-full bg-boulder",
+      position === "right" ? "origin-top-right" : "origin-top-left",
+    ]}></span>
 </span>

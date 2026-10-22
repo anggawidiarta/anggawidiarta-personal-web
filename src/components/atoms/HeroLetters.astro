@@ -1,0 +1,20 @@
+---
+interface Props {
+  word: string;
+}
+
+const { word } = Astro.props;
+---
+
+{
+  /* Astro 7 no longer keeps the space between inline elements; the hero's tight
+     letter-spacing was designed around that space, so it is added back explicitly. */
+}
+{
+  [...word].map((letter, i) => (
+    <>
+      {i > 0 && " "}
+      <span class="transition-colors duration-200 hover:text-ash">{letter}</span>
+    </>
+  ))
+}

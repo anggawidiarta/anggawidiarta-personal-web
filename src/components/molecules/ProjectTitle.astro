@@ -1,4 +1,7 @@
 ---
+import { title160 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
 interface Props {
   title: string;
   direction: "left" | "right";
@@ -9,14 +12,23 @@ const { title, direction, speed } = Astro.props;
 ---
 
 <h1
-  class="home__projects__project__title"
-  data-scroll=""
-  data-scroll-direction="horizontal"
-  data-scroll-speed={speed}
+  class={cn(
+    title160,
+    "pt-[6.4rem] pb-[4.5rem] leading-none uppercase over-tablet:whitespace-nowrap phone:pt-[3.2rem] phone:pb-[2.4rem] phone:leading-[0.9]"
+  )}
+  data-parallax-x={speed}
 >
-  <span class="inline-ovh">
-    <div class={`title__main ${direction}`}>
-      <span class="slide-up" data-content={title} aria-hidden="true"></span>
+  <span class="inline-flex overflow-hidden">
+    <div
+      class:list={[
+        "title__main relative",
+        direction === "right" && "phone:text-right",
+      ]}
+    >
+      <span
+        class="absolute top-0 left-0 hidden translate-y-full overflow-hidden transition-transform duration-[275ms] ease-[ease] group-hover/link:translate-y-0 fine:inline-block before:inline-block before:-translate-y-full before:text-gold before:transition-transform before:duration-[275ms] before:ease-[ease] before:content-[attr(data-content)] group-hover/link:before:translate-y-0 over-tablet:before:whitespace-nowrap"
+        data-content={title}
+        aria-hidden="true"></span>
       {title}
     </div>
   </span>

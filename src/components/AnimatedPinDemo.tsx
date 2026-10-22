@@ -29,10 +29,10 @@ export function AnimatedPinDemo({
     <div className="h-[40rem] w-full flex items-center justify-center ">
       <PinContainer title={headTitle} href={href}>
         <div className="flex basis-full flex-col p-4 tracking-tight text-slate-100/50 sm:basis-1/2 w-[24rem] h-[30rem] ">
-          <h3 className="max-w-xs !pb-2 !m-0 font-bold text-base lg:text-xl text-[#F6C90E] w-max tracking-wider drop-shadow-sm">
+          <h3 className="max-w-xs pb-2! m-0! font-bold text-base lg:text-xl text-[#F6C90E] w-max tracking-wider drop-shadow-sm">
             {title}
           </h3>
-          <div className="lg:text-lg text-base !m-0 !p-0 font-normal w-max">
+          <div className="lg:text-lg text-base m-0! p-0! font-normal w-max">
             <span className="text-slate-500 ">{desc}</span>
           </div>
           <div

@@ -5,7 +5,8 @@ interface Props {
 }
 
 const { title, contentDesc } = Astro.props;
-import "../scss/index.css";
+import "../styles/global.css";
+import openSauceMedium from "../fonts/opensauce-medium.woff2?url";
 ---
 
 <head>
@@ -81,7 +82,7 @@ import "../scss/index.css";
   <!-- Preload opensauce-medium font -->
   <link
     rel="preload"
-    href="/src/fonts/opensauce-medium.woff2"
+    href={openSauceMedium}
     as="font"
     type="font/woff2"
     crossorigin

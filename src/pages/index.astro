@@ -2,74 +2,81 @@
 import BaseLayout from "../layout/BaseLayout.astro";
 import Certifications from "../components/Certifications.astro";
 import FooterPage from "../components/FooterPage.astro";
-import { AnimatedPinDemo } from "../components/AnimatedPinDemo";
 import { TextGenerateEffectDemo } from "../components/TextGenerateEffect";
+import ArrowDown from "../components/atoms/ArrowDown.astro";
+import HeroLetters from "../components/atoms/HeroLetters.astro";
 import ContactSection from "../components/organisms/ContactSection.astro";
 import Navigation from "../components/organisms/Navigation.astro";
 import PinProjectsSection from "../components/templates/PinProjectsSection.astro";
 import ProjectsSection from "../components/templates/ProjectsSection.astro";
+import { desc12, desc16, paddingHome, title328 } from "../utils/classes";
+import { cn } from "../utils/cn";
+
+const bigTitle = cn(title328, "tracking-[-0.105em]");
+const dash = cn(
+  bigTitle,
+  "hero__title__dash inline-block [transform:scaleX(1.05)] will-change-transform",
+);
 ---
 
 <BaseLayout>
-  <main class="home" data-scroll-container>
+  <main
+    class="home invisible py-[2rem] [--animate-delay:2s] [--animate-duration:2.5s] [scrollbar-width:none]"
+  >
     <Navigation />
 
-    <section class="home__hero">
-      <div class="hero__title">
-        <h1 class="mobile">
+    <section class={cn("mb-[9.6rem]", paddingHome)}>
+      <div class="hero__title leading-[0.9] text-boulder">
+        <h1
+          class={cn(
+            title328,
+            "mobile tracking-[-0.05em] break-words over-phone:hidden",
+          )}
+        >
           FRONT <br />
           —— END <br />
           DEVELOPER
         </h1>
-        <h1 class="hero__title__top overflow desktop">
-          <div class="hero__title__top" title-overflow>
+        <h1
+          class="overflow inline-flex w-full justify-between overflow-hidden pr-[3rem] phone:hidden"
+        >
+          <div class="flex w-full justify-between pr-[3rem]" title-overflow>
             <span
-              class="hero__title__left"
-              data-scroll=""
-              data-scroll-direction="horizontal"
-              data-scroll-position="top"
-              data-scroll-speed="7"
+              class={bigTitle + " inline-block"}
+              data-parallax-x="7"
+              data-parallax-start="top"
             >
-              <span class="hero__hover">F</span>
-              <span class="hero__hover">R</span>
-              <span class="hero__hover">O</span>
-              <span class="hero__hover">N</span>
-              <span class="hero__hover">T</span>
+              <HeroLetters word="FRONT" />
             </span>
-            <span class="hero__title__dash desktop">——</span>
-            <span class="hero__title__dash tablet">——</span>
+            <span class={cn(dash, "desktop tablet:hidden")}>——</span>
+            <span class={cn(dash, "tablet over-tablet:hidden")}>——</span>
 
             <span
-              class="hero__title__right"
-              data-scroll=""
-              data-scroll-direction="horizontal"
-              data-scroll-position="top"
-              data-scroll-speed="-7"
+              class={bigTitle + " inline-block"}
+              data-parallax-x="-7"
+              data-parallax-start="top"
             >
-              <span class="hero__hover">E</span>
-              <span class="hero__hover">N</span>
-              <span class="hero__hover">D</span>
+              <HeroLetters word="END" />
             </span>
           </div>
         </h1>
 
-        <span class="hero__title__bottom overflow">
-          <div class="hero__title__bottom">
-            <h1 class="bottom__left desktop" title-overflow>
-              <span class="hero__hover">D</span>
-              <span class="hero__hover">E</span>
-              <span class="hero__hover">V</span>
-              <span class="hero__hover">E</span>
-              <span class="hero__hover">L</span>
-              <span class="hero__hover">O</span>
-              <span class="hero__hover">P</span>
-              <span class="hero__hover">E</span>
-              <span class="hero__hover">R</span>
+        <span
+          class="overflow inline-flex w-full justify-between overflow-hidden"
+        >
+          <div class="w-full justify-between over-tablet:flex">
+            <h1 class={cn(bigTitle, "shrink-0 phone:hidden")} title-overflow>
+              <HeroLetters word="DEVELOPER" />
             </h1>
-            <div class="bottom__right">
-              <p class="hero__paragraph">
-                <span class="first-word">About</span>
-                <span class="capitalize md:hidden">
+            <div
+              class={cn(
+                desc16,
+                "bottom__right relative z-1 flex w-full max-w-[32.5rem] flex-col pt-[2rem] pb-[5rem] tablet:max-w-[55rem] tablet:pb-0 phone:ml-auto phone:max-w-[255px]",
+              )}
+            >
+              <div class="text-ash [&_span]:uppercase">
+                <span class={cn(desc12, "text-boulder")}>About</span>
+                <span class="md:hidden">
                   &nbsp; i am a Web developer & Data Enthusiast based in Lombok,
                   Indonesia, driven by a relentless pursuit of innovation and
                   continuous growth.</span
@@ -79,41 +86,21 @@ import ProjectsSection from "../components/templates/ProjectsSection.astro";
                   words={"i am a Web developer & Data Enthusiast based in Lombok, Indonesia, driven by a relentless pursuit of innovation and continuous growth."}
                   client:load
                 />
-              </p>
-              <div class="hero__scroll">
+              </div>
+              <div
+                class="mt-auto flex items-center justify-between text-boulder tablet:hidden"
+              >
                 <p class="capitalize">Scroll Down</p>
-                <div class="c-infinite">
-                  <span class="c-link">
-                    <span class="c-link__inner">
-                      <span>
-                        <svg
-                          width="20"
-                          height="21"
-                          viewBox="0 0 20 21"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M10.8333 13.9766L15.3033 9.50658L16.4816 10.6849L9.99998 17.1666L3.51831 10.6849L4.69664 9.50658L9.16664 13.9766V3.83325H10.8333V13.9766Z"
-                            fill="#777777"></path>
-                        </svg>
-                      </span>
-                      <span class="c-link__animated">
-                        <svg
-                          width="20"
-                          height="21"
-                          viewBox="0 0 20 21"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M10.8333 13.9766L15.3033 9.50658L16.4816 10.6849L9.99998 17.1666L3.51831 10.6849L4.69664 9.50658L9.16664 13.9766V3.83325H10.8333V13.9766Z"
-                            fill="#777777"></path>
-                        </svg>
-                      </span>
-                    </span>
+                <span
+                  class="relative z-1 inline-flex items-center overflow-hidden"
+                >
+                  <span
+                    class="flex animate-infinite-arrow [transform:translateY(-100%)]"
+                  >
+                    <span><ArrowDown /></span>
+                    <span class="absolute top-full"><ArrowDown /></span>
                   </span>
-                </div>
+                </span>
               </div>
             </div>
           </div>

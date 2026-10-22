@@ -4,7 +4,9 @@ import NavText from "../atoms/NavText.astro";
 const currentYear = new Date().getFullYear();
 ---
 
-<div class="home__nav__left">
+<div
+  class="mr-[5rem] w-full max-w-[49rem] justify-between uppercase over-phone:flex phone:mr-[2rem] phone:max-w-none"
+>
   <NavText>
     <span>
       I Putu Angga <br />
@@ -12,7 +14,7 @@ const currentYear = new Date().getFullYear();
     </span>
   </NavText>
 
-  <NavText className="nav__folio hide-mobile">
+  <NavText className="text-boulder phone:hidden">
     <span>
       Web Developer <br />
       Portfolio / {currentYear}

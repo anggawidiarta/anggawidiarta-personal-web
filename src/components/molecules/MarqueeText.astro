@@ -1,21 +1,31 @@
 ---
 import type { MarqueeProps } from "../../types/contact";
+import { title160 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
 
 interface Props extends MarqueeProps {}
 
 const { text, emailLink } = Astro.props;
+
+const innerSpan = cn(
+  title160,
+  "relative overflow-hidden px-[2rem] whitespace-nowrap text-boulder uppercase"
+);
+const slideUp =
+  "absolute top-0 left-0 hidden translate-y-full overflow-hidden px-[2rem] whitespace-nowrap transition-transform duration-[275ms] ease-[ease] group-hover/marquee:translate-y-0 fine:inline-block before:inline-block before:-translate-y-full before:whitespace-nowrap before:text-gold before:transition-transform before:duration-[275ms] before:ease-[ease] before:content-[attr(data-content)] group-hover/marquee:before:translate-y-0";
 ---
 
-<!-- src/components/molecules/MarqueeText.astro -->
-<div class="marquee">
-  <a href={emailLink} class="marquee__wrap" target="_blank">
-    <div class="marquee__inner">
-      <span aria-hidden="true" class="inner-span">
-        <span class="slide-up" data-content={text} aria-hidden="true"></span>
+<div class="overflow-hidden uppercase">
+  <a href={emailLink} target="_blank">
+    <div
+      class="group/marquee relative flex h-full w-fit animate-marquee items-center pt-[2.4rem] pb-[1rem] will-change-transform hover:[animation-play-state:paused] over-phone:pt-[5.8rem] over-phone:pb-[2.3rem]"
+    >
+      <span aria-hidden="true" class={innerSpan}>
+        <span class={slideUp} data-content={text} aria-hidden="true"></span>
         {text}</span
       >
-      <span class="inner-span">
-        <span class="slide-up" data-content={text} aria-hidden="true"></span>
+      <span class={innerSpan}>
+        <span class={slideUp} data-content={text} aria-hidden="true"></span>
         {text}</span
       >
     </div>

@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # lock
 package-lock.json
+
+.claude
+.agents
+skills-lock.json

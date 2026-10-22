@@ -1,9 +1,17 @@
 ---
+import { desc12, paddingHome } from "../../utils/classes";
+import { cn } from "../../utils/cn";
 import NavLeft from "../molecules/NavLeft.astro";
 import NavRight from "../molecules/NavRight.astro";
 ---
 
-<nav class="home__nav">
+<nav
+  class={cn(
+    desc12,
+    paddingHome,
+    "home__nav mb-[6.4rem] flex justify-between leading-[1.4]"
+  )}
+>
   <NavLeft />
   <NavRight />
 </nav>

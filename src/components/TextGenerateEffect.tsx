@@ -6,9 +6,6 @@ interface TextGenerateEffectDemoProps {
   className?: string;
 }
 
-export function TextGenerateEffectDemo({
-  words,
-  className,
-}: TextGenerateEffectDemoProps) {
+export function TextGenerateEffectDemo({ words, className }: TextGenerateEffectDemoProps) {
   return <TextGenerateEffect words={words} className={className} />;
 }

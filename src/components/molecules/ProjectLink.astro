@@ -1,4 +1,7 @@
 ---
+import { buttonClass } from "../../utils/classes";
+import ButtonLabel from "../atoms/ButtonLabel.astro";
+
 interface Props {
   href: string;
 }
@@ -6,13 +9,8 @@ interface Props {
 const { href } = Astro.props;
 ---
 
-<div class="project__link">
-  <a href={href} target="_blank" rel="noopener noreferrer" class="c-button">
-    <span class="c-link">
-      <span class="c-link__inner">
-        <span>VIEW SITE</span>
-        <span class="c-link__animated">VIEW SITE</span>
-      </span>
-    </span>
+<div class="project__link pr-[5rem] pb-[3.1rem] text-right over-phone:hidden">
+  <a href={href} target="_blank" rel="noopener noreferrer" class={buttonClass}>
+    <ButtonLabel text="VIEW SITE" />
   </a>
 </div>

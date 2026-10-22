@@ -9,7 +9,7 @@ import debounce from "lodash/debounce";
 
 const toContactButtons = document.querySelectorAll(".contact-scroll");
 const footer = document.getElementById("js-footer");
-const scrollEl = document.querySelector("[data-scroll-container]");
+const homeEl = document.querySelector(".home");
 const emailButton = document.querySelector("button.email");
 const toCopyText = document.querySelector(".to-copy span");
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const home = document.querySelector(".home");
     const body = document.body;
     wrapper.style.display = "none";
-    body.classList.remove("bodyNotOverflow");
+    body.classList.remove("h-screen", "overflow-hidden");
     home.style.display = "block";
     home.classList.add("animate__animated", "animate__fadeIn");
   }, 2000);
@@ -47,37 +47,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
 gsap.registerPlugin(ScrollTrigger);
 
+// locomotive-scroll v5 only supports vertical parallax, so the horizontal
+// `data-parallax-x` effect from v4 is reproduced here.
+const parallaxItems = gsap.utils.toArray("[data-parallax-x]").map((el) => ({
+  el,
+  speed: parseFloat(el.dataset.parallaxX) / 10,
+  fromTop: el.dataset.parallaxStart === "top",
+  setX: gsap.quickSetter(el, "x", "px"),
+}));
+
+const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+function updateParallax() {
+  const enabled = !isTouchDevice && window.innerWidth > 768;
+  const viewportHeight = window.innerHeight;
+
+  parallaxItems.forEach(({ el, speed, fromTop, setX }) => {
+    if (!enabled) return setX(0);
+
+    if (fromTop) return setX(window.scrollY * -speed);
+
+    const rect = el.getBoundingClientRect();
+    const distance = viewportHeight / 2 - (rect.top + rect.height / 2);
+    setX(distance * -speed);
+  });
+}
+
 const scroll = new LocomotiveScroll({
-  el: scrollEl,
-  smooth: true,
-  lerp: 0.06,
-  tablet: {
-    breakpoint: 768,
+  lenisOptions: {
+    lerp: 0.06,
   },
+  scrollCallback: () => {
+    ScrollTrigger.update();
+    updateParallax();
+  },
+  // Drive Lenis from GSAP's ticker so ScrollTrigger and smooth scroll stay in sync
+  initCustomTicker: (render) => gsap.ticker.add(render),
+  destroyCustomTicker: (render) => gsap.ticker.remove(render),
 });
+gsap.ticker.lagSmoothing(0);
 
-setTimeout(() => {
-  scroll.update();
-}, 1000);
+const refreshLayout = () => {
+  scroll.resize();
+  ScrollTrigger.refresh();
+  updateParallax();
+};
 
-scroll.on("scroll", ScrollTrigger.update);
-
-ScrollTrigger.scrollerProxy(scroll.el, {
-  scrollTop(value) {
-    return arguments.length
-      ? scroll.scrollTo(value, 0, 0)
-      : scroll.scroll.instance.scroll.y;
-  },
-
-  getBoundingClientRect() {
-    return {
-      top: 0,
-      left: 0,
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
-  },
-});
+setTimeout(refreshLayout, 1000);
+window.addEventListener("load", refreshLayout);
+window.addEventListener("resize", updateParallax);
 
 export default class Home {
   constructor(scroll) {
@@ -108,7 +126,7 @@ export default class Home {
   homeIntro() {
     const tl = gsap.timeline();
 
-    gsap.to(scrollEl, {
+    gsap.to(homeEl, {
       autoAlpha: 1,
     });
 
@@ -160,7 +178,6 @@ export default class Home {
         duration: 1.5,
         scrollTrigger: {
           trigger: el,
-          scroller: "[data-scroll-container]",
         },
         scaleX: 0,
       });
@@ -170,7 +187,6 @@ export default class Home {
       gsap.from(el, {
         scrollTrigger: {
           trigger: el,
-          scroller: "[data-scroll-container]",
         },
         duration: 1.5,
         yPercent: 100,
@@ -186,7 +202,6 @@ export default class Home {
         gsap.from([text, link], {
           scrollTrigger: {
             trigger: el,
-            scroller: "[data-scroll-container]",
           },
           duration: 1.5,
           yPercent: 100,
@@ -203,10 +218,9 @@ export default class Home {
         },
         scrollTrigger: {
           trigger: ".home__awards",
-          scroller: "[data-scroll-container]",
         },
       });
-      awardsTl.from(".awards-title span", {
+      awardsTl.from(".awards__title span", {
         duration: 1,
         opacity: 0,
         yPercent: 100,
@@ -221,7 +235,6 @@ export default class Home {
     gsap.to(".hero__title__dash.desktop", {
       scrollTrigger: {
         trigger: ".hero__title",
-        scroller: "[data-scroll-container]",
         scrub: true,
         start: "-8% 9%",
         end: "110% 20%",
