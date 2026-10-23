@@ -1,0 +1,169 @@
+---
+import ButtonLabel from "../../components/atoms/ButtonLabel.astro";
+import StudioLayout from "../../layout/StudioLayout.astro";
+import { createVerifier } from "../../lib/supabase/server";
+import {
+  LOGIN_FAILED,
+  LOGIN_UNAVAILABLE,
+  loginErrorMessage,
+} from "../../lib/studio/auth";
+import {
+  buttonClass,
+  desc12,
+  desc16,
+  fieldClass,
+  fieldLabel,
+  title160,
+} from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+export const prerender = false;
+
+const { supabase } = Astro.locals;
+
+let error = "";
+let email = "";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  email = String(form.get("email") ?? "").trim();
+  const password = String(form.get("password") ?? "");
+
+  if (!email || !password || email.length > 254 || password.length > 128) {
+    error = LOGIN_FAILED;
+  } else {
+    try {
+      // Check the password and the allowlist on a cookie-less client first; the real
+      // session cookie is only written once the user is a confirmed admin.
+      const verifier = createVerifier();
+      const { data, error: authError } = await verifier.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError || !data.session) {
+        error = loginErrorMessage(authError);
+      } else {
+        const { data: admin, error: adminError } = await verifier
+          .from("admins")
+          .select("id")
+          .eq("id", data.user.id)
+          .maybeSingle();
+
+        if (adminError) {
+          error = LOGIN_UNAVAILABLE;
+        } else if (admin) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+          });
+          if (!sessionError) return Astro.redirect("/studio", 303);
+          error = LOGIN_UNAVAILABLE;
+        } else {
+          // Valid account, not on the allowlist: revoke the session just issued and
+          // answer exactly like a wrong password.
+          await verifier.auth.signOut();
+          error = LOGIN_FAILED;
+        }
+      }
+    } catch {
+      error = LOGIN_UNAVAILABLE;
+    }
+  }
+}
+
+const describedBy = error ? "login-error" : undefined;
+---
+
+<StudioLayout title="Sign in">
+  <h1 class={cn(title160, "leading-[0.9] text-boulder uppercase")}>Studio</h1>
+  <p
+    class={cn(
+      desc16,
+      "mt-[2.4rem] mb-[4.8rem] max-w-[max(40rem,300px)] text-ash phone:ml-auto phone:max-w-[255px]",
+    )}
+  >
+    Private. Sign in to manage the Journal.
+  </p>
+
+  <form
+    method="post"
+    data-login-form
+    class="flex max-w-[max(40rem,300px)] flex-col gap-[3.2rem] phone:ml-auto phone:max-w-[255px]"
+  >
+    <div class="group/field">
+      <label for="email" class={fieldLabel}>Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        inputmode="email"
+        autocomplete="username"
+        autocapitalize="none"
+        spellcheck="false"
+        required
+        maxlength="254"
+        value={email}
+        autofocus={!error}
+        aria-invalid={error ? "true" : undefined}
+        aria-describedby={describedBy}
+        class={fieldClass}
+      />
+    </div>
+
+    <div class="group/field relative">
+      <label for="password" class={fieldLabel}>Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        autocapitalize="none"
+        spellcheck="false"
+        required
+        maxlength="128"
+        autofocus={Boolean(error)}
+        aria-invalid={error ? "true" : undefined}
+        aria-describedby={describedBy}
+        class={fieldClass}
+      />
+      <!-- After the input in the DOM so Tab goes email, password, Show, Sign in;
+           drawn in the label row. Needs JS, so it stays hidden until StudioLogin.js runs. -->
+      <button
+        type="button"
+        hidden
+        data-toggle-password
+        aria-controls="password"
+        aria-pressed="false"
+        class={cn(
+          desc12,
+          "absolute top-0 right-0 cursor-pointer text-boulder uppercase transition-colors duration-200 fine:hover:text-gold",
+        )}>Show</button
+      >
+      <p
+        data-caps-hint
+        aria-live="polite"
+        class={cn(desc12, "mt-[8px] min-h-[1.3em] text-boulder")}
+      >
+      </p>
+    </div>
+
+    {
+      error && (
+        <p id="login-error" role="alert" class={cn(desc16, "font-medium text-ash")}>
+          {error}
+        </p>
+      )
+    }
+
+    <div>
+      <button type="submit" data-submit class={buttonClass}>
+        <ButtonLabel text="Sign in" />
+      </button>
+    </div>
+  </form>
+</StudioLayout>
+
+<script>
+  import "../../js/pages/StudioLogin";
+</script>

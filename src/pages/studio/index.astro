@@ -1,0 +1,120 @@
+---
+import { VERCEL_DEPLOY_HOOK_URL } from "astro:env/server";
+import ButtonLabel from "../../components/atoms/ButtonLabel.astro";
+import SignOutButton from "../../components/studio/SignOutButton.astro";
+import StudioLayout from "../../layout/StudioLayout.astro";
+import { formatStudioDate } from "../../lib/studio/posts";
+import { buttonClass, desc12, desc16, title160 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+export const prerender = false;
+
+// The middleware only lets an allowlisted admin reach this page.
+const { user, supabase } = Astro.locals;
+
+const { data: posts, error } = await supabase
+  .from("posts")
+  .select("id,title,status,sample,updated_at")
+  .order("updated_at", { ascending: false });
+
+const params = Astro.url.searchParams;
+const message = error
+  ? "Couldn't load your articles. Refresh to try again."
+  : params.get("error") === "create"
+    ? "Couldn't create the article. Try again."
+    : params.get("notice") === "deleted"
+      ? "Article deleted."
+      : "";
+const isError = Boolean(error) || params.get("error") === "create";
+const list = posts ?? [];
+const hookConfigured = Boolean(VERCEL_DEPLOY_HOOK_URL);
+---
+
+<StudioLayout title="Studio">
+  <SignOutButton slot="actions" />
+
+  <h1 class={cn(title160, "mb-[2.4rem] leading-[0.9] text-boulder uppercase")}>
+    Studio
+  </h1>
+  <p class={cn(desc16, "mb-[6.4rem] text-ash [word-break:break-word]")}>
+    {user?.email}
+  </p>
+
+  {
+    message && (
+      <p
+        role={isError ? "alert" : "status"}
+        class={cn(desc16, "mb-[3.2rem] max-w-[max(55rem,320px)] font-medium text-ash")}
+      >
+        {message}
+      </p>
+    )
+  }
+
+  <div class="mb-[2.4rem] flex max-w-[max(80rem,320px)] items-center justify-between gap-[2.4rem]">
+    <h2 class={cn(desc12, "text-boulder uppercase")}>Articles · {list.length}</h2>
+    <form method="post" action="/studio/posts/new">
+      <button type="submit" class={buttonClass}>
+        <ButtonLabel text="New article" />
+      </button>
+    </form>
+  </div>
+
+  {
+    list.length > 0 ? (
+      <ul class="max-w-[max(80rem,320px)] list-none p-0">
+        {list.map((post) => (
+          <li class="border-t-2 border-boulder">
+            <a
+              href={`/studio/posts/${post.id}`}
+              class="group/row grid gap-x-[2.4rem] gap-y-[4px] py-[16px] over-tablet:grid-cols-[minmax(0,1fr)_9rem_11rem]"
+            >
+              <span
+                class={cn(
+                  desc16,
+                  "text-ash transition-colors duration-300 [word-break:break-word] fine:group-hover/row:text-gold",
+                )}
+              >
+                {post.title}
+                {post.sample && (
+                  <span class={cn(desc12, "ml-[8px] text-boulder uppercase")}>
+                    Sample
+                  </span>
+                )}
+              </span>
+              <span
+                class={cn(
+                  desc12,
+                  "uppercase",
+                  post.status === "published" ? "text-ash" : "text-boulder",
+                )}
+              >
+                {post.status === "published" ? "Published" : "Draft"}
+              </span>
+              <span class={cn(desc12, "text-boulder uppercase over-tablet:text-right")}>
+                {formatStudioDate(post.updated_at)}
+              </span>
+            </a>
+          </li>
+        ))}
+        <li class="border-t-2 border-boulder" aria-hidden="true" />
+      </ul>
+    ) : (
+      !error && (
+        <div class="max-w-[max(55rem,320px)] border-t-2 border-boulder pt-[16px]">
+          <p class={cn(desc16, "text-ash")}>
+            No articles yet. Start with a draft; nothing goes public until you publish it.
+          </p>
+        </div>
+      )
+    )
+  }
+
+  <p class={cn(desc12, "mt-[6.4rem] max-w-[max(55rem,320px)] text-boulder")}>
+    {
+      hookConfigured
+        ? "Publishing rebuilds the site automatically."
+        : "Rebuild hook not configured: published changes appear after your next deploy."
+    }
+  </p>
+</StudioLayout>

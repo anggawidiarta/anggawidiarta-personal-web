@@ -1,0 +1,10 @@
+---
+import { buttonClass } from "../../utils/classes";
+import ButtonLabel from "../atoms/ButtonLabel.astro";
+---
+
+<form method="post" action="/studio/logout">
+  <button type="submit" class={buttonClass}>
+    <ButtonLabel text="Sign out" />
+  </button>
+</form>

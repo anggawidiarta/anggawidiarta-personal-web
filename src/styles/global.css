@@ -69,4 +69,204 @@
     outline: 2px solid var(--color-gold);
     outline-offset: 3px;
   }
+
+  /* Browser autofill paints fields light blue/yellow; keep them on the page ground. */
+  .field:-webkit-autofill,
+  .field:-webkit-autofill:hover,
+  .field:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-ash);
+    caret-color: var(--color-ash);
+    box-shadow: 0 0 0 1000px var(--color-ink) inset;
+    transition: background-color 9999s;
+  }
+}
+
+/* Journal articles (Read mode): a calm reading column inside the Night Press frame.
+   Gold stays reserved for interaction, so code is set in greys. */
+:root {
+  --astro-code-foreground: #cccccc;
+  --astro-code-background: var(--color-ink);
+  --astro-code-token-comment: #808080;
+  --astro-code-token-keyword: #ffffff;
+  --astro-code-token-string: #bdbdbd;
+  --astro-code-token-string-expression: #bdbdbd;
+  --astro-code-token-constant: #e6e6e6;
+  --astro-code-token-parameter: #aaaaaa;
+  --astro-code-token-function: #ffffff;
+  --astro-code-token-punctuation: #808080;
+  --astro-code-token-link: #aaaaaa;
+}
+
+@layer components {
+  .prose-press {
+    font-family: var(--font-sauce);
+    font-size: max(17px, 1.8rem);
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--color-ash);
+    overflow-wrap: break-word;
+  }
+
+  .prose-press > * + * {
+    margin-top: 1.4em;
+  }
+
+  .prose-press p {
+    text-wrap: pretty;
+  }
+
+  .prose-press h2 {
+    margin-top: 2.6em;
+    border-top: 2px solid var(--color-boulder);
+    padding-top: 1.6rem;
+    font-family: var(--font-bebas);
+    font-size: max(40px, 5.6rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--color-boulder);
+    scroll-margin-top: 3.2rem;
+  }
+
+  .prose-press h3 {
+    margin-top: 2em;
+    font-size: max(21px, 2.4rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--color-ash);
+    scroll-margin-top: 3.2rem;
+  }
+
+  .prose-press h2 + *,
+  .prose-press h3 + * {
+    margin-top: 1em;
+  }
+
+  .prose-press a {
+    text-decoration: underline;
+    text-decoration-color: var(--color-boulder);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    transition: color 0.3s;
+  }
+
+  @media (any-pointer: fine) {
+    .prose-press a:hover {
+      color: var(--color-gold);
+      text-decoration-color: var(--color-gold);
+    }
+  }
+
+  .prose-press strong {
+    font-weight: 500;
+  }
+
+  .prose-press ul,
+  .prose-press ol {
+    padding-left: 1.4em;
+  }
+
+  .prose-press ul {
+    list-style: disc;
+  }
+
+  .prose-press ol {
+    list-style: decimal;
+  }
+
+  .prose-press li + li {
+    margin-top: 0.5em;
+  }
+
+  .prose-press li::marker {
+    color: var(--color-boulder);
+  }
+
+  .prose-press blockquote {
+    border-left: 2px solid var(--color-boulder);
+    padding-left: 1.2em;
+    font-family: var(--font-georgia);
+    font-size: max(19px, 2.1rem);
+    font-style: italic;
+    line-height: 1.45;
+  }
+
+  .prose-press blockquote > * + * {
+    margin-top: 0.8em;
+  }
+
+  .prose-press :not(pre) > code {
+    padding: 0.1em 0.35em;
+    background-color: color-mix(in srgb, var(--color-ash) 14%, transparent);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.88em;
+  }
+
+  .prose-press pre {
+    overflow-x: auto;
+    border-block: 2px solid var(--color-boulder);
+    padding: 1.6rem 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: max(14px, 1.4rem);
+    line-height: 1.65;
+    tab-size: 2;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-boulder) transparent;
+  }
+
+  .prose-press pre[data-language]::before {
+    content: attr(data-language);
+    display: block;
+    margin-bottom: 1.2rem;
+    font-family: var(--font-sauce);
+    font-size: 12px;
+    letter-spacing: 0;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: var(--color-boulder);
+  }
+
+  .prose-press hr {
+    border: 0;
+    border-top: 2px solid var(--color-boulder);
+  }
+
+  .prose-press img {
+    width: 100%;
+    height: auto;
+  }
+
+  .prose-press figcaption {
+    margin-top: 0.8rem;
+    font-size: 12px;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: var(--color-boulder);
+  }
+
+  .prose-press table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: max(15px, 1.6rem);
+    line-height: 1.4;
+  }
+
+  .prose-press th {
+    padding: 0 1.6rem 1.2rem 0;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--color-boulder);
+  }
+
+  .prose-press td {
+    border-top: 2px solid var(--color-boulder);
+    padding: 1.2rem 1.6rem 1.2rem 0;
+  }
 }

@@ -1,0 +1,31 @@
+---
+import { cn } from "../../utils/cn";
+
+interface Props {
+  title: string;
+  as?: "h1" | "h2" | "p";
+  class?: string;
+}
+
+const { title, as: Tag = "h2", class: className } = Astro.props;
+---
+
+<!-- Hover swap from DESIGN.md: a gold copy of the title is revealed by a mask that slides up.
+     The parent link must carry `group/post`. Fine pointers only. -->
+<Tag
+  class={cn(
+    "relative overflow-hidden font-bebas leading-[0.95] tracking-[-0.025em] text-balance uppercase",
+    className,
+  )}
+>
+  <span class="block">{title}</span>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 hidden translate-y-full overflow-hidden transition-transform duration-[275ms] ease-[ease] group-hover/post:translate-y-0 group-focus-visible/post:translate-y-0 fine:block"
+  >
+    <span
+      class="block -translate-y-full text-gold transition-transform duration-[275ms] ease-[ease] group-hover/post:translate-y-0 group-focus-visible/post:translate-y-0"
+      >{title}</span
+    >
+  </span>
+</Tag>

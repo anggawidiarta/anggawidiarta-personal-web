@@ -1,0 +1,104 @@
+---
+import { getImage } from "astro:assets";
+import BaseLayout from "../../layout/BaseLayout.astro";
+import FooterPage from "../../components/FooterPage.astro";
+import ArticleHeader from "../../components/blog/ArticleHeader.astro";
+import PostPager from "../../components/blog/PostPager.astro";
+import ReadingProgress from "../../components/blog/ReadingProgress.astro";
+import TableOfContents from "../../components/blog/TableOfContents.astro";
+import ContactSection from "../../components/organisms/ContactSection.astro";
+import Navigation from "../../components/organisms/Navigation.astro";
+import { getAdjacent, getPosts, renderPost } from "../../lib/blog";
+import { paddingHome } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await renderPost(post);
+const { newer, older } = getAdjacent(await getPosts(), post.id);
+
+const { title, description, pubDate, updatedDate, tags, cover } = post.data;
+const site = Astro.site ?? new URL("https://www.anggawidiarta.xyz");
+const canonical = new URL(Astro.url.pathname, site).href;
+const coverImage = cover
+  ? await getImage({ src: cover, inferSize: true, width: 1200, format: "jpg" })
+  : undefined;
+const image = coverImage ? new URL(coverImage.src, site).href : undefined;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  dateModified: (updatedDate ?? pubDate).toISOString(),
+  keywords: tags.join(", "),
+  mainEntityOfPage: canonical,
+  ...(image && { image }),
+  author: {
+    "@type": "Person",
+    name: "Angga Widiarta",
+    url: site.href,
+  },
+};
+---
+
+<BaseLayout
+  title={`${title} — Angga Widiarta`}
+  description={description}
+  image={image}
+  type="article"
+>
+  <Fragment slot="head">
+    <meta property="article:published_time" content={pubDate.toISOString()} />
+    {
+      updatedDate && (
+        <meta
+          property="article:modified_time"
+          content={updatedDate.toISOString()}
+        />
+      )
+    }
+    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <main class="blog py-[2rem] [scrollbar-width:none]">
+    <ReadingProgress />
+    <Navigation current="blog" />
+
+    <article>
+      <ArticleHeader post={post} />
+
+      <div class={cn(paddingHome, "mx-auto max-w-[113rem]")}>
+        <div
+          class="over-tablet:grid over-tablet:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] over-tablet:gap-[8rem]"
+        >
+          <aside class="over-tablet:sticky over-tablet:top-[3.2rem] over-tablet:self-start">
+            <TableOfContents headings={headings} />
+          </aside>
+
+          <div data-article class="min-w-0">
+            <div class="prose-press max-w-[68ch]">
+              <Content />
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <PostPager newer={newer} older={older} />
+
+    <ContactSection />
+
+    <FooterPage />
+  </main>
+</BaseLayout>
+
+<script>
+  import "../../js/pages/BlogPost";
+</script>

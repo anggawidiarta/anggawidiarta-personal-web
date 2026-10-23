@@ -1,0 +1,29 @@
+---
+import { formatDate } from "../../lib/blog";
+import { desc12 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+interface Props {
+  date: Date;
+  minutes: number;
+  tags: string[];
+  sample?: boolean;
+  class?: string;
+}
+
+const { date, minutes, tags, sample = false, class: className } = Astro.props;
+---
+
+<div
+  class={cn(
+    desc12,
+    "leading-[1.5] text-boulder uppercase transition-colors duration-300 group-hover/post:text-ash",
+    className,
+  )}
+>
+  <p>
+    <time datetime={date.toISOString()}>{formatDate(date)}</time> · {minutes} MIN READ
+  </p>
+  <p>{tags.join(" / ")}</p>
+  {sample && <p>Sample post</p>}
+</div>

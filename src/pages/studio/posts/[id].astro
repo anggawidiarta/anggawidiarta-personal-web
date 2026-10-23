@@ -1,0 +1,287 @@
+---
+import { PUBLIC_SUPABASE_URL } from "astro:env/server";
+import ButtonLabel from "../../../components/atoms/ButtonLabel.astro";
+import SignOutButton from "../../../components/studio/SignOutButton.astro";
+import StudioLayout from "../../../layout/StudioLayout.astro";
+import { UUID, slugify } from "../../../lib/studio/posts";
+import { buttonClass, desc12, desc16, fieldClass, fieldLabel } from "../../../utils/classes";
+import { cn } from "../../../utils/cn";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+if (!id || !UUID.test(id)) return Astro.redirect("/studio");
+
+const { data: post } = await Astro.locals.supabase
+  .from("posts")
+  .select("*")
+  .eq("id", id)
+  .maybeSingle();
+if (!post) return Astro.redirect("/studio");
+
+const live = post.status === "published";
+const coverUrl = post.cover_path
+  ? `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/blog-media/${post.cover_path}`
+  : "";
+// A draft keeps deriving its slug from the title until someone edits the slug by hand.
+const slugFollowsTitle = !live && (post.slug.startsWith("untitled-") || post.slug === slugify(post.title));
+
+const NOTICES: Record<string, string> = {
+  "published-triggered": "Published. The site is rebuilding; it can take a minute or two to appear.",
+  "published-skipped": "Published. The rebuild hook is not configured, so it goes live with your next deploy.",
+  "published-failed": "Published, but the rebuild could not be started. Redeploy to put it live.",
+  "updated-triggered": "Updated. The site is rebuilding; the change can take a minute or two to appear.",
+  "updated-skipped": "Updated. The rebuild hook is not configured, so it goes live with your next deploy.",
+  "updated-failed": "Updated, but the rebuild could not be started. Redeploy to put it live.",
+  "unpublished-triggered": "Unpublished. The site is rebuilding to remove it.",
+  "unpublished-skipped": "Unpublished. The rebuild hook is not configured, so it stays up until your next deploy.",
+  "unpublished-failed": "Unpublished, but the rebuild could not be started. Redeploy to take it down.",
+};
+const notice = NOTICES[Astro.url.searchParams.get("notice") ?? ""] ?? "";
+
+const labelRow = cn(fieldLabel, "mb-0");
+const hint = cn(desc12, "mt-[8px] text-boulder");
+const tabButton = cn(
+  buttonClass,
+  "aria-pressed:border-gold aria-pressed:bg-gold aria-pressed:font-medium aria-pressed:text-ink",
+);
+---
+
+<StudioLayout title={post.title}>
+  <SignOutButton slot="actions" />
+
+  <div
+    data-editor
+    data-post-id={post.id}
+    data-status={post.status}
+    data-slug-follows-title={String(slugFollowsTitle)}
+    data-cover-path={post.cover_path ?? ""}
+    data-view="write"
+    class="group/editor"
+  >
+    <noscript>
+      <p class={cn(desc16, "mb-[3.2rem] text-ash")}>The editor needs JavaScript. Turn it on to continue.</p>
+    </noscript>
+
+    <div
+      class="sticky top-0 z-10 mb-[4.8rem] flex flex-wrap items-center justify-between gap-x-[2.4rem] gap-y-[1.2rem] border-b-2 border-boulder bg-ink py-[1.2rem]"
+    >
+      <div class="flex flex-wrap items-center gap-x-[2.4rem] gap-y-[8px]">
+        <a
+          href="/studio"
+          class={cn(desc12, "text-boulder uppercase transition-colors duration-300 fine:hover:text-gold")}
+          >Articles</a
+        >
+        <p
+          data-save-status
+          role="status"
+          class={cn(desc12, "text-boulder uppercase")}
+        >
+          {live ? "Live" : "Saved"}
+        </p>
+        <button
+          type="button"
+          hidden
+          data-retry
+          class={cn(desc12, "cursor-pointer text-ash uppercase underline underline-offset-4 fine:hover:text-gold")}
+          >Retry</button
+        >
+      </div>
+
+      <div class="flex flex-wrap items-center gap-[0.8rem]">
+        <div class="flex gap-[0.8rem] min-[1100px]:hidden" role="group" aria-label="Editor view">
+          <button type="button" data-view-toggle="write" aria-pressed="true" class={tabButton}>
+            <ButtonLabel text="Write" />
+          </button>
+          <button type="button" data-view-toggle="preview" aria-pressed="false" class={tabButton}>
+            <ButtonLabel text="Preview" />
+          </button>
+        </div>
+        {
+          live ? (
+            <>
+              <button type="button" data-action="unpublish" class={buttonClass}>
+                <ButtonLabel text="Unpublish" />
+              </button>
+              <button type="button" data-action="update-live" class={buttonClass}>
+                <ButtonLabel text="Update live" />
+              </button>
+            </>
+          ) : (
+            <button type="button" data-action="publish" class={buttonClass}>
+              <ButtonLabel text="Publish" />
+            </button>
+          )
+        }
+      </div>
+    </div>
+
+    <p
+      data-notice
+      role="status"
+      class={cn(desc16, "mb-[3.2rem] max-w-[max(60rem,320px)] font-medium text-ash empty:hidden")}
+    >
+      {notice}
+    </p>
+
+    <div class="grid gap-x-[6.4rem] min-[1100px]:grid-cols-2">
+      <!-- Write -->
+      <div
+        class="flex min-w-0 flex-col gap-[3.2rem] max-[1099px]:group-data-[view=preview]/editor:hidden"
+      >
+        <div class="group/field">
+          <label for="title" class={fieldLabel}>Title</label>
+          <input
+            id="title"
+            data-field="title"
+            type="text"
+            maxlength="200"
+            autocomplete="off"
+            value={post.title}
+            class={cn(fieldClass, "text-[max(22px,2.4rem)] font-medium")}
+          />
+        </div>
+
+        <div class="group/field">
+          <label for="slug" class={fieldLabel}>Slug</label>
+          <input
+            id="slug"
+            data-field="slug"
+            type="text"
+            maxlength="120"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            value={post.slug}
+            aria-describedby="slug-hint"
+            class={fieldClass}
+          />
+          <p id="slug-hint" data-slug-hint class={hint}>
+            {
+              live
+                ? "This article is live. Changing the slug breaks its existing link."
+                : `Address: /blog/${post.slug}`
+            }
+          </p>
+          <p data-field-error="slug" role="alert" class={cn(desc12, "mt-[8px] text-ash empty:hidden")}></p>
+        </div>
+
+        <div class="group/field">
+          <label for="description" class={fieldLabel}>Description</label>
+          <textarea
+            id="description"
+            data-field="description"
+            rows="3"
+            maxlength="200"
+            aria-describedby="description-count"
+            class={cn(fieldClass, "resize-none")}>{post.description}</textarea
+          >
+          <p id="description-count" class={hint}>
+            <span data-count>{post.description.length}</span>/200. Shown in lists and search results.
+          </p>
+        </div>
+
+        <div class="group/field">
+          <label for="tags" class={fieldLabel}>Tags</label>
+          <input
+            id="tags"
+            data-field="tags"
+            type="text"
+            autocomplete="off"
+            value={post.tags.join(", ")}
+            aria-describedby="tags-hint"
+            class={fieldClass}
+          />
+          <p id="tags-hint" data-tags-hint class={hint}>Separate with commas. Up to 8.</p>
+        </div>
+
+        <div class="group/field">
+          <p class={fieldLabel}>Cover image</p>
+          <img
+            data-cover-preview
+            src={coverUrl}
+            alt=""
+            hidden={!coverUrl}
+            class="mb-[1.6rem] aspect-[16/9] w-full object-cover"
+          />
+          <div class="flex flex-wrap items-center gap-[0.8rem]">
+            <button type="button" data-action="cover-upload" class={buttonClass}>
+              <ButtonLabel text={coverUrl ? "Replace" : "Upload cover"} />
+            </button>
+            <button type="button" data-action="cover-remove" hidden={!coverUrl} class={buttonClass}>
+              <ButtonLabel text="Remove" />
+            </button>
+            <input data-cover-file type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden />
+          </div>
+          <div class="group/field mt-[2.4rem]">
+            <label for="cover-alt" class={fieldLabel}>Cover alt text</label>
+            <input
+              id="cover-alt"
+              data-field="coverAlt"
+              type="text"
+              maxlength="200"
+              autocomplete="off"
+              value={post.cover_alt ?? ""}
+              aria-describedby="cover-alt-hint"
+              class={fieldClass}
+            />
+            <p id="cover-alt-hint" class={hint}>Describe the image for readers who cannot see it. Required with a cover.</p>
+          </div>
+        </div>
+
+        <div class="group/field">
+          <div class="flex items-baseline justify-between gap-[1.6rem]">
+            <label for="body" class={labelRow}>Content (Markdown)</label>
+            <button
+              type="button"
+              data-action="body-image"
+              class={cn(desc12, "cursor-pointer text-boulder uppercase transition-colors duration-200 fine:hover:text-gold")}
+              >Insert image</button
+            >
+          </div>
+          <input data-body-file type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden />
+          <textarea
+            id="body"
+            data-field="body"
+            rows="26"
+            spellcheck="true"
+            aria-describedby="body-hint"
+            class="mt-[8px] block min-h-[40rem] w-full resize-y rounded-none border-2 border-boulder bg-transparent p-[1.6rem] font-mono text-[max(14px,1.5rem)] leading-[1.6] text-ash caret-ash transition-colors duration-200 focus:border-gold focus:outline-none"
+            >{post.body}</textarea
+          >
+          <p id="body-hint" class={hint}>
+            Paste or drop an image to upload it. <span data-upload-status role="status"></span>
+          </p>
+        </div>
+
+        <div class="border-t-2 border-boulder pt-[2.4rem]">
+          <button
+            type="button"
+            data-action="delete"
+            class={cn(desc12, "cursor-pointer text-boulder uppercase transition-colors duration-200 fine:hover:text-gold")}
+            >Delete article</button
+          >
+        </div>
+      </div>
+
+      <!-- Preview: same type as the published article -->
+      <section
+        aria-label="Preview"
+        class="min-w-0 max-[1099px]:group-data-[view=write]/editor:hidden min-[1100px]:sticky min-[1100px]:top-[8rem] min-[1100px]:self-start"
+      >
+        <p class={cn(desc12, "mb-[2.4rem] text-boulder uppercase")}>Preview</p>
+        <h2
+          data-preview-title
+          class="mb-[3.2rem] font-bebas text-[max(48px,7.2rem)] leading-[0.95] tracking-[-0.025em] text-balance text-boulder uppercase"
+        >
+          {post.title}
+        </h2>
+        <div data-preview class="prose-press max-w-[68ch]"></div>
+      </section>
+    </div>
+  </div>
+</StudioLayout>
+
+<script>
+  import "../../../js/pages/StudioEditor";
+</script>

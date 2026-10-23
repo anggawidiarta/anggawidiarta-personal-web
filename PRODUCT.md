@@ -31,6 +31,8 @@ Confirmed wording: the hero reads "FULL —— STACK / DEVELOPER" ("FULL — / S
 ## Capabilities and Constraints
 
 - Single-page Astro site (`src/pages/index.astro`) with sections: hero, project list, design work, experience and certifications, contact, footer.
+- **Journal** (`/blog`, `/blog/[slug]`): a native blog, static for now. Articles are written in the Studio and stored in Supabase, then read through `src/lib/blog.ts` at build time. It ends in the same contact marquee and footer. The five imported sample articles are drafts (`sample: true`); publish or replace them before promoting the Journal.
+- **Studio** (`/studio/login`, `/studio`, `/studio/posts/[id]`): a private, server-rendered CMS behind Supabase Auth (email and password, single admin on the `admins` allowlist). Articles live in the `posts` table; the public Journal is built from published rows at build time, and publishing triggers a Vercel Deploy Hook rebuild. It is an Operate surface, not linked from any public page, and always `noindex`, `no-store` and free of analytics. The rest of the site stays static.
 - Stack: Astro 7 and Tailwind 4, with no UI framework runtime. Motion uses GSAP and Locomotive Scroll plus CSS, and respects `prefers-reduced-motion`.
 - **English only.** No localized version is planned.
 

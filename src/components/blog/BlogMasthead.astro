@@ -1,0 +1,60 @@
+---
+import HeroLetters from "../atoms/HeroLetters.astro";
+import { desc12, desc16, paddingHome, title328 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+interface Props {
+  count: number;
+  hasSamples: boolean;
+}
+
+const { count, hasSamples } = Astro.props;
+const bigTitle = cn(title328, "tracking-[-0.105em]");
+---
+
+<section class={cn("mb-[6.4rem]", paddingHome)}>
+  <h1 class="leading-[0.9] text-boulder" aria-label="Journal">
+    <span class="blog__title block overflow-hidden phone:hidden" aria-hidden="true">
+      <span class={cn(bigTitle, "inline-block")} data-masthead>
+        <HeroLetters word="JOURNAL" />
+      </span>
+    </span>
+    <span
+      class="blog__title block overflow-hidden over-phone:hidden"
+      aria-hidden="true"
+    >
+      <span
+        class={cn(
+          title328,
+          "inline-block tracking-[-0.05em] phone:text-[min(160px,calc((100vw-32px)/2.5))]",
+        )}
+        data-masthead>JOURNAL</span
+      >
+    </span>
+  </h1>
+
+  <div
+    class={cn(
+      desc16,
+      "blog__intro mt-[2.4rem] flex max-w-[32.5rem] flex-col gap-[0.8rem] tablet:max-w-[55rem] phone:ml-auto phone:max-w-[255px]",
+    )}
+  >
+    <p class={cn(desc12, "text-boulder uppercase")}>About the journal</p>
+    <p
+      class="text-[max(14px,1.6rem)] leading-[1.4] font-medium tracking-wide text-pretty text-ash"
+    >
+      Notes on building web products end to end: interface, backend, and the
+      architecture behind them.
+    </p>
+    <p class={cn(desc12, "text-boulder uppercase")}>
+      {count} {count === 1 ? "article" : "articles"}
+    </p>
+    {
+      hasSamples && (
+        <p class={cn(desc12, "text-boulder")}>
+          Sample articles: placeholder content while the journal is set up.
+        </p>
+      )
+    }
+  </div>
+</section>

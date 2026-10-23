@@ -1,0 +1,56 @@
+---
+import { postNumber, readingTime, type Post } from "../../lib/blog";
+import { desc12, desc16, paddingHome } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+import ProjectLine from "../atoms/ProjectLine.astro";
+import PostMeta from "./PostMeta.astro";
+import PostTitle from "./PostTitle.astro";
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, tags, sample } = post.data;
+---
+
+<!-- Newest article, shown while no topic filter is active. -->
+<section class={paddingHome} data-lead>
+  <ProjectLine position="right" />
+  <a
+    href={`/blog/${post.id}`}
+    class="group/post block pt-[2.4rem] pb-[6.4rem] phone:pb-[4.8rem]"
+  >
+    <div
+      class="mb-[4.8rem] flex items-start justify-between gap-[2.4rem] phone:mb-[2.4rem] phone:flex-col"
+    >
+      <p class={cn(desc12, "text-boulder uppercase")}>
+        {postNumber(post.number)} · Latest
+      </p>
+      <PostMeta
+        date={pubDate}
+        minutes={readingTime(post.body)}
+        tags={tags}
+        sample={sample}
+        class="over-phone:text-right"
+      />
+    </div>
+
+    <PostTitle
+      title={title}
+      class="text-[16rem] phone:text-[64px] phone:leading-[0.95]"
+    />
+
+    <div
+      class="mt-[3.2rem] flex items-end justify-between gap-[2.4rem] phone:flex-col phone:items-start"
+    >
+      <p class={cn(desc16, "max-w-[65ch] leading-[1.45] text-pretty text-ash")}>
+        {description}
+      </p>
+      <span
+        class="inline-block shrink-0 rounded-[45px] border-2 border-boulder bg-transparent px-[8px] py-[5px] text-[16px] text-ash uppercase transition-all duration-300 ease-[ease] group-focus-visible/post:border-gold fine:group-hover/post:border-gold fine:group-hover/post:bg-gold fine:group-hover/post:font-medium fine:group-hover/post:text-ink"
+        aria-hidden="true">Read article</span
+      >
+    </div>
+  </a>
+</section>

@@ -22,3 +22,11 @@ export const buttonClass =
 
 export const linkChildren =
   "[&_a]:text-boulder [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-gold";
+
+// Form fields (Studio): a hairline underline that turns gold with the label on focus.
+// The wrapper must carry `group/field`.
+export const fieldLabel =
+  "mb-[8px] block font-sauce text-[12px] leading-[1.3] text-boulder uppercase transition-colors duration-200 group-focus-within/field:text-gold";
+
+export const fieldClass =
+  "field block w-full rounded-none border-0 border-b-2 border-boulder bg-transparent py-[12px] font-sauce text-[max(16px,1.6rem)] text-ash caret-ash transition-colors duration-200 placeholder:text-boulder focus:border-gold focus:outline-none aria-invalid:border-ash focus:aria-invalid:border-gold";

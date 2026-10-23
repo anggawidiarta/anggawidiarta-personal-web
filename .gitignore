@@ -26,3 +26,6 @@ package-lock.json
 .claude
 .agents
 skills-lock.json
+
+# vercel build output
+.vercel/

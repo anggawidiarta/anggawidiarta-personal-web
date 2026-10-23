@@ -3,6 +3,12 @@ import { desc12, paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 import NavLeft from "../molecules/NavLeft.astro";
 import NavRight from "../molecules/NavRight.astro";
+
+interface Props {
+  current?: "blog";
+}
+
+const { current } = Astro.props;
 ---
 
 <nav
@@ -13,5 +19,5 @@ import NavRight from "../molecules/NavRight.astro";
   )}
 >
   <NavLeft />
-  <NavRight />
+  <NavRight current={current} />
 </nav>

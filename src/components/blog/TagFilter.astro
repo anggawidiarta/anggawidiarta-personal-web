@@ -1,0 +1,45 @@
+---
+import { slugifyTag } from "../../lib/blog";
+import { buttonClass, desc12, paddingHome } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+import ButtonLabel from "../atoms/ButtonLabel.astro";
+
+interface Props {
+  tags: { tag: string; count: number }[];
+  total: number;
+}
+
+const { tags, total } = Astro.props;
+const pill = cn(
+  buttonClass,
+  "aria-pressed:border-gold aria-pressed:bg-gold aria-pressed:font-medium aria-pressed:text-ink",
+);
+---
+
+<!-- Hidden until the page script runs: without JS the filter would do nothing. -->
+<div class={cn(paddingHome, "mb-[4.8rem]")} data-js-only hidden>
+  <p class={cn(desc12, "mb-[1.6rem] text-boulder uppercase")}>Filter by topic</p>
+  <div
+    role="group"
+    aria-label="Filter articles by topic"
+    class="flex flex-wrap gap-[0.8rem]"
+  >
+    <button type="button" class={pill} data-tag-filter="all" data-label="All" aria-pressed="true">
+      <ButtonLabel text={`All ${total}`} />
+    </button>
+    {
+      tags.map(({ tag, count }) => (
+        <button
+          type="button"
+          class={pill}
+          data-tag-filter={slugifyTag(tag)}
+          data-label={tag}
+          aria-pressed="false"
+        >
+          <ButtonLabel text={`${tag} ${count}`} />
+        </button>
+      ))
+    }
+  </div>
+  <p class="sr-only" role="status" data-filter-status></p>
+</div>

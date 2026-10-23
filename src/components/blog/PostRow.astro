@@ -1,0 +1,51 @@
+---
+import { postNumber, readingTime, slugifyTag, type Post } from "../../lib/blog";
+import { desc12 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+import ProjectLine from "../atoms/ProjectLine.astro";
+import PostMeta from "./PostMeta.astro";
+import PostTitle from "./PostTitle.astro";
+
+interface Props {
+  post: Post;
+  index: number;
+  /** The newest article: hidden while the lead section shows it. */
+  lead?: boolean;
+}
+
+const { post, index, lead = false } = Astro.props;
+const { title, pubDate, tags, sample } = post.data;
+---
+
+<li
+  data-post
+  data-tags={tags.map(slugifyTag).join("|")}
+  data-lead-row={lead ? "" : undefined}
+  hidden={lead}
+>
+  <ProjectLine position={index % 2 === 0 ? "left" : "right"} />
+  <a
+    href={`/blog/${post.id}`}
+    class="group/post grid gap-x-[2.4rem] gap-y-[1.6rem] py-[3.2rem] over-tablet:grid-cols-[10rem_minmax(0,1fr)_max(24rem,190px)] phone:py-[2.4rem]"
+  >
+    <p
+      class={cn(
+        desc12,
+        "pt-[0.8rem] text-boulder uppercase transition-colors duration-300 group-hover/post:text-ash",
+      )}
+    >
+      {postNumber(post.number)}
+    </p>
+    <PostTitle
+      title={title}
+      class="text-[max(40px,8rem)] phone:text-[40px] phone:leading-[1]"
+    />
+    <PostMeta
+      date={pubDate}
+      minutes={readingTime(post.body)}
+      tags={tags}
+      sample={sample}
+      class="pt-[0.8rem] over-tablet:text-right"
+    />
+  </a>
+</li>

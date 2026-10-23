@@ -1,0 +1,55 @@
+---
+import { postNumber, type Post } from "../../lib/blog";
+import { buttonClass, desc12, paddingHome } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+import ButtonLabel from "../atoms/ButtonLabel.astro";
+import ProjectLine from "../atoms/ProjectLine.astro";
+import PostTitle from "./PostTitle.astro";
+
+interface Props {
+  newer?: Post;
+  older?: Post;
+}
+
+const { newer, older } = Astro.props;
+const links = [
+  { post: newer, label: "Newer", position: "left" },
+  { post: older, label: "Older", position: "right" },
+].filter((item): item is { post: Post; label: string; position: "left" | "right" } =>
+  Boolean(item.post),
+);
+---
+
+<nav aria-label="More articles" class={cn(paddingHome, "mt-[12rem] phone:mt-[9.6rem]")}>
+  {
+    links.map(({ post, label, position }) => (
+      <>
+        <ProjectLine position={position} />
+        <a
+          href={`/blog/${post.id}`}
+          class="group/post block py-[3.2rem] phone:py-[2.4rem]"
+        >
+          <p
+            class={cn(
+              desc12,
+              "mb-[1.6rem] text-boulder uppercase transition-colors duration-300 group-hover/post:text-ash",
+            )}
+          >
+            {label} · {postNumber(post.number)}
+          </p>
+          <PostTitle
+            as="p"
+            title={post.data.title}
+            class="text-[max(40px,8rem)] phone:text-[40px] phone:leading-[1]"
+          />
+        </a>
+      </>
+    ))
+  }
+  <ProjectLine position="left" />
+  <div class="pt-[3.2rem]">
+    <a href="/blog" class={buttonClass}>
+      <ButtonLabel text="All articles" />
+    </a>
+  </div>
+</nav>

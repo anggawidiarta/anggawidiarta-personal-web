@@ -15,12 +15,17 @@
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.9",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/vercel": "^11.0.16",
     "@fontsource/bebas-neue": "^5.3.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.4.2",
     "clsx": "^2.1.1",
     "gsap": "^3.15.0",
     "locomotive-scroll": "^5.0.1",
+    "marked": "^18.1.1",
     "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.3"
   },

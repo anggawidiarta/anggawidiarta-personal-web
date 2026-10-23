@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../layout/BaseLayout.astro";
+import FooterPage from "../../components/FooterPage.astro";
+import ProjectLine from "../../components/atoms/ProjectLine.astro";
+import BlogMasthead from "../../components/blog/BlogMasthead.astro";
+import PostLead from "../../components/blog/PostLead.astro";
+import PostRow from "../../components/blog/PostRow.astro";
+import TagFilter from "../../components/blog/TagFilter.astro";
+import ContactSection from "../../components/organisms/ContactSection.astro";
+import Navigation from "../../components/organisms/Navigation.astro";
+import { getPosts, getTags } from "../../lib/blog";
+import { desc12, desc16, paddingHome } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+const posts = await getPosts();
+const tags = await getTags();
+const [lead] = posts;
+const hasSamples = posts.some((post) => post.data.sample);
+---
+
+<BaseLayout
+  title="Journal — Angga Widiarta"
+  description="Notes from a fullstack developer in Lombok, Indonesia: Laravel, Astro, front-end craft and the architecture behind web products."
+>
+  <main class="blog py-[2rem] [scrollbar-width:none]">
+    <Navigation current="blog" />
+
+    <BlogMasthead count={posts.length} hasSamples={hasSamples} />
+
+    {
+      lead ? (
+        <>
+          <TagFilter tags={tags} total={posts.length} />
+
+          <PostLead post={lead} />
+
+          <section class={paddingHome} aria-label="All articles">
+            <ul class="list-none p-0" data-archive>
+              {posts.map((post, i) => (
+                <PostRow post={post} index={i} lead={i === 0} />
+              ))}
+            </ul>
+            <ProjectLine position="right" />
+          </section>
+        </>
+      ) : (
+        <section class={cn(paddingHome, "pb-[9.6rem]")}>
+          <ProjectLine position="right" />
+          <div class="pt-[3.2rem]" role="status">
+            <p class={cn(desc12, "mb-[1.6rem] text-boulder uppercase")}>
+              No articles yet
+            </p>
+            <p class={cn(desc16, "max-w-[40rem] text-ash")}>
+              The first one is on its way. In the meantime, the best way to
+              reach me is by email.
+            </p>
+          </div>
+        </section>
+      )
+    }
+
+    <ContactSection />
+
+    <FooterPage />
+  </main>
+</BaseLayout>
+
+<script>
+  import "../../js/pages/BlogIndex";
+</script>

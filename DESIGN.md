@@ -198,6 +198,28 @@ A full-width marquee of Headline-size Boulder text linking to a prefilled `mailt
 ### Design work grid
 Three items in a row (stacked on phones), each a plain link under a 2px Boulder rule: a 4:3 thumbnail, the title in Body (Ash, turning Gold on hover) and a 12px uppercase Boulder kind label. Thumbnails sit desaturated and dimmed at rest and return to full tone on hover (fine pointers only). It is a list, not a set of cards: no border, radius, shadow or tilt.
 
+## Journal
+
+The blog (`/blog`, `/blog/[slug]`) is a Read surface inside the same world: the frame (masthead, titles, rules, pills) stays Night Press, the reading column stays calm.
+
+- **Index (ledger):** a Display "JOURNAL" masthead, topic pills, the newest article as a lead (Headline-size title, 65ch excerpt), then ruled rows: number, title in Bebas `max(40px, 8rem)` (40px on phones) with the gold slide-up swap on hover, and a right-aligned 12px meta block. Rows and lines reuse the project-row rules and drawing motion.
+- **Topic pills:** the standard pill; the selected pill (`aria-pressed`) takes the Gold fill, since it is an interactive state. Filtering reorders with a short Flip glide and respects reduced motion.
+- **Article:** title in Headline size (64px on phones), Boulder, balanced. Body is Open Sauce 400 at `max(17px, 1.8rem)` and line-height 1.6, held to 68ch, in Ash. Section heads are Bebas in Boulder (`max(40px, 5.6rem)`) under a 2px rule; subheads are Open Sauce 500. Quotes use the Georgia italic accent. Links are Ash with a 2px Boulder underline that turns Gold on hover.
+- **Code:** flat blocks between 2px Boulder rules with a 12px language label, set in the system monospace stack (the one functional exception to the two-family rule). Syntax is a grey ramp (#808080 comments up to #ffffff keywords); Gold never appears in code.
+- **Contents and progress:** a sticky contents list in the left margin on wide screens, a collapsed "Contents" disclosure on tablets and phones. The current section is Ash; hover and focus are Gold. Reading progress is a 2px Ash hairline at the top of the page: it is feedback, not interaction, so it is not Gold.
+- **Motion:** masthead letters and article title lines rise out of a mask once; nothing else on these pages animates on load. All of it is off under `prefers-reduced-motion`.
+
+## Studio
+
+The private CMS (`/studio/*`) is an Operate surface in the same world: precision over expression, no intro motion, no analytics.
+
+- **Forms:** a label above each field (12px uppercase Boulder), a 2px Boulder underline, and no box. Focus turns the underline and its label Gold together; the browser outline is removed on fields only because those two cues replace it. Autofill is repainted on the page ground. An invalid field takes an Ash underline and the message sits in an `alert` beside the action, never in a coloured box.
+- **Sign in:** "Studio" in Headline size, one line of context, two fields, the standard pill. Errors say what to do (wrong credentials, wait, try later) and stay generic about which accounts exist. Show/Hide password and the Caps Lock hint appear only when JS runs.
+- **Article list:** the same ruled rows as the project list: title in Open Sauce (not Bebas, since this is a working list), status as text ("Draft", "Published"), date right-aligned. Hover turns the title Gold on fine pointers.
+- **Editor:** a sticky bar with the save state ("Saved", "Saving…", "Unsaved changes", errors with Retry) and the primary action; fields on the left, a live preview on the right in the article's own type (Bebas title, `.prose-press` body). Below 1100px the preview is a Write/Preview toggle whose selected state is Gold, like the topic pills. The Markdown textarea uses the system monospace stack, as code does elsewhere.
+- **Destructive action:** Delete is plain text; the first click turns it into "Confirm delete" for four seconds. There is no modal.
+- **Never** in the Studio: Gold as a status colour, toasts, spinners over content, or colour as the only signal of state.
+
 ## Do's and Don'ts
 
 ### Do

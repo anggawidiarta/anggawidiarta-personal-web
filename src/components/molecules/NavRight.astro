@@ -1,6 +1,12 @@
 ---
 import NavButton from "../atoms/NavButton.astro";
 import NavText from "../atoms/NavText.astro";
+
+interface Props {
+  current?: "blog";
+}
+
+const { current } = Astro.props;
 ---
 
 <div
@@ -22,7 +28,7 @@ import NavText from "../atoms/NavText.astro";
     </span>
   </NavText>
 
-  <NavButton text="Blog" href="https://nuxt-personal-blog-seven.vercel.app/" />
+  <NavButton text="Blog" href="/blog" current={current === "blog"} />
 
   <div class="phone:mx-0 phone:my-4">
     <NavButton text="Contact" className="contact-scroll" />

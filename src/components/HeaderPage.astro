@@ -2,36 +2,57 @@
 interface Props {
   title: string;
   contentDesc: string;
+  image?: string;
+  type?: "website" | "article";
+  /** Private pages (the studio): no indexing, no analytics. */
+  noindex?: boolean;
 }
 
-const { title, contentDesc } = Astro.props;
+const DEFAULT_IMAGE = "https://i.ibb.co/wpWy7Qy/Profil-Image-Tag.jpg";
+const SITE = "https://www.anggawidiarta.xyz";
+
+const {
+  title,
+  contentDesc,
+  image = DEFAULT_IMAGE,
+  type = "website",
+  noindex = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE).href;
 import "../styles/global.css";
 import openSauceMedium from "../fonts/opensauce-medium.woff2?url";
 import bebasNeue from "@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url";
 ---
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script
-    type="text/partytown"
-    async
-    src="https://www.googletagmanager.com/gtag/js?id=G-B4PD2PNELH"></script>
-  <script type="text/partytown">
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
+  {
+    !noindex && (
+      <>
+      <!-- Google tag (gtag.js) -->
+      <script
+        type="text/partytown"
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-B4PD2PNELH"></script>
+      <script type="text/partytown">
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
 
-    gtag("config", "G-B4PD2PNELH");
-  </script>
+        gtag("config", "G-B4PD2PNELH");
+      </script>
+      </>
+    )
+  }
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <noscript>
     <style>
       .home,
-      .home__projects__line {
+      .home__projects__line,
+      .blog-line {
         visibility: visible !important;
       }
     </style>
@@ -43,40 +64,43 @@ import bebasNeue from "@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="manifest" href="/site.webmanifest" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
   <meta name="author" content="Angga Widiarta" />
   <meta
     name="keywords"
     content="portfolio, fullstack developer, web developer, angga widiarta, portfolio angga widiarta"
   />
   <meta name="description" content={contentDesc} />
-  <meta
-    property="og:image"
-    content="https://i.ibb.co/wpWy7Qy/Profil-Image-Tag.jpg"
+  <link rel="canonical" href={canonical} />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Angga Widiarta — Journal"
+    href="/rss.xml"
   />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://www.anggawidiarta.xyz/" />
+  <meta property="twitter:url" content={canonical} />
   <meta property="twitter:title" content={title} />
   <meta property="twitter:description" content={contentDesc} />
-  <meta
-    property="twitter:image"
-    content="https://i.ibb.co/wpWy7Qy/Profil-Image-Tag.jpg"
-  />
+  <meta property="twitter:image" content={image} />
 
   <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.anggawidiarta.xyz/" />
+  <meta property="og:type" content={type} />
+  <meta property="og:url" content={canonical} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={contentDesc} />
-  <meta
-    property="og:image"
-    content="https://i.ibb.co/wpWy7Qy/Profil-Image-Tag.jpg"
-  />
+  <meta property="og:image" content={image} />
 
-  <!-- Load 24timezones script asynchronously -->
-  <script type="text/javascript" src="//w.24timezones.com/l.js" async></script>
+  <slot />
+
+  {/* 24timezones: footer clock script, not needed on private pages */}
+  {
+    !noindex && (
+      <script type="text/javascript" src="//w.24timezones.com/l.js" async />
+    )
+  }
 
   <!-- Preload the two faces visible on first paint -->
   <link

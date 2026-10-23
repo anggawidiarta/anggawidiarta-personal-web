@@ -1,5 +1,21 @@
 ---
 import HeaderPage from "../components/HeaderPage.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "article";
+  noindex?: boolean;
+}
+
+const {
+  title = "Angga Widiarta — Fullstack Developer",
+  description = "Fullstack developer based in Lombok, Indonesia, building web products from interface to backend and system architecture. Open to full-time and freelance work.",
+  image,
+  type,
+  noindex,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -8,17 +24,18 @@ import HeaderPage from "../components/HeaderPage.astro";
   class="overscroll-none text-[length:calc(100vw/1440*10)] antialiased [scrollbar-width:none] max-[375px]:text-[length:calc(100vw/375*10)] phone:text-[length:calc(100vw/550*10)]"
 >
   <HeaderPage
-    title="Angga Widiarta — Fullstack Developer"
-    contentDesc="Fullstack developer based in Lombok, Indonesia, building web products from interface to backend and system architecture. Open to full-time and freelance work."
-  />
+    title={title}
+    contentDesc={description}
+    image={image}
+    type={type}
+    noindex={noindex}
+  >
+    <slot name="head" />
+  </HeaderPage>
 
   <body
     class="min-h-screen bg-ink font-sauce text-[1.6rem] leading-none font-medium text-ash [scrollbar-width:none]"
   >
     <slot />
-
-    <script>
-      import "../js/index";
-    </script>
   </body>
 </html>
