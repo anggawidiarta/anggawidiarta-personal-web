@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource/bebas-neue/latin-400.css";
 @import "locomotive-scroll/dist/locomotive-scroll.css";
 
 @font-face {
@@ -20,21 +21,23 @@
 @theme {
   --color-ink: #111111;
   --color-gold: #f6c90e;
-  --color-boulder: #777777;
+  --color-boulder: #808080;
   --color-ash: #aaaaaa;
 
-  --font-bebas: "Bebas Neue", sans-serif;
+  --font-bebas: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
   --font-sauce: "Open Sauce", arial, sans-serif;
   --font-georgia: Georgia, "Times New Roman", Times, serif;
 
   --animate-marquee: marquee 25s linear infinite;
-  --animate-infinite-arrow: infiniteArrow 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+  --animate-word-in: wordIn 0.6s ease-out backwards;
+  --animate-infinite-arrow: infiniteArrow 1s cubic-bezier(0.25, 1, 0.5, 1)
     infinite;
 
-  /* Preloader (duration is driven by the --s custom property) */
-  --animate-mirror-1: mirror1 calc(var(--s) * 2) ease infinite;
-  --animate-mirror-2: mirror2 calc(var(--s) * 2) ease calc(var(--s) / 2) infinite;
-  --animate-bar-grow: barGrow var(--s) ease-in-out infinite alternate;
+  @keyframes wordIn {
+    from {
+      opacity: 0;
+    }
+  }
 
   @keyframes marquee {
     100% {
@@ -47,47 +50,6 @@
       transform: translateY(0);
     }
   }
-
-  @keyframes mirror1 {
-    0%,
-    47%,
-    99.99%,
-    100% {
-      transform: rotate(180deg) rotateX(0deg);
-    }
-    47.01%,
-    99.98% {
-      transform: rotate(180deg) rotateX(180deg);
-    }
-  }
-
-  @keyframes mirror2 {
-    0%,
-    47%,
-    99.99%,
-    100% {
-      transform: rotate(90deg) rotateX(180deg);
-    }
-    47.01%,
-    99.98% {
-      transform: rotate(90deg) rotateX(0deg);
-    }
-  }
-
-  @keyframes barGrow {
-    0%,
-    25% {
-      background-position-x: -297%;
-    }
-    45%,
-    55% {
-      background-position-x: -250%;
-    }
-    75%,
-    100% {
-      background-position-x: -203%;
-    }
-  }
 }
 
 /* Breakpoints carried over from the old SCSS `media()` mixin (max-width variants first so smaller wins) */
@@ -98,9 +60,13 @@
 @custom-variant fine (@media (any-pointer: fine));
 
 @layer base {
-  *,
-  ::before,
-  ::after {
-    transform-style: preserve-3d;
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
   }
 }

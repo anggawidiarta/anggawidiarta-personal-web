@@ -9,9 +9,18 @@ interface Props {
   className?: string;
 }
 
-const { text, className = "" } = Astro.props;
+const { text, href, className = "" } = Astro.props;
+const classes = cn(buttonClass, "nav__button shrink-0 grow-0", className);
 ---
 
-<button class={cn(buttonClass, "nav__button shrink-0 grow-0", className)} nav-anim>
-  <ButtonLabel text={text} />
-</button>
+{
+  href ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" class={classes} nav-anim>
+      <ButtonLabel text={text} />
+    </a>
+  ) : (
+    <button class={classes} nav-anim>
+      <ButtonLabel text={text} />
+    </button>
+  )
+}

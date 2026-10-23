@@ -16,9 +16,9 @@ const slideUp =
 ---
 
 <div class="overflow-hidden uppercase">
-  <a href={emailLink} target="_blank">
+  <a href={emailLink} target="_blank" rel="noopener noreferrer" aria-label="Email Angga">
     <div
-      class="group/marquee relative flex h-full w-fit animate-marquee items-center pt-[2.4rem] pb-[1rem] will-change-transform hover:[animation-play-state:paused] over-phone:pt-[5.8rem] over-phone:pb-[2.3rem]"
+      class="group/marquee relative flex h-full w-fit animate-marquee items-center motion-reduce:animate-none pt-[2.4rem] pb-[1rem] will-change-transform hover:[animation-play-state:paused] over-phone:pt-[5.8rem] over-phone:pb-[2.3rem]"
     >
       <span aria-hidden="true" class={innerSpan}>
         <span class={slideUp} data-content={text} aria-hidden="true"></span>

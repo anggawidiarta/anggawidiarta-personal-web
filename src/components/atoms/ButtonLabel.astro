@@ -8,11 +8,12 @@ const { text } = Astro.props;
 
 <span class="relative z-1 inline-flex items-center overflow-hidden">
   <span
-    class="mr-[2px] flex translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] fine:group-hover/btn:-translate-y-full"
+    class="mr-[2px] flex translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] fine:group-hover/btn:-translate-y-full"
   >
     <span>{text}</span>
-    <span class="absolute top-full hidden font-sauce fine:inline-block"
-      >{text}</span
+    <span
+      class="absolute top-full hidden font-sauce fine:inline-block"
+      aria-hidden="true">{text}</span
     >
   </span>
 </span>

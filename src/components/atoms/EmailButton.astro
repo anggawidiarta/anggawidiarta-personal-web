@@ -22,8 +22,9 @@ const { email } = Astro.props;
   <div
     class={cn(
       desc16,
-      "to-copy hidden fine:block fine:translate-y-full fine:uppercase fine:opacity-0 fine:transition-[opacity,translate] fine:duration-300 fine:peer-hover/email:translate-y-0 fine:peer-hover/email:opacity-100"
+      "to-copy hidden fine:block fine:translate-y-full fine:opacity-0 fine:transition-[opacity,translate] fine:duration-300 fine:peer-hover/email:translate-y-0 fine:peer-hover/email:opacity-100 fine:peer-focus-visible/email:translate-y-0 fine:peer-focus-visible/email:opacity-100 data-[copied]:block data-[copied]:translate-y-0 data-[copied]:opacity-100"
     )}
+    role="status"
   >
     <span
       class="rounded-[45px] border-2 border-boulder px-[8px] py-[5px] capitalize"
@@ -33,20 +34,31 @@ const { email } = Astro.props;
 </div>
 
 <script>
-  import { playClickSound } from "../../js/utils/sound";
+  const emailButton = document.querySelector<HTMLButtonElement>("button.email");
+  const hint = document.querySelector<HTMLElement>(".to-copy");
+  const hintLabel = hint?.querySelector("span");
+  const idleLabel = hintLabel?.textContent ?? "";
+  let resetTimer: number | undefined;
 
-  const emailButton = document.querySelector("button.email");
+  const showHint = (label: string) => {
+    if (!hint || !hintLabel) return;
+    hintLabel.textContent = label;
+    hint.setAttribute("data-copied", "");
+    clearTimeout(resetTimer);
+    resetTimer = window.setTimeout(() => {
+      hint.removeAttribute("data-copied");
+      hintLabel.textContent = idleLabel;
+    }, 2000);
+  };
+
   emailButton?.addEventListener("click", async () => {
-    const email = emailButton.textContent;
-    if (email) {
-      try {
-        await navigator.clipboard.writeText(email);
-
-        playClickSound();
-      } catch (err) {
-        console.error("Failed to copy:", err);
-        alert("Failed to copy email");
-      }
+    const email = emailButton.textContent?.trim();
+    if (!email) return;
+    try {
+      await navigator.clipboard.writeText(email);
+      showHint("Copied");
+    } catch {
+      showHint("Copy failed");
     }
   });
 </script>

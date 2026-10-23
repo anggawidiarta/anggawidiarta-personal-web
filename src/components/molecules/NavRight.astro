@@ -10,21 +10,19 @@ import NavText from "../atoms/NavText.astro";
     className="text-boulder over-phone:hidden phone:mb-[2.4rem] phone:[&_br]:hidden"
   >
     <span>
-      Frontend Developer <br />
-      Personal Portfolio / {new Date().getFullYear()}
+      Fullstack Developer <br />
+      Portfolio / {new Date().getFullYear()}
     </span>
   </NavText>
 
   <NavText className="text-boulder phone:mb-[2.4rem] phone:[&_br]:hidden">
     <span>
-      Available for freelance <br />
-      Work / ASAP
+      Open to full-time <br />
+      & freelance work
     </span>
   </NavText>
 
-  <a href="https://nuxt-personal-blog-seven.vercel.app/" target="_blank">
-    <NavButton text="Blog" />
-  </a>
+  <NavButton text="Blog" href="https://nuxt-personal-blog-seven.vercel.app/" />
 
   <div class="phone:mx-0 phone:my-4">
     <NavButton text="Contact" className="contact-scroll" />

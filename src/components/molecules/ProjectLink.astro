@@ -7,10 +7,11 @@ interface Props {
 }
 
 const { href } = Astro.props;
+const label = href.includes("github.com") ? "VIEW CODE" : "VIEW SITE";
 ---
 
 <div class="project__link pr-[5rem] pb-[3.1rem] text-right over-phone:hidden">
   <a href={href} target="_blank" rel="noopener noreferrer" class={buttonClass}>
-    <ButtonLabel text="VIEW SITE" />
+    <ButtonLabel text={label} />
   </a>
 </div>

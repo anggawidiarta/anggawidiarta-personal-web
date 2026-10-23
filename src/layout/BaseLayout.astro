@@ -1,6 +1,5 @@
 ---
 import HeaderPage from "../components/HeaderPage.astro";
-import Preloader from "../components/Preloader.astro";
 ---
 
 <!doctype html>
@@ -9,15 +8,13 @@ import Preloader from "../components/Preloader.astro";
   class="overscroll-none text-[length:calc(100vw/1440*10)] antialiased [scrollbar-width:none] max-[375px]:text-[length:calc(100vw/375*10)] phone:text-[length:calc(100vw/550*10)]"
 >
   <HeaderPage
-    title="Angga Widiarta - Web Developer"
-    contentDesc="Front End Developer Based In Lombok, Indonesia. Brimming With Enthusiasm And An Unwavering Optimism For Continuous Growth And Development"
+    title="Angga Widiarta — Fullstack Developer"
+    contentDesc="Fullstack developer based in Lombok, Indonesia, building web products from interface to backend and system architecture. Open to full-time and freelance work."
   />
 
   <body
-    class="h-screen min-h-screen overflow-hidden bg-ink font-sauce text-[1.6rem] leading-none font-medium text-ash [scrollbar-width:none]"
+    class="min-h-screen bg-ink font-sauce text-[1.6rem] leading-none font-medium text-ash [scrollbar-width:none]"
   >
-    <Preloader />
-
     <slot />
 
     <script>

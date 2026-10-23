@@ -3,12 +3,12 @@ import { desc12, desc16, paddingHome } from "../utils/classes";
 import { cn } from "../utils/cn";
 
 const experience = [
-  "Fullstack Web Developer - CV Mataram Medika",
-  "Software Developer - PT Oxindo Solution",
-  "Frontend Developer - Inside Lombok",
-  "Fullstack Web Developer - Jalan Digital",
-  "Fullstack Web Developer - Immigration Office of Mataram",
-  "Assistant Lecturer - University of Mataram",
+  "Fullstack Web Developer — CV Mataram Medika",
+  "Software Developer — PT Oxindo Solution",
+  "Frontend Developer — Inside Lombok",
+  "Fullstack Web Developer — Jalan Digital",
+  "Fullstack Web Developer — Immigration Office of Mataram",
+  "Assistant Lecturer — University of Mataram",
 ];
 
 const certifications = [
@@ -27,7 +27,7 @@ const item = cn(
 const contentTitle = cn(desc12, "mb-[2.4rem] text-boulder uppercase");
 const contentDesc = cn(
   desc16,
-  "w-full max-w-[95rem] tracking-[-0.025em] text-justify over-tablet:mx-auto"
+  "w-full max-w-[95rem] text-pretty leading-[1.45] tracking-[-0.01em] over-tablet:mx-auto"
 );
 ---
 
@@ -38,41 +38,30 @@ const contentDesc = cn(
   )}
 >
   <div
-    class="mb-[9.6rem] over-tablet:mb-0 over-tablet:w-full over-tablet:max-w-[55.5rem]"
+    class="mb-[9.6rem] over-tablet:mb-0 over-tablet:w-full over-tablet:max-w-[max(55.5rem,30rem)]"
   >
     <h2 class={sectionTitle}>
-      <span>WORK / ORGANIZATION</span><br />
+      <span>WORK & TEACHING</span><br />
       <span>EXPERIENCE</span>
     </h2>
     <div>
       {experience.map((text) => <div class={item} data-fade-in>{text}</div>)}
     </div>
-    <br />
-    <h2 class={sectionTitle}>
-      <span>CERTIFICATIONS</span><br />
-      <span>LIST</span>
+    <h2 class={cn(sectionTitle, "mt-[6.4rem]")}>
+      <span>CERTIFICATIONS</span>
     </h2>
     <div>
       {certifications.map((text) => <div class={item} data-fade-in>{text}</div>)}
     </div>
   </div>
 
-  <div class="over-tablet:w-full over-tablet:max-w-[32.5rem]">
-    <div class="mb-[9.6rem]" data-fade-in>
+  <div class="over-tablet:w-full over-tablet:max-w-[max(32.5rem,18rem)]">
+    <div data-fade-in>
       <h2 class={contentTitle}>Interests</h2>
       <p class={contentDesc}>
-        Web Development, UI/UX, Computer Hardware, Content Creation, Machine
-        Learning, Artificial Intelligence, NLP.
-      </p>
-    </div>
-
-    <div data-fade-in>
-      <h2 class={contentTitle}>ICEBREAKERS</h2>
-      <p class={contentDesc}>
-        During free time, indulging in activities like watching anime, reading
-        books or comics, and exploring various genres of music that are pleasant
-        to the ear is relished. Moreover, maintaining fitness through gym
-        workouts and cycling is also enjoyed.
+        Web development, UI/UX, computer hardware, content creation, machine
+        learning, artificial intelligence and NLP. Off the clock: anime, books
+        and comics, music, the gym and cycling.
       </p>
     </div>
   </div>

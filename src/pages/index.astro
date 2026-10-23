@@ -2,15 +2,17 @@
 import BaseLayout from "../layout/BaseLayout.astro";
 import Certifications from "../components/Certifications.astro";
 import FooterPage from "../components/FooterPage.astro";
-import { TextGenerateEffectDemo } from "../components/TextGenerateEffect";
 import ArrowDown from "../components/atoms/ArrowDown.astro";
 import HeroLetters from "../components/atoms/HeroLetters.astro";
 import ContactSection from "../components/organisms/ContactSection.astro";
 import Navigation from "../components/organisms/Navigation.astro";
-import PinProjectsSection from "../components/templates/PinProjectsSection.astro";
+import DesignWork from "../components/templates/DesignWork.astro";
 import ProjectsSection from "../components/templates/ProjectsSection.astro";
 import { desc12, desc16, paddingHome, title328 } from "../utils/classes";
 import { cn } from "../utils/cn";
+
+const about =
+  "I'm a fullstack developer based in Lombok, Indonesia, building web products end to end: interface, backend, and the system architecture behind them.";
 
 const bigTitle = cn(title328, "tracking-[-0.105em]");
 const dash = cn(
@@ -21,7 +23,7 @@ const dash = cn(
 
 <BaseLayout>
   <main
-    class="home invisible py-[2rem] [--animate-delay:2s] [--animate-duration:2.5s] [scrollbar-width:none]"
+    class="home invisible py-[2rem] [scrollbar-width:none]"
   >
     <Navigation />
 
@@ -30,15 +32,17 @@ const dash = cn(
         <h1
           class={cn(
             title328,
-            "mobile tracking-[-0.05em] break-words over-phone:hidden",
+            "mobile tracking-[-0.05em] break-words over-phone:hidden phone:text-[min(160px,calc((100vw-24px)/3.05))]",
           )}
+          aria-label="Fullstack Developer"
         >
-          FRONT <br />
-          —— END <br />
+          FULL — <br />
+          STACK <br />
           DEVELOPER
         </h1>
         <h1
           class="overflow inline-flex w-full justify-between overflow-hidden pr-[3rem] phone:hidden"
+          aria-label="Fullstack Developer"
         >
           <div class="flex w-full justify-between pr-[3rem]" title-overflow>
             <span
@@ -46,7 +50,7 @@ const dash = cn(
               data-parallax-x="7"
               data-parallax-start="top"
             >
-              <HeroLetters word="FRONT" />
+              <HeroLetters word="FULL" />
             </span>
             <span class={cn(dash, "desktop tablet:hidden")}>——</span>
             <span class={cn(dash, "tablet over-tablet:hidden")}>——</span>
@@ -56,7 +60,7 @@ const dash = cn(
               data-parallax-x="-7"
               data-parallax-start="top"
             >
-              <HeroLetters word="END" />
+              <HeroLetters word="STACK" />
             </span>
           </div>
         </h1>
@@ -65,37 +69,46 @@ const dash = cn(
           class="overflow inline-flex w-full justify-between overflow-hidden"
         >
           <div class="w-full justify-between over-tablet:flex">
-            <h1 class={cn(bigTitle, "shrink-0 phone:hidden")} title-overflow>
+            <div
+              class={cn(bigTitle, "shrink-0 phone:hidden")}
+              title-overflow
+              aria-hidden="true"
+            >
               <HeroLetters word="DEVELOPER" />
-            </h1>
+            </div>
             <div
               class={cn(
                 desc16,
                 "bottom__right relative z-1 flex w-full max-w-[32.5rem] flex-col pt-[2rem] pb-[5rem] tablet:max-w-[55rem] tablet:pb-0 phone:ml-auto phone:max-w-[255px]",
               )}
             >
-              <div class="text-ash [&_span]:uppercase">
-                <span class={cn(desc12, "text-boulder")}>About</span>
-                <span class="md:hidden">
-                  &nbsp; i am a Web developer & Data Enthusiast based in Lombok,
-                  Indonesia, driven by a relentless pursuit of innovation and
-                  continuous growth.</span
+              <div class="text-ash">
+                <span class={cn(desc12, "text-boulder uppercase")}>About</span>
+                <span class="md:hidden">&nbsp; {about}</span>
+                <p
+                  class="mt-4 text-[max(14px,1.6rem)] leading-[1.4] font-medium tracking-wide text-pretty max-md:hidden"
                 >
-                <TextGenerateEffectDemo
-                  className="max-md:hidden"
-                  words={"i am a Web developer & Data Enthusiast based in Lombok, Indonesia, driven by a relentless pursuit of innovation and continuous growth."}
-                  client:load
-                />
+                  {
+                    about.split(" ").map((word, i) => (
+                      <span
+                        class="animate-word-in motion-reduce:animate-none"
+                        style={`animation-delay: ${0.6 + i * 0.04}s`}
+                      >
+                        {word}{" "}
+                      </span>
+                    ))
+                  }
+                </p>
               </div>
               <div
-                class="mt-auto flex items-center justify-between text-boulder tablet:hidden"
+                class="mt-auto flex items-center justify-between pt-[1.6rem] text-boulder tablet:hidden"
               >
                 <p class="capitalize">Scroll Down</p>
                 <span
                   class="relative z-1 inline-flex items-center overflow-hidden"
                 >
                   <span
-                    class="flex animate-infinite-arrow [transform:translateY(-100%)]"
+                    class="flex animate-infinite-arrow [transform:translateY(-100%)] motion-reduce:animate-none motion-reduce:[transform:none]"
                   >
                     <span><ArrowDown /></span>
                     <span class="absolute top-full"><ArrowDown /></span>
@@ -110,7 +123,7 @@ const dash = cn(
 
     <ProjectsSection />
 
-    <PinProjectsSection />
+    <DesignWork />
 
     <Certifications />
 

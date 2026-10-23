@@ -1,49 +1,11 @@
-import "animate.css";
 import LocomotiveScroll from "locomotive-scroll";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import each from "lodash/each";
-import { copyText } from "./utils/index";
-import { playClickSound } from "./utils/sound";
-import debounce from "lodash/debounce";
 
 const toContactButtons = document.querySelectorAll(".contact-scroll");
 const footer = document.getElementById("js-footer");
 const homeEl = document.querySelector(".home");
-const emailButton = document.querySelector("button.email");
-const toCopyText = document.querySelector(".to-copy span");
-
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    const wrapper = document.querySelector(".wrapper");
-    const home = document.querySelector(".home");
-    const body = document.body;
-    wrapper.style.display = "none";
-    body.classList.remove("h-screen", "overflow-hidden");
-    home.style.display = "block";
-    home.classList.add("animate__animated", "animate__fadeIn");
-  }, 2000);
-
-  const projectLinks = document.querySelectorAll(
-    ".home__projects__project__link, .project__link a"
-  );
-
-  const debouncedPlaySound = debounce(() => {
-    playClickSound();
-  }, 100);
-
-  projectLinks.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      debouncedPlaySound();
-
-      setTimeout(() => {
-        window.open(link.href, "_blank", "noopener,noreferrer");
-      }, 150);
-    });
-  });
-});
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -59,7 +21,7 @@ const parallaxItems = gsap.utils.toArray("[data-parallax-x]").map((el) => ({
 const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
 function updateParallax() {
-  const enabled = !isTouchDevice && window.innerWidth > 768;
+  const enabled = !reduceMotion && !isTouchDevice && window.innerWidth > 768;
   const viewportHeight = window.innerHeight;
 
   parallaxItems.forEach(({ el, speed, fromTop, setX }) => {
@@ -73,22 +35,27 @@ function updateParallax() {
   });
 }
 
-const scroll = new LocomotiveScroll({
-  lenisOptions: {
-    lerp: 0.06,
-  },
-  scrollCallback: () => {
-    ScrollTrigger.update();
-    updateParallax();
-  },
-  // Drive Lenis from GSAP's ticker so ScrollTrigger and smooth scroll stay in sync
-  initCustomTicker: (render) => gsap.ticker.add(render),
-  destroyCustomTicker: (render) => gsap.ticker.remove(render),
-});
+// Smooth scrolling is skipped entirely for visitors who ask for reduced motion.
+const scroll = reduceMotion
+  ? null
+  : new LocomotiveScroll({
+      lenisOptions: {
+        lerp: 0.1,
+      },
+      scrollCallback: () => {
+        ScrollTrigger.update();
+        updateParallax();
+      },
+      // Drive Lenis from GSAP's ticker so ScrollTrigger and smooth scroll stay in sync
+      initCustomTicker: (render) => gsap.ticker.add(render),
+      destroyCustomTicker: (render) => gsap.ticker.remove(render),
+    });
 gsap.ticker.lagSmoothing(0);
 
+if (reduceMotion) window.addEventListener("scroll", updateParallax, { passive: true });
+
 const refreshLayout = () => {
-  scroll.resize();
+  scroll?.resize();
   ScrollTrigger.refresh();
   updateParallax();
 };
@@ -107,23 +74,20 @@ export default class Home {
   }
 
   homeActions() {
-    each(toContactButtons, (button) => {
+    toContactButtons.forEach((button) => {
       button.onclick = () => {
-        this.locomotive.scrollTo(footer);
+        if (this.locomotive) this.locomotive.scrollTo(footer);
+        else footer.scrollIntoView();
       };
-    });
-
-    emailButton.addEventListener("click", (e) => {
-      copyText(e);
-      toCopyText.textContent = "copied";
-
-      setTimeout(() => {
-        toCopyText.textContent = "Click To Copy";
-      }, 2000);
     });
   }
 
   homeIntro() {
+    if (reduceMotion) {
+      gsap.set(homeEl, { autoAlpha: 1 });
+      return;
+    }
+
     const tl = gsap.timeline();
 
     gsap.to(homeEl, {
@@ -171,15 +135,18 @@ export default class Home {
   }
 
   homeAnimations() {
-    gsap.to(".home__projects__line", { autoAlpha: 1 });
+    gsap.to(".home__projects__line", { autoAlpha: 1, duration: reduceMotion ? 0 : 0.4 });
+    if (reduceMotion) return;
+
     gsap.utils.toArray(".home__projects__line").forEach((el) => {
       const line = el.querySelector("span");
       gsap.from(line, {
-        duration: 1.5,
+        duration: 1.1,
         scrollTrigger: {
           trigger: el,
         },
         scaleX: 0,
+        ease: "power3.out",
       });
     });
 
@@ -188,10 +155,10 @@ export default class Home {
         scrollTrigger: {
           trigger: el,
         },
-        duration: 1.5,
-        yPercent: 100,
+        duration: 0.9,
+        y: 20,
         opacity: 0,
-        ease: "power4.out",
+        ease: "power3.out",
       });
     });
 
@@ -203,12 +170,12 @@ export default class Home {
           scrollTrigger: {
             trigger: el,
           },
-          duration: 1.5,
+          duration: 1,
           yPercent: 100,
           stagger: {
             amount: 0.2,
           },
-          ease: "power4.out",
+          ease: "power3.out",
         });
       });
 
@@ -232,6 +199,8 @@ export default class Home {
   }
 
   heroTextAnimation() {
+    if (reduceMotion) return;
+
     gsap.to(".hero__title__dash.desktop", {
       scrollTrigger: {
         trigger: ".hero__title",
