@@ -25,16 +25,7 @@ const socials = [
       class="mr-[1.4rem] cursor-pointer text-boulder transition-colors duration-500 ease-[ease] hover:text-gold"
       >LOMBOK, INDONESIA</a
     >
-    <div
-      class="relative before:absolute before:left-0 before:h-full before:w-[6px] before:bg-ink"
-    >
-      <a
-        class="clock24"
-        id="tz24-1708652367-c1765-eyJob3VydHlwZSI6IjI0Iiwic2hvd2RhdGUiOiIwIiwic2hvd3NlY29uZHMiOiIwIiwic2hvd3RpbWV6b25lIjoiMCIsInR5cGUiOiJkIiwibGFuZyI6ImVuIn0="
-        title="time now"
-        target="_blank"
-        rel="noopener noreferrer nofollow"></a>
-    </div>
+    <time data-clock class="tabular-nums" title="Local time in Lombok">--:--</time>
   </div>
 
   <div
@@ -59,3 +50,22 @@ const socials = [
     className="order-2 over-tablet:order-3 over-tablet:justify-self-end wide:self-center"
   />
 </footer>
+
+<script>
+  const clock = document.querySelector<HTMLTimeElement>("[data-clock]");
+
+  if (clock) {
+    const format = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Makassar",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    });
+
+    const tick = () => {
+      clock.textContent = format.format(new Date());
+      window.setTimeout(tick, 60_000 - (Date.now() % 60_000));
+    };
+    tick();
+  }
+</script>

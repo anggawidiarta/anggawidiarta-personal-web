@@ -1,4 +1,8 @@
 ---
+import "../styles/global.css";
+import openSauceMedium from "../fonts/opensauce-medium.woff2?url";
+import bebasNeue from "@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url";
+
 interface Props {
   title: string;
   contentDesc: string;
@@ -9,7 +13,6 @@ interface Props {
 }
 
 const DEFAULT_IMAGE = "https://i.ibb.co/wpWy7Qy/Profil-Image-Tag.jpg";
-const SITE = "https://www.anggawidiarta.xyz";
 
 const {
   title,
@@ -18,47 +21,50 @@ const {
   type = "website",
   noindex = false,
 } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE).href;
-import "../styles/global.css";
-import openSauceMedium from "../fonts/opensauce-medium.woff2?url";
-import bebasNeue from "@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url";
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preload" href={bebasNeue} as="font" type="font/woff2" crossorigin />
+  <link
+    rel="preload"
+    href={openSauceMedium}
+    as="font"
+    type="font/woff2"
+    crossorigin
+  />
   {
     !noindex && (
       <>
-      <!-- Google tag (gtag.js) -->
-      <script
-        type="text/partytown"
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-B4PD2PNELH"></script>
-      <script type="text/partytown">
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-          dataLayer.push(arguments);
-        }
-        gtag("js", new Date());
+        <script
+          type="text/partytown"
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-B4PD2PNELH"
+        />
+        <script type="text/partytown">
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag("js", new Date());
 
-        gtag("config", "G-B4PD2PNELH");
-      </script>
+          gtag("config", "G-B4PD2PNELH");
+        </script>
       </>
     )
   }
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <noscript>
     <style>
       .home,
-      .home__projects__line,
-      .blog-line {
+      .home__projects__line {
         visibility: visible !important;
       }
     </style>
   </noscript>
   <title>{title}</title>
-  <meta name="title" content={title} />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -66,10 +72,6 @@ import bebasNeue from "@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
   <meta name="author" content="Angga Widiarta" />
-  <meta
-    name="keywords"
-    content="portfolio, fullstack developer, web developer, angga widiarta, portfolio angga widiarta"
-  />
   <meta name="description" content={contentDesc} />
   <link rel="canonical" href={canonical} />
   <link
@@ -79,14 +81,12 @@ import bebasNeue from "@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.
     href="/rss.xml"
   />
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content={canonical} />
-  <meta property="twitter:title" content={title} />
-  <meta property="twitter:description" content={contentDesc} />
-  <meta property="twitter:image" content={image} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content={canonical} />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={contentDesc} />
+  <meta name="twitter:image" content={image} />
 
-  <!-- Open Graph / Facebook -->
   <meta property="og:type" content={type} />
   <meta property="og:url" content={canonical} />
   <meta property="og:title" content={title} />
@@ -94,27 +94,4 @@ import bebasNeue from "@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.
   <meta property="og:image" content={image} />
 
   <slot />
-
-  {/* 24timezones: footer clock script, not needed on private pages */}
-  {
-    !noindex && (
-      <script type="text/javascript" src="//w.24timezones.com/l.js" async />
-    )
-  }
-
-  <!-- Preload the two faces visible on first paint -->
-  <link
-    rel="preload"
-    href={bebasNeue}
-    as="font"
-    type="font/woff2"
-    crossorigin
-  />
-  <link
-    rel="preload"
-    href={openSauceMedium}
-    as="font"
-    type="font/woff2"
-    crossorigin
-  />
 </head>
