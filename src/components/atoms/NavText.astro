@@ -1,6 +1,4 @@
 ---
-import { cn } from "../../utils/cn";
-
 interface Props {
   className?: string;
 }
@@ -8,6 +6,6 @@ interface Props {
 const { className = "" } = Astro.props;
 ---
 
-<div class={cn("nav__name", className)} nav-anim>
+<div class={className}>
   <slot />
 </div>

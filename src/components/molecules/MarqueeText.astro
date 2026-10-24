@@ -1,9 +1,11 @@
 ---
-import type { MarqueeProps } from "../../types/contact";
 import { title160 } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 
-interface Props extends MarqueeProps {}
+interface Props {
+  text: string;
+  emailLink: string;
+}
 
 const { text, emailLink } = Astro.props;
 
@@ -16,7 +18,7 @@ const slideUp =
 ---
 
 <div class="overflow-hidden uppercase">
-  <a href={emailLink} target="_blank" rel="noopener noreferrer" aria-label="Email Angga">
+  <a href={emailLink} aria-label="Email Angga">
     <div
       class="group/marquee relative flex h-full w-fit animate-marquee items-center motion-reduce:animate-none pt-[2.4rem] pb-[1rem] will-change-transform hover:[animation-play-state:paused] over-phone:pt-[5.8rem] over-phone:pb-[2.3rem]"
     >

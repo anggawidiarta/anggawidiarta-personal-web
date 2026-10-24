@@ -7,118 +7,95 @@ gsap.registerPlugin(ScrollTrigger);
 
 const homeEl = document.querySelector(".home");
 
-class Home {
-  constructor() {
-    this.heroTextAnimation();
-    this.homeIntro();
-    sectionReveals();
-    this.mobileReveals();
-    contactActions();
+function homeIntro() {
+  if (reduceMotion) {
+    gsap.set(homeEl, { autoAlpha: 1 });
+    return;
   }
 
-  homeIntro() {
-    if (reduceMotion) {
-      gsap.set(homeEl, { autoAlpha: 1 });
-      return;
-    }
+  gsap.to(homeEl, { autoAlpha: 1 });
 
-    const tl = gsap.timeline();
-
-    gsap.to(homeEl, {
-      autoAlpha: 1,
-    });
-
-    tl.from(".home__nav", {
+  gsap
+    .timeline()
+    .from(".home__nav", {
       duration: 0.5,
       delay: 0.3,
       opacity: 0,
       yPercent: -100,
       ease: "power4.out",
     })
-      .from(".hero__title [title-overflow]", {
-        duration: 0.7,
-        yPercent: 100,
-        stagger: {
-          amount: 0.2,
-        },
-        ease: "power4.out",
-      })
-      .from(
-        ".hero__title .bottom__right",
-        {
-          duration: 1,
-          yPercent: 100,
-          opacity: 0,
-          ease: "power4.out",
-        },
-        "<20%"
-      )
-      .set(".hero__title .overflow", { overflow: "unset" })
-      .from(
-        ".hero__title .mobile",
-        {
-          duration: 0.7,
-          yPercent: 100,
-          stagger: {
-            amount: 0.2,
-          },
-          ease: "power4.out",
-        },
-        "-=1.4"
-      );
-  }
-
-  mobileReveals() {
-    if (reduceMotion || window.innerWidth > 768) return;
-
-    gsap.utils.toArray(".home__projects__project").forEach((el) => {
-      const text = el.querySelector(".title__main");
-      const link = el.querySelector(".project__link");
-      gsap.from([text, link], {
-        scrollTrigger: {
-          trigger: el,
-        },
+    .from(".hero__title [title-overflow]", {
+      duration: 0.7,
+      yPercent: 100,
+      stagger: { amount: 0.2 },
+      ease: "power4.out",
+    })
+    .from(
+      ".hero__title .bottom__right",
+      {
         duration: 1,
         yPercent: 100,
-        stagger: {
-          amount: 0.2,
-        },
-        ease: "power3.out",
-      });
-    });
+        opacity: 0,
+        ease: "power4.out",
+      },
+      "<20%",
+    )
+    .set(".hero__title .overflow", { overflow: "unset" })
+    .from(
+      ".hero__title .mobile",
+      {
+        duration: 0.7,
+        yPercent: 100,
+        stagger: { amount: 0.2 },
+        ease: "power4.out",
+      },
+      "-=1.4",
+    );
+}
 
-    const awardsTl = gsap.timeline({
-      defaults: {
-        ease: "power1.out",
-      },
-      scrollTrigger: {
-        trigger: ".home__awards",
-      },
+function mobileReveals() {
+  if (reduceMotion || window.innerWidth > 768) return;
+
+  gsap.utils.toArray(".home__projects__project").forEach((el) => {
+    gsap.from([el.querySelector(".title__main"), el.querySelector(".project__link")], {
+      scrollTrigger: { trigger: el },
+      duration: 1,
+      yPercent: 100,
+      stagger: { amount: 0.2 },
+      ease: "power3.out",
     });
-    awardsTl.from(".awards__title span", {
+  });
+
+  gsap
+    .timeline({
+      defaults: { ease: "power1.out" },
+      scrollTrigger: { trigger: ".home__awards" },
+    })
+    .from(".awards__title span", {
       duration: 1,
       opacity: 0,
       yPercent: 100,
-      stagger: {
-        amount: 0.2,
-      },
+      stagger: { amount: 0.2 },
     });
-  }
-
-  heroTextAnimation() {
-    if (reduceMotion) return;
-
-    gsap.to(".hero__title__dash.desktop", {
-      scrollTrigger: {
-        trigger: ".hero__title",
-        scrub: true,
-        start: "-8% 9%",
-        end: "110% 20%",
-      },
-      scaleX: 4,
-      ease: "none",
-    });
-  }
 }
 
-new Home();
+function heroTextAnimation() {
+  if (reduceMotion) return;
+
+  gsap.to(".hero__title__dash.desktop", {
+    scrollTrigger: {
+      trigger: ".hero__title",
+      scrub: true,
+      start: "-8% 9%",
+      end: "110% 20%",
+    },
+    scaleX: 4,
+    ease: "none",
+  });
+}
+
+heroTextAnimation();
+homeIntro();
+sectionReveals();
+mobileReveals();
+contactActions();

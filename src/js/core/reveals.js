@@ -1,22 +1,16 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { reduceMotion, scroll } from "./scroll";
+import { reduceMotion, scrollToTarget } from "./scroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// "Contact" pills scroll to the footer on every page.
 export function contactActions() {
   const footer = document.getElementById("js-footer");
   document.querySelectorAll(".contact-scroll").forEach((button) => {
-    button.onclick = () => {
-      if (!footer) return;
-      if (scroll) scroll.scrollTo(footer);
-      else footer.scrollIntoView();
-    };
+    button.onclick = () => scrollToTarget(footer);
   });
 }
 
-// Hairlines draw in from their edge, list rows rise and fade in once.
 export function sectionReveals(scope = document) {
   gsap.to(scope.querySelectorAll(".home__projects__line"), {
     autoAlpha: 1,

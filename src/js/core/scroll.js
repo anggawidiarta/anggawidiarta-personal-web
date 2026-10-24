@@ -9,7 +9,7 @@ export const reduceMotion = window.matchMedia(
 ).matches;
 
 // locomotive-scroll v5 only supports vertical parallax, so the horizontal
-// `data-parallax-x` effect from v4 is reproduced here.
+// `data-parallax-x` effect is reproduced here.
 const parallaxItems = gsap.utils.toArray("[data-parallax-x]").map((el) => ({
   el,
   speed: parseFloat(el.dataset.parallaxX) / 10,
@@ -34,14 +34,6 @@ function updateParallax() {
   });
 }
 
-// Pages can hook extra per-frame work (reading progress, ...) into the scroll loop.
-const scrollListeners = new Set();
-export const onScroll = (fn) => {
-  scrollListeners.add(fn);
-  return () => scrollListeners.delete(fn);
-};
-
-// Smooth scrolling is skipped entirely for visitors who ask for reduced motion.
 export const scroll = reduceMotion
   ? null
   : new LocomotiveScroll({
@@ -51,7 +43,6 @@ export const scroll = reduceMotion
       scrollCallback: () => {
         ScrollTrigger.update();
         updateParallax();
-        scrollListeners.forEach((fn) => fn());
       },
       // Drive Lenis from GSAP's ticker so ScrollTrigger and smooth scroll stay in sync
       initCustomTicker: (render) => gsap.ticker.add(render),
@@ -59,17 +50,12 @@ export const scroll = reduceMotion
     });
 gsap.ticker.lagSmoothing(0);
 
-if (reduceMotion) {
-  window.addEventListener("scroll", updateParallax, { passive: true });
-}
-
 export const refreshLayout = () => {
   scroll?.resize();
   ScrollTrigger.refresh();
   updateParallax();
 };
 
-// Scroll to an element, smooth when Locomotive is running, native otherwise.
 export const scrollToTarget = (target, offset = 0) => {
   if (!target) return;
   if (scroll) scroll.scrollTo(target, { offset });

@@ -1,9 +1,10 @@
 ---
-import type { EmailButtonProps } from "../../types/contact";
 import { desc16, desc32 } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 
-interface Props extends EmailButtonProps {}
+interface Props {
+  email: string;
+}
 
 const { email } = Astro.props;
 ---

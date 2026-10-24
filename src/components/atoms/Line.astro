@@ -1,9 +1,10 @@
 ---
-import type { LineProps } from "../../types/contact";
 import { paddingHome } from "../../utils/classes";
 import ProjectLine from "./ProjectLine.astro";
 
-interface Props extends LineProps {}
+interface Props {
+  position: "left" | "right";
+}
 
 const { position } = Astro.props;
 ---

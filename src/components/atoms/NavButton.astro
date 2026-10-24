@@ -7,17 +7,12 @@ interface Props {
   text: string;
   href?: string;
   className?: string;
-  /** Needed when the visible text alone does not say where the link goes. */
   ariaLabel?: string;
 }
 
 const { text, href, className = "", ariaLabel } = Astro.props;
 const external = href?.startsWith("http") ?? false;
-const classes = cn(
-  buttonClass,
-  "nav__button shrink-0 grow-0",
-  className,
-);
+const classes = cn(buttonClass, "shrink-0 grow-0", className);
 ---
 
 {
@@ -28,12 +23,11 @@ const classes = cn(
       rel={external ? "noopener noreferrer" : undefined}
       aria-label={ariaLabel}
       class={classes}
-      nav-anim
     >
       <ButtonLabel text={text} />
     </a>
   ) : (
-    <button class={classes} nav-anim>
+    <button class={classes}>
       <ButtonLabel text={text} />
     </button>
   )

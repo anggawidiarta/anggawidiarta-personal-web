@@ -14,15 +14,17 @@ import { cn } from "../../utils/cn";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, ...getAdjacent(posts, post.id) },
+  }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content, headings } = await renderPost(post);
-const { newer, older } = getAdjacent(await getPosts(), post.id);
 
 const { title, description, pubDate, updatedDate, tags, cover } = post.data;
-const site = Astro.site ?? new URL("https://www.anggawidiarta.xyz");
+const site = Astro.site!;
 const canonical = new URL(Astro.url.pathname, site).href;
 const coverImage = cover
   ? await getImage({ src: cover, inferSize: true, width: 1200, format: "jpg" })
