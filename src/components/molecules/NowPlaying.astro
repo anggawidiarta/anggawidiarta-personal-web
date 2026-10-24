@@ -176,6 +176,8 @@ const { className = "", layout = "stack" } = Astro.props;
     let current: NowPlaying | null = null;
     let fetchedAt = 0;
     let pollTimer: number | undefined;
+    let loading = false;
+    let refreshedAtEndOf: string | null = null;
 
     const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
     const ago = (iso: string) => {
@@ -206,8 +208,12 @@ const { className = "", layout = "stack" } = Astro.props;
 
     const paintProgress = () => {
       for (const { fill } of views) fill.style.setProperty("--np-progress", String(progress()));
-      // A finished track: ask Spotify what comes next instead of waiting for the poll.
-      if (current?.state === "playing" && progress() >= 1) void load();
+      // A finished track: ask Spotify what comes next instead of waiting for the poll. Once per
+      // track, because the CDN may still serve the same song for a few seconds.
+      if (current?.state === "playing" && progress() >= 1 && refreshedAtEndOf !== current.url) {
+        refreshedAtEndOf = current.url;
+        void load();
+      }
     };
 
     const render = (track: NowPlaying) => {
@@ -255,6 +261,8 @@ const { className = "", layout = "stack" } = Astro.props;
     };
 
     async function load() {
+      if (loading) return;
+      loading = true;
       try {
         const response = await fetch("/api/now-playing");
         if (response.status === 204 || !response.ok) return hideAll();
@@ -265,6 +273,7 @@ const { className = "", layout = "stack" } = Astro.props;
       } catch {
         hideAll();
       } finally {
+        loading = false;
         schedule();
       }
     }

@@ -61,11 +61,12 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   if (!UUID.test(id)) return json({ error: "Article not found." }, 404);
 
   const { supabase } = locals;
-  const { data: post } = await supabase
+  const { data: post, error: readError } = await supabase
     .from("posts")
     .select("id,status")
     .eq("id", id)
     .maybeSingle();
+  if (readError) return json({ error: "Could not load the article." }, 500);
   if (!post) return json({ error: "Article not found." }, 404);
 
   const { error } = await supabase.from("posts").delete().eq("id", id);
