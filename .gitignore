@@ -29,3 +29,4 @@ skills-lock.json
 
 # vercel build output
 .vercel/
+.mcp.json
