@@ -209,6 +209,14 @@ The blog (`/blog`, `/blog/[slug]`) is a Read surface inside the same world: the 
 - **Contents and progress:** a sticky contents list in the left margin on wide screens, a collapsed "Contents" disclosure on tablets and phones. The current section is Ash; hover and focus are Gold. Reading progress is a 2px Ash hairline at the top of the page: it is feedback, not interaction, so it is not Gold.
 - **Motion:** masthead letters and article title lines rise out of a mask once; nothing else on these pages animates on load. All of it is off under `prefers-reduced-motion`.
 
+## Now Playing
+
+A small colophon line under the name in the nav, fed by Spotify (`/api/now-playing`): a 12px uppercase status line, a 32px cover, title in Ash, artist in Boulder, and a 2px progress hairline.
+
+- **States:** playing (three Ash equalizer bars move, progress runs), paused (bars rest low, "Paused"), recent ("Last played · 2 hours ago", Boulder dot-height bars, no progress). With no data it is removed; while loading it is invisible but keeps its space so the nav never jumps.
+- **Colour:** the cover is greyscale at rest and takes its real colours on hover or focus, so the page keeps its single chromatic ink. The title turns Gold on hover and focus because the whole block is a link. Progress is feedback, so it stays Ash.
+- **Motion:** the equalizer, plus one slide-up when the song changes while the page is open. Both are off under `prefers-reduced-motion`. No sound, ever.
+
 ## Studio
 
 The private CMS (`/studio/*`) is an Operate surface in the same world: precision over expression, no intro motion, no analytics.

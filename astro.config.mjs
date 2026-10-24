@@ -41,6 +41,10 @@ export default defineConfig({
         access: "secret",
         optional: true,
       }),
+      // Spotify "now playing" in the nav. All optional: without them the widget stays hidden.
+      SPOTIFY_CLIENT_ID: envField.string({ context: "server", access: "secret", optional: true }),
+      SPOTIFY_CLIENT_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
+      SPOTIFY_REFRESH_TOKEN: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },
   devToolbar: {

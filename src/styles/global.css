@@ -65,6 +65,7 @@
 @custom-variant phone (@media (max-width: 550px));
 @custom-variant over-phone (@media (min-width: 551px));
 @custom-variant over-tablet (@media (min-width: 769px));
+@custom-variant wide (@media (min-width: 1100px));
 @custom-variant fine (@media (any-pointer: fine));
 
 @layer base {

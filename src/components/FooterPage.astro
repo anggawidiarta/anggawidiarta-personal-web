@@ -1,7 +1,7 @@
 ---
-import { buttonClass, linkChildren } from "../utils/classes";
-import { cn } from "../utils/cn";
+import { buttonClass } from "../utils/classes";
 import ButtonLabel from "./atoms/ButtonLabel.astro";
+import NowPlaying from "./molecules/NowPlaying.astro";
 
 const socials = [
   { label: "INSTAGRAM", href: "https://www.instagram.com/anggawdyrta/" },
@@ -12,33 +12,11 @@ const socials = [
 ---
 
 <footer
-  class="relative w-full max-w-[40rem] justify-center ml-auto text-[16px] font-normal over-tablet:ml-0 over-tablet:flex over-tablet:max-w-none phone:max-w-[255px]"
+  class="relative ml-auto flex w-full max-w-[40rem] flex-col gap-[3.2rem] pb-[4.8rem] text-[16px] font-normal over-tablet:ml-0 over-tablet:grid over-tablet:max-w-none over-tablet:grid-cols-2 over-tablet:items-start over-tablet:gap-x-[2.4rem] over-tablet:gap-y-[3.2rem] wide:grid-cols-[1fr_auto_1fr] over-tablet:px-[2.4rem] over-tablet:pb-[2.4rem] phone:max-w-[255px]"
   id="js-footer"
 >
-  <div>
-    <div class="items-center tablet:mb-[4.8rem] over-tablet:flex">
-      <div
-        class="ml-auto flex w-full max-w-[40rem] phone:max-w-[255px] over-tablet:w-auto over-tablet:max-w-none"
-      >
-        <div class="flex flex-wrap gap-[0.8rem] over-tablet:ml-[0.8rem]">
-          {
-            socials.map(({ label, href }) => (
-              <a
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class={buttonClass}
-              >
-                <ButtonLabel text={label} />
-              </a>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-  </div>
   <div
-    class="flex max-w-fit font-sauce over-tablet:absolute over-tablet:top-[1rem] over-tablet:right-0 over-tablet:left-[2.4rem]"
+    class="order-3 flex font-sauce over-tablet:order-2 over-tablet:pt-[8px] wide:order-1"
   >
     <a
       href="https://homeiswhereyourbagis.com/en/15-things-you-should-see-on-lombok/"
@@ -48,7 +26,7 @@ const socials = [
       >LOMBOK, INDONESIA</a
     >
     <div
-      class="relative before:absolute before:left-0 before:h-full before:w-[6px] before:bg-ink tablet:mb-[2.4rem]"
+      class="relative before:absolute before:left-0 before:h-full before:w-[6px] before:bg-ink"
     >
       <a
         class="clock24"
@@ -58,19 +36,26 @@ const socials = [
         rel="noopener noreferrer nofollow"></a>
     </div>
   </div>
-  <p
-    class={cn(
-      linkChildren,
-      "over-tablet:absolute over-tablet:top-[1rem] over-tablet:right-[2.4rem]"
-    )}
+
+  <div
+    class="order-1 flex flex-wrap gap-[0.8rem] over-tablet:order-1 over-tablet:col-span-2 over-tablet:flex-nowrap over-tablet:justify-center wide:order-2 wide:col-span-1"
   >
-    Created by{" "}
-    <a
-      href="https://www.instagram.com/anggawdyrta/"
-      target="_blank"
-      rel="noopener noreferrer nofollow"
-    >
-      Angga Widiarta
-    </a>
-  </p>
+    {
+      socials.map(({ label, href }) => (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class={buttonClass}
+        >
+          <ButtonLabel text={label} />
+        </a>
+      ))
+    }
+  </div>
+
+  <NowPlaying
+    layout="row"
+    className="order-2 over-tablet:order-3 over-tablet:justify-self-end wide:self-center"
+  />
 </footer>

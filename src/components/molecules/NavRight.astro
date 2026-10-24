@@ -3,14 +3,22 @@ import NavButton from "../atoms/NavButton.astro";
 import NavText from "../atoms/NavText.astro";
 
 interface Props {
-  current?: "blog";
+  current?: "home" | "blog" | "post";
 }
 
-const { current } = Astro.props;
+const { current = "home" } = Astro.props;
+
+// The link that leads somewhere else. On the journal there is no "Blog" button to press:
+// the way out is back to the home page, or from an article back to the journal.
+const way = {
+  home: { text: "Blog", href: "/blog", label: "Read the journal" },
+  blog: { text: "Home", href: "/", label: "Back to the home page" },
+  post: { text: "Journal", href: "/blog", label: "Back to the journal" },
+}[current];
 ---
 
 <div
-  class="w-full max-w-[350px] justify-between uppercase over-phone:flex phone:ml-auto phone:max-w-[175px] phone:[&_br]:hidden"
+  class="w-full max-w-[350px] items-start justify-between uppercase over-phone:flex phone:ml-auto phone:max-w-[175px] phone:[&_br]:hidden"
 >
   <NavText
     className="text-boulder over-phone:hidden phone:mb-[2.4rem] phone:[&_br]:hidden"
@@ -28,7 +36,7 @@ const { current } = Astro.props;
     </span>
   </NavText>
 
-  <NavButton text="Blog" href="/blog" current={current === "blog"} />
+  <NavButton text={way.text} href={way.href} ariaLabel={way.label} />
 
   <div class="phone:mx-0 phone:my-4">
     <NavButton text="Contact" className="contact-scroll" />

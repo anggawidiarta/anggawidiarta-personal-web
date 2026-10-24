@@ -1,0 +1,290 @@
+---
+import { desc12 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+interface Props {
+  className?: string;
+  layout?: "stack" | "row";
+}
+
+const { className = "", layout = "stack" } = Astro.props;
+---
+
+<!--
+  Filled in by the script below from /api/now-playing (one fetch feeds every instance on the
+  page: the nav and the footer). It stays invisible (but keeps its
+  space, so the nav never jumps) until data arrives, and is removed if there is none.
+-->
+<a
+  data-now-playing
+  data-state="idle"
+  data-layout={layout}
+  href="https://open.spotify.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Spotify"
+  class={cn(
+    desc12,
+    "np group/np block w-full max-w-[190px] min-w-0 uppercase transition-opacity duration-500 data-[state=idle]:invisible data-[state=off]:hidden",
+    className,
+  )}
+>
+  <span class="np__head flex items-center gap-[6px] text-boulder">
+    <span class="np__eq" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="np__status truncate"></span>
+  </span>
+
+  <span class="np__body mt-[8px] flex items-center gap-[8px]">
+    <img
+      class="np__art size-[32px] shrink-0 bg-boulder/30 object-cover grayscale transition-[filter] duration-300 ease-[ease] group-focus-visible/np:grayscale-0 fine:group-hover/np:grayscale-0"
+      alt=""
+      width="32"
+      height="32"
+      decoding="async"
+    />
+    <span class="np__text block min-w-0 flex-1">
+      <span
+        class="np__title block truncate text-ash transition-colors duration-300 group-focus-visible/np:text-gold fine:group-hover/np:text-gold"
+      ></span>
+      <span class="np__artist mt-[2px] block truncate text-boulder"></span>
+    </span>
+  </span>
+
+  <span class="np__bar mt-[8px] block h-[2px] bg-boulder/30" aria-hidden="true">
+    <span class="np__fill block h-full origin-left bg-ash"></span>
+  </span>
+</a>
+
+<style>
+  /* Equalizer: three Ash bars; they only move while a track is playing. */
+  .np__eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 10px;
+  }
+  .np__eq i {
+    width: 2px;
+    height: 100%;
+    background: var(--color-ash);
+    transform-origin: bottom;
+    transform: scaleY(0.3);
+  }
+  .np[data-state="recent"] .np__eq i {
+    background: var(--color-boulder);
+  }
+  .np[data-state="playing"] .np__eq i {
+    animation: np-eq 900ms ease-in-out infinite alternate;
+  }
+  .np[data-state="playing"] .np__eq i:nth-child(2) {
+    animation-duration: 700ms;
+    animation-delay: -300ms;
+  }
+  .np[data-state="playing"] .np__eq i:nth-child(3) {
+    animation-duration: 1100ms;
+    animation-delay: -600ms;
+  }
+  @keyframes np-eq {
+    from {
+      transform: scaleY(0.25);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  /* Progress is feedback, not interaction, so it stays Ash (never Gold). */
+  .np__fill {
+    transform: scaleX(var(--np-progress, 0));
+    transition: transform 1s linear;
+  }
+  .np[data-state="recent"] .np__bar {
+    visibility: hidden;
+  }
+
+  @media (min-width: 769px) {
+    .np[data-layout="row"] {
+      position: relative;
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr);
+      align-items: center;
+      column-gap: 10px;
+      max-width: 280px;
+    }
+    .np[data-layout="row"] .np__head {
+      grid-area: 1 / 2;
+    }
+    .np[data-layout="row"] .np__body {
+      display: contents;
+    }
+    .np[data-layout="row"] .np__art {
+      grid-area: 1 / 1 / 3 / 2;
+    }
+    .np[data-layout="row"] .np__text {
+      display: flex;
+      grid-area: 2 / 2;
+      gap: 6px;
+    }
+    .np[data-layout="row"] .np__artist {
+      margin-top: 0;
+    }
+    .np[data-layout="row"] .np__artist::before {
+      content: "·";
+      margin-right: 6px;
+    }
+    .np[data-layout="row"] .np__bar {
+      position: absolute;
+      inset: auto 0 -8px;
+      margin-top: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .np__eq i {
+      animation: none !important;
+      transform: scaleY(0.6);
+    }
+    .np__fill {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import type { NowPlaying } from "../../lib/spotify";
+
+  const roots = [...document.querySelectorAll<HTMLAnchorElement>("[data-now-playing]")];
+
+  if (roots.length) {
+    const views = roots.map((root) => {
+      const $ = <T extends HTMLElement>(selector: string) => root.querySelector(selector) as T;
+      return {
+        root,
+        status: $(".np__status"),
+        art: $<HTMLImageElement>(".np__art"),
+        text: $(".np__text"),
+        title: $(".np__title"),
+        artist: $(".np__artist"),
+        fill: $(".np__fill"),
+      };
+    });
+
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const PLAYING_EVERY = 20_000;
+    const IDLE_EVERY = 90_000;
+
+    let current: NowPlaying | null = null;
+    let fetchedAt = 0;
+    let pollTimer: number | undefined;
+
+    const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+    const ago = (iso: string) => {
+      const seconds = (Date.now() - new Date(iso).getTime()) / 1000;
+      if (seconds < 60) return "just now";
+      const steps: [Intl.RelativeTimeFormatUnit, number][] = [
+        ["day", 86400],
+        ["hour", 3600],
+        ["minute", 60],
+      ];
+      const [unit, size] = steps.find(([, size]) => seconds >= size)!;
+      return relative.format(-Math.floor(seconds / size), unit);
+    };
+
+    const label = (track: NowPlaying) =>
+      track.state === "playing"
+        ? "Now playing"
+        : track.state === "paused"
+          ? "Paused"
+          : `Last played · ${track.playedAt ? ago(track.playedAt) : "recently"}`;
+
+    const progress = () => {
+      if (!current?.durationMs) return 0;
+      const elapsed =
+        (current.progressMs ?? 0) + (current.state === "playing" ? Date.now() - fetchedAt : 0);
+      return Math.min(elapsed / current.durationMs, 1);
+    };
+
+    const paintProgress = () => {
+      for (const { fill } of views) fill.style.setProperty("--np-progress", String(progress()));
+      // A finished track: ask Spotify what comes next instead of waiting for the poll.
+      if (current?.state === "playing" && progress() >= 1) void load();
+    };
+
+    const render = (track: NowPlaying) => {
+      const changed = !current || current.url !== track.url;
+      const prefix = track.state === "recent" ? "Last played" : "Now playing";
+      const hadTrack = current !== null;
+
+      for (const { root, status, art, text, title, artist } of views) {
+        root.dataset.state = track.state;
+        root.href = track.url;
+        root.setAttribute(
+          "aria-label",
+          `${prefix} on Spotify: ${track.title} by ${track.artist} (opens in new tab)`,
+        );
+        status.textContent = label(track);
+
+        if (!changed) continue;
+        title.textContent = track.title;
+        artist.textContent = track.artist;
+        art.src = track.image ?? "";
+        art.hidden = !track.image;
+        // The song changed while the page was open: let the new line rise into place.
+        if (hadTrack && !reduceMotion.matches) {
+          text.animate(
+            [
+              { transform: "translateY(60%)", opacity: 0 },
+              { transform: "none", opacity: 1 },
+            ],
+            { duration: 500, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
+          );
+        }
+      }
+      current = track;
+    };
+
+    const hideAll = () => {
+      // Nothing to show on first load: drop the reserved space. Later failures keep the last track.
+      if (!current) for (const { root } of views) root.dataset.state = "off";
+    };
+
+    const schedule = () => {
+      clearTimeout(pollTimer);
+      if (document.hidden) return;
+      pollTimer = window.setTimeout(load, current?.state === "playing" ? PLAYING_EVERY : IDLE_EVERY);
+    };
+
+    async function load() {
+      try {
+        const response = await fetch("/api/now-playing");
+        if (response.status === 204 || !response.ok) return hideAll();
+        const track = (await response.json()) as NowPlaying;
+        fetchedAt = Date.now();
+        render(track);
+        paintProgress();
+      } catch {
+        hideAll();
+      } finally {
+        schedule();
+      }
+    }
+
+    // One tick a second keeps the bar and the "2 hours ago" text honest between polls.
+    const tickTimer = window.setInterval(() => {
+      if (!current || document.hidden) return;
+      paintProgress();
+      for (const { status } of views) status.textContent = label(current);
+    }, 1000);
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) clearTimeout(pollTimer);
+      else void load();
+    });
+    window.addEventListener("pagehide", () => {
+      clearTimeout(pollTimer);
+      clearInterval(tickTimer);
+    });
+
+    void load();
+  }
+</script>

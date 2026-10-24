@@ -53,3 +53,12 @@ All commands are run from the root of the project, from a terminal:
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 # namaste
+
+## 🎧 Spotify "Now playing" (nav)
+
+The nav shows the track playing on Spotify, or the last one played. It reads `/api/now-playing`, a server route, so the rest of the site stays static. Without the variables below the widget simply stays hidden.
+
+1. Open the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard), create an app (Web API) and add the redirect URI `http://127.0.0.1:8888/callback`.
+2. Put the app's Client ID and Secret in `.env` as `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
+3. Run `node --env-file=.env scripts/spotify-token.mjs`, open the printed URL, approve, and copy the printed `SPOTIFY_REFRESH_TOKEN` into `.env`.
+4. Add all three variables to Vercel (Project, Settings, Environment Variables) and redeploy.

@@ -1,5 +1,6 @@
 ---
 import NavText from "../atoms/NavText.astro";
+import NowPlaying from "./NowPlaying.astro";
 
 const currentYear = new Date().getFullYear();
 ---
@@ -7,16 +8,20 @@ const currentYear = new Date().getFullYear();
 <div
   class="mr-[5rem] w-full max-w-[49rem] justify-between uppercase over-phone:flex phone:mr-[2rem] phone:max-w-none"
 >
-  <NavText>
-    <a
-      href="/"
-      aria-label="I Putu Angga Purnama Widiarta, home"
-      class="transition-colors duration-300 fine:hover:text-gold"
-    >
-      I Putu Angga <br />
-      Purnama Widiarta
-    </a>
-  </NavText>
+  <div class="min-w-0">
+    <NavText>
+      <a
+        href="/"
+        aria-label="I Putu Angga Purnama Widiarta, home"
+        class="transition-colors duration-300 fine:hover:text-gold"
+      >
+        I Putu Angga <br />
+        Purnama Widiarta
+      </a>
+    </NavText>
+
+    <NowPlaying className="mt-[2.4rem]" />
+  </div>
 
   <NavText className="text-boulder phone:hidden">
     <span>
