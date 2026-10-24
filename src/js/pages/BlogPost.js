@@ -48,7 +48,6 @@ function intro() {
   });
 }
 
-// Reading progress: a hairline at the top and a percentage in the contents list.
 function readingProgress() {
   const bar = document.querySelector("[data-progress]");
   const label = document.querySelector("[data-progress-label]");
@@ -69,8 +68,6 @@ function readingProgress() {
   });
 }
 
-// Highlight the contents entry for the section being read, and make the
-// entries scroll through the same smooth-scroll layer as the rest of the page.
 function contents() {
   if (!tocLinks.length) return;
 

@@ -60,7 +60,7 @@
   }
 }
 
-/* Breakpoints carried over from the old SCSS `media()` mixin (max-width variants first so smaller wins) */
+/* Max-width variants are declared first so the smaller breakpoint wins. */
 @custom-variant tablet (@media (max-width: 768px));
 @custom-variant phone (@media (max-width: 550px));
 @custom-variant over-phone (@media (min-width: 551px));

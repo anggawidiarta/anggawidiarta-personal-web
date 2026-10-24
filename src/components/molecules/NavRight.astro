@@ -8,8 +8,6 @@ interface Props {
 
 const { current = "home" } = Astro.props;
 
-// The link that leads somewhere else. On the journal there is no "Blog" button to press:
-// the way out is back to the home page, or from an article back to the journal.
 const way = {
   home: { text: "Blog", href: "/blog", label: "Read the journal" },
   blog: { text: "Home", href: "/", label: "Back to the home page" },
