@@ -1,19 +1,14 @@
 import type { APIRoute } from "astro";
 import { PUBLIC_SUPABASE_URL } from "astro:env/server";
-import { IMAGE_TYPES, MAX_UPLOAD_BYTES, UUID, json } from "../../../lib/studio/posts";
+import { UUID, json } from "../../../lib/studio/posts";
+import { IMAGE_EXTENSIONS, MAX_UPLOAD_BYTES, mediaUrl } from "../../../lib/studio/rules";
 
 export const prerender = false;
 
-const EXTENSION: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "image/avif": "avif",
-  "image/gif": "gif",
-};
+type ImageType = keyof typeof IMAGE_EXTENSIONS;
 
 /** Identifies the real format from the first bytes; the declared type is not trusted. */
-function sniff(bytes: Uint8Array): string | null {
+function sniff(bytes: Uint8Array): ImageType | null {
   const ascii = (from: number, to: number) => String.fromCharCode(...bytes.slice(from, to));
   if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
   if (bytes[0] === 0x89 && ascii(1, 4) === "PNG") return "image/png";
@@ -45,23 +40,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const type = sniff(bytes);
-  if (!type || !(IMAGE_TYPES as readonly string[]).includes(type)) {
-    return json({ error: "Use a JPEG, PNG, WebP, AVIF or GIF image." }, 415);
-  }
+  if (!type) return json({ error: "Use a JPEG, PNG, WebP, AVIF or GIF image." }, 415);
 
   const { supabase } = locals;
   const { data: post } = await supabase.from("posts").select("id").eq("id", postId).maybeSingle();
   if (!post) return json({ error: "Article not found." }, 404);
 
-  const path = `${kind === "cover" ? "covers" : "body"}/${postId}/${crypto.randomUUID()}.${EXTENSION[type]}`;
+  const path = `${kind === "cover" ? "covers" : "body"}/${postId}/${crypto.randomUUID()}.${IMAGE_EXTENSIONS[type]}`;
   const { error } = await supabase.storage
     .from("blog-media")
     .upload(path, bytes, { contentType: type, upsert: false });
   if (error) return json({ error: "Could not upload the image. Try again." }, 500);
 
-  return json({
-    ok: true,
-    path,
-    url: `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/blog-media/${path}`,
-  });
+  return json({ ok: true, path, url: mediaUrl(PUBLIC_SUPABASE_URL, path) });
 };

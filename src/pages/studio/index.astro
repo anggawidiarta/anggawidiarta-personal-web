@@ -3,9 +3,9 @@ import { VERCEL_DEPLOY_HOOK_URL } from "astro:env/server";
 import ButtonLabel from "../../components/atoms/ButtonLabel.astro";
 import SignOutButton from "../../components/studio/SignOutButton.astro";
 import StudioLayout from "../../layout/StudioLayout.astro";
-import { formatStudioDate } from "../../lib/studio/posts";
 import { buttonClass, desc12, desc16, title160 } from "../../utils/classes";
 import { cn } from "../../utils/cn";
+import { formatDate } from "../../utils/date";
 
 export const prerender = false;
 
@@ -18,14 +18,14 @@ const { data: posts, error } = await supabase
   .order("updated_at", { ascending: false });
 
 const params = Astro.url.searchParams;
-const message = error
-  ? "Couldn't load your articles. Refresh to try again."
-  : params.get("error") === "create"
-    ? "Couldn't create the article. Try again."
-    : params.get("notice") === "deleted"
-      ? "Article deleted."
-      : "";
-const isError = Boolean(error) || params.get("error") === "create";
+const createFailed = params.get("error") === "create";
+const isError = Boolean(error) || createFailed;
+
+let message = "";
+if (error) message = "Couldn't load your articles. Refresh to try again.";
+else if (createFailed) message = "Couldn't create the article. Try again.";
+else if (params.get("notice") === "deleted") message = "Article deleted.";
+
 const list = posts ?? [];
 const hookConfigured = Boolean(VERCEL_DEPLOY_HOOK_URL);
 ---
@@ -92,7 +92,7 @@ const hookConfigured = Boolean(VERCEL_DEPLOY_HOOK_URL);
                 {post.status === "published" ? "Published" : "Draft"}
               </span>
               <span class={cn(desc12, "text-boulder uppercase over-tablet:text-right")}>
-                {formatStudioDate(post.updated_at)}
+                {formatDate(post.updated_at)}
               </span>
             </a>
           </li>

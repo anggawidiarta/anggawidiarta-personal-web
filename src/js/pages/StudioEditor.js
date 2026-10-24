@@ -1,20 +1,15 @@
 import { marked } from "marked";
+import {
+  MAX_SLUG_LENGTH,
+  MAX_TAG_LENGTH,
+  MAX_TAGS,
+  MAX_UPLOAD_BYTES,
+  SLUG,
+  slugify,
+} from "../../lib/studio/rules";
 import { toast } from "../studio-toast";
 
-const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-const MAX_TAGS = 8;
 const AUTOSAVE_MS = 1500;
-const MAX_UPLOAD = 4 * 1024 * 1024;
-
-const slugify = (text) =>
-  text
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-    .slice(0, 120)
-    .replace(/-$/, "");
 
 const root = document.querySelector("[data-editor]");
 if (root) init(root);
@@ -55,7 +50,6 @@ function init(root) {
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const dirty = () => revision !== savedRevision;
 
-  // ---- status line -------------------------------------------------------
   function setStatus(state, message = "") {
     const prefix = live() ? "Live · " : "";
     const text = {
@@ -73,7 +67,6 @@ function init(root) {
     noticeEl.textContent = message;
   }
 
-  // ---- tags --------------------------------------------------------------
   function parseTags() {
     const seen = new Set();
     return field.tags.value
@@ -90,26 +83,24 @@ function init(root) {
   function validateTags() {
     const tags = parseTags();
     const tooMany = tags.length > MAX_TAGS;
-    const tooLong = tags.some((tag) => tag.length > 30);
+    const tooLong = tags.some((tag) => tag.length > MAX_TAG_LENGTH);
     tagsHint.textContent = tooMany
       ? `Use up to ${MAX_TAGS} tags.`
       : tooLong
-        ? "Each tag can be up to 30 characters."
-        : "Separate with commas. Up to 8.";
+        ? `Each tag can be up to ${MAX_TAG_LENGTH} characters.`
+        : `Separate with commas. Up to ${MAX_TAGS}.`;
     return !tooMany && !tooLong;
   }
 
-  // ---- slug --------------------------------------------------------------
   function validateSlug() {
     const value = field.slug.value;
-    const ok = SLUG.test(value) && value.length <= 120;
+    const ok = SLUG.test(value) && value.length <= MAX_SLUG_LENGTH;
     slugError.textContent = ok ? "" : "Use lowercase letters, numbers and single hyphens.";
     field.slug.setAttribute("aria-invalid", ok ? "false" : "true");
     if (ok && !live()) slugHint.textContent = `Address: /blog/${value}`;
     return ok;
   }
 
-  // ---- preview -----------------------------------------------------------
   let previewTimer;
   function renderPreview() {
     clearTimeout(previewTimer);
@@ -119,7 +110,6 @@ function init(root) {
     }, 150);
   }
 
-  // ---- saving ------------------------------------------------------------
   function collect() {
     const payload = {
       description: field.description.value,
@@ -188,9 +178,8 @@ function init(root) {
     }
   }
 
-  // ---- uploads -----------------------------------------------------------
   async function upload(file, kind) {
-    if (file.size > MAX_UPLOAD) throw new Error("Images can be up to 4 MB. Resize it and try again.");
+    if (file.size > MAX_UPLOAD_BYTES) throw new Error("Images can be up to 4 MB. Resize it and try again.");
     const form = new FormData();
     form.append("file", file);
     form.append("kind", kind);
@@ -279,7 +268,6 @@ function init(root) {
     }
   });
 
-  // ---- inputs ------------------------------------------------------------
   field.title.addEventListener("input", () => {
     if (slugFollowsTitle) {
       const next = slugify(field.title.value);
@@ -310,7 +298,6 @@ function init(root) {
     if (event.target instanceof HTMLElement && event.target.matches("[data-field]")) save();
   });
 
-  // ---- actions -----------------------------------------------------------
   async function post(url) {
     const response = await fetch(url, { method: "POST" });
     return { ok: response.ok, data: await response.json().catch(() => ({})) };
@@ -385,7 +372,6 @@ function init(root) {
     if (noticeEl.textContent.startsWith("Click Confirm delete")) showNotice("");
   }
 
-  // Publish, update and unpublish show progress on the button and lock the others.
   const BUSY_LABEL = { publish: "Publishing", "update-live": "Updating", unpublish: "Unpublishing" };
   let busy = false;
 
@@ -426,7 +412,6 @@ function init(root) {
 
   retryEl.addEventListener("click", () => save({ liveUpdate: live() }));
 
-  // Write / Preview tabs below 1100px.
   root.querySelectorAll("[data-view-toggle]").forEach((button) => {
     button.addEventListener("click", () => {
       root.dataset.view = button.dataset.viewToggle;
@@ -453,7 +438,6 @@ function init(root) {
   renderPreview();
   setStatus("saved");
 
-  // A notice from the redirect after publish, update or unpublish.
   if (root.dataset.notice) {
     toast(root.dataset.notice, root.dataset.noticeTone || "info");
     const url = new URL(location.href);

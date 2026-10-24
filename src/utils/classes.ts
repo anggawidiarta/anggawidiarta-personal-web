@@ -1,5 +1,3 @@
-// Shared Tailwind class sets (replaces the old SCSS placeholders / mixins).
-
 export const paddingHome = "px-[4rem] phone:px-[1.6rem]";
 
 export const desc12 = "font-sauce text-[12px] leading-[1.3]";
@@ -20,8 +18,7 @@ export const title160 =
 export const buttonClass =
   "group/btn inline-block cursor-pointer rounded-[45px] border-2 border-boulder bg-transparent px-[8px] py-[5px] text-[16px] text-ash uppercase transition-all duration-300 ease-[ease] fine:hover:border-gold fine:hover:bg-gold fine:hover:font-medium fine:hover:text-ink aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[loading=true]:pointer-events-none data-[loading=true]:cursor-progress data-[loading=true]:border-gold data-[loading=true]:text-gold";
 
-export const linkChildren =
-  "[&_a]:text-boulder [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-gold";
+export const toggleButtonClass = `${buttonClass} aria-pressed:border-gold aria-pressed:bg-gold aria-pressed:font-medium aria-pressed:text-ink`;
 
 // Form fields (Studio): a hairline underline that turns gold with the label on focus.
 // The wrapper must carry `group/field`.

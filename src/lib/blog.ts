@@ -1,5 +1,5 @@
 // The only module that reads the blog collection. Swapping the content source
-// (Markdown today, a CMS or database later) happens in src/content.config.ts.
+// happens in src/content.config.ts.
 import { getCollection, render, type CollectionEntry } from "astro:content";
 
 export type Post = CollectionEntry<"blog"> & { number: number };
@@ -8,13 +8,9 @@ const WORDS_PER_MINUTE = 220;
 
 /** Published posts, newest first, each with a stable chronological number (NO.001 = oldest). */
 export async function getPosts(): Promise<Post[]> {
-  const entries = await getCollection("blog", ({ data }) =>
-    import.meta.env.PROD ? !data.draft : true,
-  );
-  const oldestFirst = entries.sort(
-    (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
-  );
-  return oldestFirst
+  const entries = await getCollection("blog");
+  return entries
+    .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
     .map((entry, i) => ({ ...entry, number: i + 1 }))
     .reverse();
 }
@@ -49,12 +45,3 @@ export const postNumber = (n: number) => `NO.${String(n).padStart(3, "0")}`;
 
 export const slugifyTag = (tag: string) =>
   tag.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
-const dateFormat = new Intl.DateTimeFormat("en-GB", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-export const formatDate = (date: Date) =>
-  dateFormat.format(date).replace(/,/g, "").toUpperCase();

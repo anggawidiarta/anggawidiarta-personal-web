@@ -1,8 +1,9 @@
 ---
 import { Image } from "astro:assets";
-import { formatDate, postNumber, readingTime, slugifyTag, type Post } from "../../lib/blog";
+import { postNumber, readingTime, slugifyTag, type Post } from "../../lib/blog";
 import { buttonClass, desc12, desc16, paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
+import { formatDate } from "../../utils/date";
 import ButtonLabel from "../atoms/ButtonLabel.astro";
 
 interface Props {

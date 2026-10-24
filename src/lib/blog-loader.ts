@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Loader } from "astro/loaders";
+import { mediaUrl } from "./studio/rules";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -69,11 +70,8 @@ export function postsLoader(): Loader {
             // Only worth showing when the article changed after the day it went out.
             updatedDate: updated.valueOf() - published.valueOf() > DAY ? updated : undefined,
             tags: row.tags,
-            cover: row.cover_path
-              ? `${url}/storage/v1/object/public/blog-media/${row.cover_path}`
-              : undefined,
+            cover: row.cover_path ? mediaUrl(url, row.cover_path) : undefined,
             coverAlt: row.cover_alt ?? undefined,
-            draft: false,
             sample: row.sample,
           },
         });

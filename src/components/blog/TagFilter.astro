@@ -1,6 +1,6 @@
 ---
 import { slugifyTag } from "../../lib/blog";
-import { buttonClass, desc12, paddingHome } from "../../utils/classes";
+import { desc12, paddingHome, toggleButtonClass } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 import ButtonLabel from "../atoms/ButtonLabel.astro";
 
@@ -10,10 +10,6 @@ interface Props {
 }
 
 const { tags, total } = Astro.props;
-const pill = cn(
-  buttonClass,
-  "aria-pressed:border-gold aria-pressed:bg-gold aria-pressed:font-medium aria-pressed:text-ink",
-);
 ---
 
 <!-- Hidden until the page script runs: without JS the filter would do nothing. -->
@@ -24,14 +20,14 @@ const pill = cn(
     aria-label="Filter articles by topic"
     class="flex flex-wrap gap-[0.8rem]"
   >
-    <button type="button" class={pill} data-tag-filter="all" data-label="All" aria-pressed="true">
+    <button type="button" class={toggleButtonClass} data-tag-filter="all" data-label="All" aria-pressed="true">
       <ButtonLabel text={`All ${total}`} />
     </button>
     {
       tags.map(({ tag, count }) => (
         <button
           type="button"
-          class={pill}
+          class={toggleButtonClass}
           data-tag-filter={slugifyTag(tag)}
           data-label={tag}
           aria-pressed="false"
