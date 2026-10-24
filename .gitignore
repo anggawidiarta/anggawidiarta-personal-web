@@ -20,9 +20,6 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# lock
-package-lock.json
-
 .claude
 .agents
 skills-lock.json
