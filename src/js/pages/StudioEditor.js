@@ -1,4 +1,5 @@
 import { marked } from "marked";
+import { toast } from "../studio-toast";
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_TAGS = 8;
@@ -179,7 +180,8 @@ function init(root) {
       }
       return { ok: true, data };
     } catch {
-      setStatus("error", "Couldn't save. Check your connection");
+      lastError = "Couldn't save. Check your connection";
+      setStatus("error", lastError);
       return { ok: false };
     } finally {
       saving = false;
@@ -314,27 +316,35 @@ function init(root) {
     return { ok: response.ok, data: await response.json().catch(() => ({})) };
   }
 
+  // Leaving the page after success keeps the button in its loading state until the new page paints.
+  let leaving = false;
+  const go = (href) => {
+    leaving = true;
+    location.href = href;
+  };
+  const fail = (message) => toast(message, "error");
+
   const actions = {
     async publish() {
       const saved = await save();
-      if (!saved.ok) return;
+      if (!saved.ok) return fail(lastError || "Couldn't save your changes, so nothing was published.");
       const { ok, data } = await post(`/studio/api/posts/${id}/publish`);
-      if (!ok) return showNotice(data.error || "Couldn't publish. Try again.");
-      location.href = `/studio/posts/${id}?notice=published-${data.rebuild}`;
+      if (!ok) return fail(data.error || "Couldn't publish. Try again.");
+      go(`/studio/posts/${id}?notice=published-${data.rebuild}`);
     },
     async "update-live"() {
       const saved = await save({ liveUpdate: true });
-      if (!saved.ok) return;
-      location.href = `/studio/posts/${id}?notice=updated-${saved.data?.rebuild ?? "skipped"}`;
+      if (!saved.ok) return fail(lastError || saved.data?.error || "Couldn't update the live article.");
+      go(`/studio/posts/${id}?notice=updated-${saved.data?.rebuild ?? "skipped"}`);
     },
     async unpublish() {
       const { ok, data } = await post(`/studio/api/posts/${id}/unpublish`);
-      if (!ok) return showNotice(data.error || "Couldn't unpublish. Try again.");
+      if (!ok) return fail(data.error || "Couldn't unpublish. Try again.");
       // It is a draft now, so pending edits save like any draft (no second rebuild).
       root.dataset.status = "draft";
       const saved = await save();
-      if (!saved.ok) return showNotice("Unpublished, but your last edits did not save. Retry saving.");
-      location.href = `/studio/posts/${id}?notice=unpublished-${data.rebuild}`;
+      if (!saved.ok) return fail("Unpublished, but your last edits did not save. Retry saving.");
+      go(`/studio/posts/${id}?notice=unpublished-${data.rebuild}`);
     },
     "cover-upload": () => coverFile.click(),
     "cover-remove"() {
@@ -366,7 +376,7 @@ function init(root) {
       const data = await response.json().catch(() => ({}));
       deleteButton.disabled = false;
       disarm();
-      showNotice(data.error || "Couldn't delete the article.");
+      fail(data.error || "Couldn't delete the article.");
     }
   });
   function disarm() {
@@ -375,16 +385,42 @@ function init(root) {
     if (noticeEl.textContent.startsWith("Click Confirm delete")) showNotice("");
   }
 
+  // Publish, update and unpublish show progress on the button and lock the others.
+  const BUSY_LABEL = { publish: "Publishing", "update-live": "Updating", unpublish: "Unpublishing" };
+  let busy = false;
+
+  function setBusy(button, on) {
+    const peers = root.querySelectorAll("[data-action]");
+    peers.forEach((el) => (on ? el.setAttribute("aria-disabled", "true") : el.removeAttribute("aria-disabled")));
+    const label = BUSY_LABEL[button.dataset.action];
+    if (!label) return;
+    if (on) {
+      button.dataset.loading = "true";
+      button.setAttribute("aria-busy", "true");
+      button.removeAttribute("aria-disabled");
+      button.dataset.idle = button.innerHTML;
+      button.innerHTML = `<span class="inline-flex items-center gap-[8px]"><span aria-hidden="true" class="size-[12px] animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:hidden"></span>${label}…</span>`;
+    } else {
+      delete button.dataset.loading;
+      button.removeAttribute("aria-busy");
+      button.innerHTML = button.dataset.idle ?? button.innerHTML;
+    }
+  }
+
   root.addEventListener("click", async (event) => {
     const target = event.target instanceof Element ? event.target.closest("[data-action]") : null;
     if (!target || target === deleteButton) return;
     const run = actions[target.dataset.action];
-    if (!run) return;
-    target.setAttribute("aria-disabled", "true");
+    if (!run || busy) return;
+    busy = true;
+    setBusy(target, true);
     try {
       await run();
+    } catch {
+      fail("Couldn't reach the server. Check your connection and try again.");
     } finally {
-      target.removeAttribute("aria-disabled");
+      busy = false;
+      if (!leaving) setBusy(target, false);
     }
   });
 
@@ -416,4 +452,12 @@ function init(root) {
   validateTags();
   renderPreview();
   setStatus("saved");
+
+  // A notice from the redirect after publish, update or unpublish.
+  if (root.dataset.notice) {
+    toast(root.dataset.notice, root.dataset.noticeTone || "info");
+    const url = new URL(location.href);
+    url.searchParams.delete("notice");
+    history.replaceState(null, "", url);
+  }
 }

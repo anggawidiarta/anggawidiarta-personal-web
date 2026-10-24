@@ -37,7 +37,10 @@ const NOTICES: Record<string, string> = {
   "unpublished-skipped": "Unpublished. The rebuild hook is not configured, so it stays up until your next deploy.",
   "unpublished-failed": "Unpublished, but the rebuild could not be started. Redeploy to take it down.",
 };
-const notice = NOTICES[Astro.url.searchParams.get("notice") ?? ""] ?? "";
+const noticeKey = Astro.url.searchParams.get("notice") ?? "";
+const notice = NOTICES[noticeKey] ?? "";
+// A failed rebuild is a problem to act on; a skipped hook is only worth knowing.
+const noticeTone = noticeKey.endsWith("-failed") ? "error" : noticeKey.endsWith("-skipped") ? "info" : "success";
 
 const labelRow = cn(fieldLabel, "mb-0");
 const hint = cn(desc12, "mt-[8px] text-boulder");
@@ -57,6 +60,8 @@ const tabButton = cn(
     data-slug-follows-title={String(slugFollowsTitle)}
     data-cover-path={post.cover_path ?? ""}
     data-view="write"
+    data-notice={notice}
+    data-notice-tone={noticeTone}
     class="group/editor"
   >
     <noscript>
@@ -121,7 +126,6 @@ const tabButton = cn(
       role="status"
       class={cn(desc16, "mb-[3.2rem] max-w-[max(60rem,320px)] font-medium text-ash empty:hidden")}
     >
-      {notice}
     </p>
 
     <div class="grid gap-x-[6.4rem] min-[1100px]:grid-cols-2">

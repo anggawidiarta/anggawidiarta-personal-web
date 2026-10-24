@@ -1,4 +1,5 @@
 ---
+import Toaster from "../components/studio/Toaster.astro";
 import { desc12, paddingHome } from "../utils/classes";
 import { cn } from "../utils/cn";
 import BaseLayout from "./BaseLayout.astro";
@@ -29,4 +30,5 @@ const { title = "Studio" } = Astro.props;
 
     <slot />
   </main>
+  <Toaster />
 </BaseLayout>
