@@ -1,12 +1,14 @@
 ---
-import { desc16, desc32 } from "../../utils/classes";
+import { buttonClass, desc16, desc32 } from "../../utils/classes";
 import { cn } from "../../utils/cn";
+import ButtonLabel from "./ButtonLabel.astro";
 
 interface Props {
   email: string;
+  emailLink: string;
 }
 
-const { email } = Astro.props;
+const { email, emailLink } = Astro.props;
 ---
 
 <div
@@ -31,6 +33,11 @@ const { email } = Astro.props;
       class="rounded-[45px] border-2 border-boulder px-[8px] py-[5px] capitalize"
       >Click To Copy</span
     >
+  </div>
+  <div class="mt-[2.4rem]">
+    <a href={emailLink} class={buttonClass}>
+      <ButtonLabel text="Write an email" />
+    </a>
   </div>
 </div>
 

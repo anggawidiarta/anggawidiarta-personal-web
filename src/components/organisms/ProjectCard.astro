@@ -8,22 +8,19 @@ interface Props {
   technology: string;
   title: string;
   href: string;
+  index: string;
+  year: number | null;
   direction: "left" | "right";
   speed: number;
 }
 
-const { category, technology, title, href, direction, speed } = Astro.props;
+const { category, technology, title, href, index, year, direction, speed } = Astro.props;
 ---
 
 <div class="home__projects__project group/project text-boulder">
-  <ProjectLabel category={category} technology={technology} />
+  <ProjectLabel category={category} technology={technology} index={index} year={year} />
 
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="group/link pointer-events-none fine:pointer-events-auto"
-  >
+  <a href={href} target="_blank" rel="noopener noreferrer" class="group/link">
     <ProjectTitle title={title} direction={direction} speed={speed} />
   </a>
 

@@ -1,77 +1,56 @@
 ---
 import { Image } from "astro:assets";
-import engine from "../../assets/design/engine.jpg";
-import mountain from "../../assets/design/gunung.jpg";
-import shoes from "../../assets/design/shoes.jpg";
+import { getDesignWorks } from "../../lib/site";
 import { desc12, desc16, paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 
-const work = [
-  {
-    title: "Toko Sepatu",
-    kind: "Landing page UI/UX",
-    href: "https://tokosepatu.vercel.app/",
-    image: shoes,
-    alt: "Illustration of two sneakers",
-  },
-  {
-    title: "Motorcycle Homepage Concept",
-    kind: "Figma UI design",
-    href: "https://www.figma.com/file/HIQID6Bf50FpXzqzl5Ikph/Playground?type=design&node-id=0%3A1&mode=design&t=rHe6Sop1e4eHEYbz-1",
-    image: engine,
-    alt: "Illustration of a V-twin motorcycle engine",
-  },
-  {
-    title: "Trip In Lombok",
-    kind: "Landing page UI/UX",
-    href: "https://trip-in-lombok.vercel.app/",
-    image: mountain,
-    alt: "Illustration of a mountain above a pine forest",
-  },
-] as const;
+const work = await getDesignWorks();
+
+const imageProps = {
+  widths: [320, 480, 640],
+  sizes: "(min-width: 769px) 33vw, 100vw",
+  format: "webp" as const,
+  quality: 75,
+  loading: "lazy" as const,
+  class:
+    "mb-[16px] aspect-[4/3] w-full object-cover brightness-75 grayscale transition-[filter] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] fine:group-hover/work:brightness-100 fine:group-hover/work:grayscale-0",
+};
 
 const sectionTitle = cn(desc12, "mt-[9.6rem] mb-[2.4rem] text-boulder uppercase");
 ---
 
-<section class={cn(paddingHome, "mx-auto max-w-[113rem]")}>
-  <h2 class={sectionTitle}>Design work</h2>
+{
+  work.length > 0 && (
+    <section class={cn(paddingHome, "mx-auto max-w-[113rem]")}>
+      <h2 class={sectionTitle}>Design work</h2>
 
-  <ul
-    class="grid list-none grid-cols-1 gap-[max(2.4rem,16px)] p-0 over-tablet:grid-cols-3"
-  >
-    {
-      work.map(({ title, kind, href, image, alt }) => (
-        <li data-fade-in>
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group/work block border-t-2 border-boulder pt-[16px]"
-          >
-            <Image
-              src={image}
-              alt={alt}
-              widths={[320, 480, 640]}
-              sizes="(min-width: 769px) 33vw, 100vw"
-              format="webp"
-              quality={75}
-              loading="lazy"
-              class="mb-[16px] aspect-[4/3] w-full object-cover brightness-75 grayscale transition-[filter] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] fine:group-hover/work:brightness-100 fine:group-hover/work:grayscale-0"
-            />
-            <span
-              class={cn(
-                desc16,
-                "block text-ash transition-colors duration-300 fine:group-hover/work:text-gold",
-              )}
+      <ul class="grid list-none grid-cols-1 gap-[max(2.4rem,16px)] p-0 over-tablet:grid-cols-3">
+        {work.map(({ title, kind, url, image, image_alt }) => (
+          <li data-fade-in>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group/work block border-t-2 border-boulder pt-[16px]"
             >
-              {title}
-            </span>
-            <span class={cn(desc12, "mt-[4px] block text-boulder uppercase")}>
-              {kind}
-            </span>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-</section>
+              {typeof image === "string" ? (
+                <Image src={image} inferSize alt={image_alt ?? ""} {...imageProps} />
+              ) : (
+                image && <Image src={image} alt={image_alt ?? ""} {...imageProps} />
+              )}
+              <span
+                class={cn(
+                  desc16,
+                  "block text-ash transition-colors duration-300 fine:group-hover/work:text-gold",
+                )}
+              >
+                {title}
+              </span>
+              <span class={cn(desc12, "mt-[4px] block text-boulder uppercase")}>{kind}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

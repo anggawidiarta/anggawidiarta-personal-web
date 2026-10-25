@@ -1,4 +1,5 @@
 ---
+import { getProfile, lines } from "../../lib/site";
 import NavButton from "../atoms/NavButton.astro";
 import NavText from "../atoms/NavText.astro";
 
@@ -7,6 +8,7 @@ interface Props {
 }
 
 const { current = "home" } = Astro.props;
+const availability = lines((await getProfile()).availability);
 
 const way = {
   home: { text: "Blog", href: "/blog", label: "Read the journal" },
@@ -27,12 +29,20 @@ const way = {
     </span>
   </NavText>
 
-  <NavText className="text-boulder phone:mb-[2.4rem] phone:[&_br]:hidden">
-    <span>
-      Open to full-time <br />
-      & freelance work
-    </span>
-  </NavText>
+  {
+    availability.length > 0 && (
+      <NavText className="text-boulder phone:mb-[2.4rem] phone:[&_br]:hidden">
+        <span>
+          {availability.map((line, i) => (
+            <>
+              {i > 0 && <br />}
+              {line}{" "}
+            </>
+          ))}
+        </span>
+      </NavText>
+    )
+  }
 
   <NavButton text={way.text} href={way.href} ariaLabel={way.label} />
 

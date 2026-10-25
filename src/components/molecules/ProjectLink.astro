@@ -10,8 +10,9 @@ const { href } = Astro.props;
 const label = href.includes("github.com") ? "VIEW CODE" : "VIEW SITE";
 ---
 
-<div class="project__link pr-[5rem] pb-[3.1rem] text-right over-phone:hidden">
-  <a href={href} target="_blank" rel="noopener noreferrer" class={buttonClass}>
+<!-- Touch screens never see the title's hover swap, so they keep an explicit button at every width. -->
+<div class="project__link pr-[5rem] pb-[3.1rem] text-right over-phone:fine:hidden">
+  <a href={href} target="_blank" rel="noopener noreferrer" class={buttonClass} tabindex="-1">
     <ButtonLabel text={label} />
   </a>
 </div>

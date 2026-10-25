@@ -1,0 +1,102 @@
+---
+import ButtonLabel from "../../components/atoms/ButtonLabel.astro";
+import FormField from "../../components/studio/FormField.astro";
+import StudioLayout from "../../layout/StudioLayout.astro";
+import { CONTACT_FIELDS, PROFILE_FIELDS, parseFields, withNotice, type FieldErrors } from "../../lib/studio/content";
+import { buttonClass, desc12, desc16 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+export const prerender = false;
+
+const { supabase } = Astro.locals;
+const fields = [...PROFILE_FIELDS, ...CONTACT_FIELDS];
+const columns = fields.map((field) => field.name).join(",");
+
+const { data: settings, error: loadError } = await supabase
+  .from("site_settings")
+  .select(columns)
+  .eq("id", 1)
+  .maybeSingle<Record<string, string>>();
+
+let values: Record<string, unknown> = { ...(settings ?? {}) };
+let errors: FieldErrors = {};
+let formError = loadError || !settings ? "Couldn't load the profile. Refresh to try again." : "";
+
+if (Astro.request.method === "POST" && settings) {
+  const parsed = parseFields(fields, await Astro.request.formData());
+  values = parsed.values;
+  errors = parsed.errors;
+
+  if (parsed.data) {
+    // These columns are not nullable: an emptied optional field is stored as "".
+    const update = Object.fromEntries(
+      Object.entries(parsed.data).map(([key, value]) => [key, value ?? ""]),
+    );
+    const { data, error } = await supabase
+      .from("site_settings")
+      .update(update)
+      .eq("id", 1)
+      .select("id")
+      .maybeSingle();
+    if (!error && data) return Astro.redirect(withNotice("/studio/profile", "saved"), 303);
+    formError = "Couldn't save. Try again.";
+  } else {
+    formError = "Check the highlighted fields.";
+  }
+}
+
+const saved =
+  Astro.url.searchParams.get("notice") === "saved"
+    ? { text: "Profile saved. Publish the site to put it live.", tone: "success" as const }
+    : null;
+const groupTitle = cn(desc12, "mb-[3.2rem] w-full border-b-2 border-boulder pb-[12px] text-ash uppercase");
+---
+
+<StudioLayout title="Profile & contact" notice={saved}>
+  <div class="max-w-[max(60rem,320px)]">
+    <h1 class="mb-[4.8rem] font-bebas text-[max(56px,9.6rem)] leading-[0.9] text-boulder uppercase">
+      Profile & contact
+    </h1>
+
+    {
+      formError && (
+        <p role="alert" class={cn(desc16, "mb-[3.2rem] font-medium text-ash")}>
+          {formError}
+        </p>
+      )
+    }
+
+    {
+      settings && (
+        <form method="post" class="flex flex-col gap-[6.4rem]" novalidate>
+          <fieldset class="flex flex-col gap-[3.2rem] border-0 p-0">
+            <legend class={groupTitle}>Profile</legend>
+            {PROFILE_FIELDS.map((field) => (
+              <FormField field={field} value={values[field.name]} error={errors[field.name]} />
+            ))}
+          </fieldset>
+
+          <fieldset class="flex flex-col gap-[3.2rem] border-0 p-0">
+            <legend class={groupTitle}>Contact</legend>
+            {CONTACT_FIELDS.map((field) => (
+              <FormField field={field} value={values[field.name]} error={errors[field.name]} />
+            ))}
+            <p class={cn(desc12, "text-boulder")}>
+              Footer links live under{" "}
+              <a href="/studio/socials" class="text-ash underline underline-offset-4 fine:hover:text-gold">
+                Social links
+              </a>
+              .
+            </p>
+          </fieldset>
+
+          <div>
+            <button type="submit" class={buttonClass}>
+              <ButtonLabel text="Save" />
+            </button>
+          </div>
+        </form>
+      )
+    }
+  </div>
+</StudioLayout>

@@ -1,0 +1,39 @@
+---
+import { SECTIONS } from "../../lib/studio/content";
+import { desc12 } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+const path = Astro.url.pathname.replace(/\/+$/, "");
+const segment = path.split("/")[2] ?? "";
+
+const links = [
+  { href: "/studio", label: "Journal", current: segment === "" || segment === "posts" },
+  ...SECTIONS.map(({ slug, title }) => ({
+    href: `/studio/${slug}`,
+    label: title,
+    current: segment === slug,
+  })),
+  { href: "/studio/profile", label: "Profile & contact", current: segment === "profile" },
+];
+---
+
+<nav aria-label="Studio sections" class="mb-[6.4rem] -mx-[16px] overflow-x-auto px-[16px] [scrollbar-width:none]">
+  <ul class="flex w-max list-none gap-x-[2.4rem] border-b-2 border-boulder p-0 min-[1100px]:w-full">
+    {
+      links.map(({ href, label, current }) => (
+        <li>
+          <a
+            href={href}
+            aria-current={current ? "page" : undefined}
+            class={cn(
+              desc12,
+              "-mb-[2px] block border-b-2 border-transparent py-[12px] whitespace-nowrap text-boulder uppercase transition-colors duration-200 fine:hover:text-gold aria-[current=page]:border-ash aria-[current=page]:text-ash",
+            )}
+          >
+            {label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

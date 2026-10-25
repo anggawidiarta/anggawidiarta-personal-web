@@ -5,21 +5,25 @@ import { cn } from "../../utils/cn";
 interface Props {
   category: string;
   technology: string;
+  index: string;
+  year: number | null;
 }
 
-const { category, technology } = Astro.props;
+const { category, technology, index, year } = Astro.props;
 ---
 
 <div
   class={cn(
     desc12,
-    "mt-[3.2rem] flex justify-end pr-[2.2rem] over-tablet:pr-[17.2rem]"
+    "mt-[3.2rem] flex justify-end gap-x-[3.2rem] pr-[2.2rem] over-tablet:gap-x-[6.4rem] over-tablet:pr-[17.2rem]"
   )}
 >
-  <div>
-    <p class="transition-colors duration-300 group-hover/project:text-ash">
-      {category} / <br />
-      {technology}
-    </p>
-  </div>
+  <p class="tabular-nums">
+    {index}
+    {year && <><br />{year}</>}
+  </p>
+  <p class="transition-colors duration-300 group-hover/project:text-ash">
+    {category} / <br />
+    {technology}
+  </p>
 </div>

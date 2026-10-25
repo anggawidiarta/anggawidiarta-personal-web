@@ -1,0 +1,150 @@
+---
+import ButtonLabel from "../../../components/atoms/ButtonLabel.astro";
+import StudioLayout from "../../../layout/StudioLayout.astro";
+import { findSection, sectionNotice, withNotice } from "../../../lib/studio/content";
+import { moveRow, toggleRow } from "../../../lib/studio/content-store";
+import { UUID } from "../../../lib/studio/posts";
+import { buttonClass, desc12, desc16 } from "../../../utils/classes";
+import { cn } from "../../../utils/cn";
+
+export const prerender = false;
+
+const section = findSection(Astro.params.section);
+if (!section) return Astro.redirect("/studio");
+
+const { supabase } = Astro.locals;
+const listPath = `/studio/${section.slug}`;
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const action = form.get("_action");
+  const id = String(form.get("id") ?? "");
+  let notice = "failed";
+
+  if (UUID.test(id)) {
+    if (action === "up" || action === "down") {
+      if (await moveRow(supabase, section.table, id, action)) notice = "moved";
+    } else if (action === "toggle") {
+      const visible = await toggleRow(supabase, section.table, id);
+      if (visible !== null) notice = visible ? "shown" : "hidden";
+    }
+  }
+  return Astro.redirect(`${withNotice(listPath, notice)}#row-${id}`, 303);
+}
+
+const { data, error } = await supabase
+  .from(section.table)
+  .select("*")
+  .order("position")
+  .order("created_at");
+const rows = (data ?? []) as Record<string, unknown>[];
+
+const notice = sectionNotice(section, Astro.url.searchParams.get("notice"));
+const rowAction = cn(
+  desc12,
+  "inline-flex min-h-[32px] min-w-[32px] cursor-pointer items-center justify-center text-boulder uppercase transition-colors duration-200 fine:hover:text-gold disabled:pointer-events-none disabled:opacity-40",
+);
+---
+
+<StudioLayout title={section.title} notice={notice}>
+  <div class="max-w-[max(80rem,320px)]">
+    <div class="mb-[2.4rem] flex flex-wrap items-end justify-between gap-[2.4rem]">
+      <h1 class="font-bebas text-[max(56px,9.6rem)] leading-[0.9] text-boulder uppercase">
+        {section.title}
+      </h1>
+      <a href={`${listPath}/new`} class={buttonClass}>
+        <ButtonLabel text={`Add ${section.singular.toLowerCase()}`} />
+      </a>
+    </div>
+
+    <p class={cn(desc12, "mb-[2.4rem] text-boulder uppercase")}>
+      {rows.length} on the list · {rows.filter((row) => row.visible).length} shown
+    </p>
+
+    {
+      error ? (
+        <p role="alert" class={cn(desc16, "font-medium text-ash")}>
+          Couldn't load this list. Refresh to try again.
+        </p>
+      ) : rows.length > 0 ? (
+        <ol class="list-none p-0">
+          {rows.map((row, index) => {
+            const { primary, secondary } = section.summary(row);
+            const id = String(row.id);
+            return (
+              <li
+                id={`row-${id}`}
+                class="grid scroll-mt-[8rem] items-center gap-x-[2.4rem] gap-y-[8px] border-t-2 border-boulder py-[12px] over-tablet:grid-cols-[minmax(0,1fr)_auto]"
+              >
+                <a href={`${listPath}/${id}`} class="group/row min-w-0 py-[4px]">
+                  <span
+                    class={cn(
+                      desc16,
+                      "block transition-colors duration-300 [word-break:break-word] fine:group-hover/row:text-gold",
+                      row.visible ? "text-ash" : "text-boulder",
+                    )}
+                  >
+                    {primary}
+                  </span>
+                  {secondary && (
+                    <span class={cn(desc12, "mt-[4px] block text-boulder uppercase [word-break:break-word]")}>
+                      {secondary}
+                    </span>
+                  )}
+                </a>
+
+                <form method="post" class="flex items-center gap-x-[1.2rem]">
+                  <input type="hidden" name="id" value={id} />
+                  {!row.visible && (
+                    <span class={cn(desc12, "mr-[0.4rem] text-ash uppercase")}>Hidden</span>
+                  )}
+                  <button
+                    type="submit"
+                    name="_action"
+                    value="up"
+                    disabled={index === 0}
+                    aria-label={`Move ${primary} up`}
+                    class={rowAction}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="submit"
+                    name="_action"
+                    value="down"
+                    disabled={index === rows.length - 1}
+                    aria-label={`Move ${primary} down`}
+                    class={rowAction}
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="submit"
+                    name="_action"
+                    value="toggle"
+                    aria-label={`${row.visible ? "Hide" : "Show"} ${primary}`}
+                    class={cn(rowAction, "w-[4.8em]")}
+                  >
+                    {row.visible ? "Hide" : "Show"}
+                  </button>
+                </form>
+              </li>
+            );
+          })}
+          <li class="border-t-2 border-boulder" aria-hidden="true" />
+        </ol>
+      ) : (
+        <div class="max-w-[max(55rem,320px)] border-t-2 border-boulder pt-[16px]">
+          <p class={cn(desc16, "text-ash")}>
+            Nothing here yet. Add the first one; it reaches the homepage when you publish the site.
+          </p>
+        </div>
+      )
+    }
+
+    <p class={cn(desc12, "mt-[6.4rem] max-w-[max(55rem,320px)] text-boulder")}>
+      Changes save right away and stay off the homepage until you publish the site. Hidden items
+      stay here but are left out of the homepage.
+    </p>
+  </div>
+</StudioLayout>

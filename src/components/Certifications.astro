@@ -1,29 +1,20 @@
 ---
+import { getCertifications, getExperiences, getProfile } from "../lib/site";
 import { desc12, desc16, paddingHome } from "../utils/classes";
 import { cn } from "../utils/cn";
 
-const experience = [
-  "Fullstack Web Developer — CV Mataram Medika",
-  "Software Developer — PT Oxindo Solution",
-  "Frontend Developer — Inside Lombok",
-  "Fullstack Web Developer — Jalan Digital",
-  "Fullstack Web Developer — Immigration Office of Mataram",
-  "Assistant Lecturer — University of Mataram",
-];
-
-const certifications = [
-  "Solid Programming Principles",
-  "Specialized Google Analytics Data",
-  "AI-900: Microsoft Azure AI Fundamentals",
-  "DP-900: Microsoft Azure Data Fundamentals",
-  "PL-900: Microsoft Power Platform Fundamentals",
-];
+const [experiences, certifications, { interests }] = await Promise.all([
+  getExperiences(),
+  getCertifications(),
+  getProfile(),
+]);
 
 const sectionTitle = cn(desc12, "awards__title mb-[24px] text-boulder");
-const item = cn(
-  desc16,
-  "relative border-t-2 border-boulder py-[16px] transition-colors duration-200"
-);
+const row =
+  "grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-[2.4rem] border-t-2 border-boulder py-[16px]";
+const primary = cn(desc16, "block text-ash transition-colors duration-200");
+const secondary = cn(desc12, "mt-[4px] block text-boulder uppercase");
+const aside = cn(desc12, "text-right text-boulder uppercase tabular-nums");
 const contentTitle = cn(desc12, "mb-[2.4rem] text-boulder uppercase");
 const contentDesc = cn(
   desc16,
@@ -44,25 +35,78 @@ const contentDesc = cn(
       <span>WORK & TEACHING</span><br />
       <span>EXPERIENCE</span>
     </h2>
-    <div>
-      {experience.map((text) => <div class={item} data-fade-in>{text}</div>)}
-    </div>
-    <h2 class={cn(sectionTitle, "mt-[6.4rem]")}>
-      <span>CERTIFICATIONS</span>
-    </h2>
-    <div>
-      {certifications.map((text) => <div class={item} data-fade-in>{text}</div>)}
-    </div>
+    <ul class="list-none p-0">
+      {
+        experiences.map(({ role, organization, period }) => (
+          <li class={row} data-fade-in>
+            <span>
+              <span class={primary}>{role}</span>
+              <span class={secondary}>{organization}</span>
+            </span>
+            {period && <span class={aside}>{period}</span>}
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      certifications.length > 0 && (
+        <>
+          <h2 class={cn(sectionTitle, "mt-[6.4rem]")}>
+            <span>CERTIFICATIONS</span>
+          </h2>
+          <ul class="list-none p-0">
+            {certifications.map(({ name, issuer, year, credential_url }) => {
+              const meta = [issuer, year].filter(Boolean).join(" · ");
+              const body = (
+                <span>
+                  <span class={cn(primary, credential_url && "fine:group-hover/cert:text-gold")}>
+                    {name}
+                  </span>
+                  {meta && <span class={secondary}>{meta}</span>}
+                </span>
+              );
+              return (
+                <li data-fade-in>
+                  {credential_url ? (
+                    <a
+                      href={credential_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class={cn(row, "group/cert")}
+                    >
+                      {body}
+                      <span
+                        aria-hidden="true"
+                        class={cn(
+                          desc16,
+                          "text-boulder transition-[color,translate] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] fine:group-hover/cert:translate-x-[2px] fine:group-hover/cert:-translate-y-[2px] fine:group-hover/cert:text-gold",
+                        )}
+                      >
+                        ↗
+                      </span>
+                      <span class="sr-only">(view credential, opens in a new tab)</span>
+                    </a>
+                  ) : (
+                    <div class={row}>{body}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )
+    }
   </div>
 
-  <div class="over-tablet:w-full over-tablet:max-w-[max(32.5rem,18rem)]">
-    <div data-fade-in>
-      <h2 class={contentTitle}>Interests</h2>
-      <p class={contentDesc}>
-        Web development, UI/UX, computer hardware, content creation, machine
-        learning, artificial intelligence and NLP. Off the clock: anime, books
-        and comics, music, the gym and cycling.
-      </p>
-    </div>
-  </div>
+  {
+    interests && (
+      <div class="over-tablet:w-full over-tablet:max-w-[max(32.5rem,18rem)]">
+        <div data-fade-in>
+          <h2 class={contentTitle}>Interests</h2>
+          <p class={contentDesc}>{interests}</p>
+        </div>
+      </div>
+    )
+  }
 </section>

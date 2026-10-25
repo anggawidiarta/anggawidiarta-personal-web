@@ -1,7 +1,6 @@
 ---
 import { VERCEL_DEPLOY_HOOK_URL } from "astro:env/server";
 import ButtonLabel from "../../components/atoms/ButtonLabel.astro";
-import SignOutButton from "../../components/studio/SignOutButton.astro";
 import StudioLayout from "../../layout/StudioLayout.astro";
 import { buttonClass, desc12, desc16, title160 } from "../../utils/classes";
 import { cn } from "../../utils/cn";
@@ -31,8 +30,6 @@ const hookConfigured = Boolean(VERCEL_DEPLOY_HOOK_URL);
 ---
 
 <StudioLayout title="Studio">
-  <SignOutButton slot="actions" />
-
   <h1 class={cn(title160, "mb-[2.4rem] leading-[0.9] text-boulder uppercase")}>
     Studio
   </h1>

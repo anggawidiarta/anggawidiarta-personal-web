@@ -1,7 +1,6 @@
 ---
 import { PUBLIC_SUPABASE_URL } from "astro:env/server";
 import ButtonLabel from "../../../components/atoms/ButtonLabel.astro";
-import SignOutButton from "../../../components/studio/SignOutButton.astro";
 import StudioLayout from "../../../layout/StudioLayout.astro";
 import { UUID } from "../../../lib/studio/posts";
 import { IMAGE_ACCEPT, mediaUrl, slugify } from "../../../lib/studio/rules";
@@ -53,8 +52,6 @@ const hint = cn(desc12, "mt-[8px] text-boulder");
 ---
 
 <StudioLayout title={post.title}>
-  <SignOutButton slot="actions" />
-
   <div
     data-editor
     data-post-id={post.id}

@@ -1,5 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
 import type { Loader } from "astro/loaders";
+import { buildClient } from "./build-client";
 import { mediaUrl } from "./studio/rules";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -19,31 +19,19 @@ interface PostRow {
 
 /**
  * Loads published posts from Supabase at build time (the public site stays static).
- * Reads with the publishable key, so row-level security already limits it to
- * `status = 'published'`.
+ * Row-level security already limits the publishable key to `status = 'published'`.
  */
 export function postsLoader(): Loader {
   return {
     name: "supabase-posts",
     async load({ store, parseData, renderMarkdown, generateDigest, logger }) {
-      const url = import.meta.env.PUBLIC_SUPABASE_URL ?? process.env.PUBLIC_SUPABASE_URL;
-      const key =
-        import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-        process.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
-      if (!url || !key) {
-        // A production build without credentials would silently ship an empty blog.
-        if (import.meta.env.PROD) {
-          throw new Error(
-            "PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_PUBLISHABLE_KEY are required to build the blog.",
-          );
-        }
-        logger.warn("Supabase env is missing; the blog will be empty in dev.");
+      const client = buildClient(logger, "the blog");
+      if (!client) {
         store.clear();
         return;
       }
+      const { supabase, url } = client;
 
-      const supabase = createClient(url, key, { auth: { persistSession: false } });
       const { data, error } = await supabase
         .from("posts")
         .select(

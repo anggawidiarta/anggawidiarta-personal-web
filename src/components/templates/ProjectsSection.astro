@@ -1,70 +1,27 @@
 ---
+import { getProjects } from "../../lib/site";
 import { paddingHome } from "../../utils/classes";
 import ProjectLine from "../atoms/ProjectLine.astro";
 import ProjectCard from "../organisms/ProjectCard.astro";
 
-const projects = [
-  {
-    category: "WEB DEVELOPMENT",
-    technology: "NEXT.JS & LARAVEL",
-    title:
-      "INSIDE UMKM — WEB PLATFORM FOR MICRO, SMALL & MEDIUM ENTERPRISES",
-    href: "https://umkm.insidelombok.com/",
-  },
-  {
-    category: "WEB DEVELOPMENT",
-    technology: "CODEIGNITER",
-    title: "ATTENDANCE APP — EMPLOYEE ATTENDANCE TRACKING",
-    href: "https://absen.oxindosolution.com/",
-  },
-  {
-    category: "WEB DEVELOPMENT",
-    technology: "LARAVEL",
-    title: "SPA WEB APP — BOOKING & RESERVATION SYSTEM",
-    href: "https://spa.oxindosolution.com/",
-  },
-  {
-    category: "WEB DEVELOPMENT",
-    technology: "LARAVEL",
-    title: "INVENTORY WEBSITE — INVENTORY MANAGEMENT SYSTEM",
-    href: "https://github.com/anggawidiarta/SistemInventaris-PKL/tree/master",
-  },
-  {
-    category: "MACHINE LEARNING",
-    technology: "PYTHON & JUPYTER NOTEBOOK",
-    title: "THESIS — TWITTER SENTIMENT ANALYSIS",
-    href: "https://rosadecor.my.canva.site/thesis-showcase",
-  },
-  {
-    category: "UI DEVELOPMENT",
-    technology: "FIREBASE",
-    title: "KATA KITA — QUOTES SHARING WEB APP",
-    href: "https://katakita-quotes-sharing.vercel.app/",
-  },
-  {
-    category: "CREATIVE DEVELOPMENT",
-    technology: "PORTFOLIO EXPLORATION",
-    title: "DOTAKU — MOBILE APP FOR HERO INFORMATION",
-    href: "https://github.com/anggawidiarta/Dotaku-MobileApp",
-  },
-  {
-    category: "CREATIVE DEVELOPMENT",
-    technology: "PORTFOLIO EXPLORATION",
-    title: "PLAYGROUND — JS & TS MINI PROJECTS",
-    href: "https://javascript-playground-anggawidiarta.vercel.app/",
-  },
-];
+const projects = await getProjects();
+const pad = (n: number) => String(n).padStart(2, "0");
 ---
 
 <section class={paddingHome}>
   {
-    projects.map((project, index) => {
+    projects.map(({ title, category, technology, url, year }, index) => {
       const fromLeft = index % 2 === 0;
       return (
         <>
           <ProjectLine position={fromLeft ? "right" : "left"} />
           <ProjectCard
-            {...project}
+            title={title}
+            category={category}
+            technology={technology}
+            href={url}
+            index={`${pad(index + 1)} / ${pad(projects.length)}`}
+            year={year}
             direction={fromLeft ? "left" : "right"}
             speed={fromLeft ? -8 : 8}
           />

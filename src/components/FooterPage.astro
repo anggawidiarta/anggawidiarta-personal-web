@@ -1,14 +1,10 @@
 ---
+import { getSocials } from "../lib/site";
 import { buttonClass } from "../utils/classes";
 import ButtonLabel from "./atoms/ButtonLabel.astro";
 import NowPlaying from "./molecules/NowPlaying.astro";
 
-const socials = [
-  { label: "INSTAGRAM", href: "https://www.instagram.com/anggawdyrta/" },
-  { label: "GITHUB", href: "https://github.com/anggawidiarta" },
-  { label: "LINKEDIN", href: "https://www.linkedin.com/in/anggawidiarta/" },
-  { label: "iCodeThis", href: "https://icodethis.com/anggawidiarta" },
-];
+const socials = await getSocials();
 ---
 
 <footer
@@ -32,9 +28,9 @@ const socials = [
     class="order-1 flex flex-wrap gap-[0.8rem] over-tablet:order-1 over-tablet:col-span-2 over-tablet:flex-nowrap over-tablet:justify-center wide:order-2 wide:col-span-1"
   >
     {
-      socials.map(({ label, href }) => (
+      socials.map(({ label, url }) => (
         <a
-          href={href}
+          href={url}
           target="_blank"
           rel="noopener noreferrer"
           class={buttonClass}

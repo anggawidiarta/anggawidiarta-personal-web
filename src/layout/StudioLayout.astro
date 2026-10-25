@@ -1,14 +1,35 @@
 ---
+import ButtonLabel from "../components/atoms/ButtonLabel.astro";
+import SignOutButton from "../components/studio/SignOutButton.astro";
+import StudioNav from "../components/studio/StudioNav.astro";
 import Toaster from "../components/studio/Toaster.astro";
-import { desc12, paddingHome } from "../utils/classes";
+import { SITE_NOTICES } from "../lib/studio/content";
+import { buttonClass, desc12, paddingHome } from "../utils/classes";
 import { cn } from "../utils/cn";
 import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
   title?: string;
+  notice?: { text: string; tone: "success" | "info" | "error" } | null;
 }
 
 const { title = "Studio" } = Astro.props;
+const { user, supabase } = Astro.locals;
+
+let pending = false;
+if (user) {
+  const { data } = await supabase
+    .from("site_settings")
+    .select("content_changed_at,published_at")
+    .eq("id", 1)
+    .maybeSingle();
+  pending = Boolean(
+    data && (!data.published_at || new Date(data.content_changed_at) > new Date(data.published_at)),
+  );
+}
+
+const notice = Astro.props.notice ?? SITE_NOTICES[Astro.url.searchParams.get("notice") ?? ""] ?? null;
+const here = `${Astro.url.pathname}${Astro.url.search}`;
 ---
 
 <BaseLayout
@@ -18,17 +39,74 @@ const { title = "Studio" } = Astro.props;
 >
   <main class={cn(paddingHome, "min-h-screen py-[2rem]")}>
     <header
-      class={cn(desc12, "mb-[6.4rem] flex items-center justify-between uppercase")}
+      class={cn(
+        desc12,
+        "flex flex-wrap items-center justify-between gap-x-[2.4rem] gap-y-[1.6rem] uppercase",
+        user ? "mb-[3.2rem]" : "mb-[6.4rem]",
+      )}
     >
       <a
         href="/"
         class="text-boulder transition-colors duration-300 fine:hover:text-gold"
         >Back to portfolio</a
       >
+      {
+        user && (
+          <div class="flex flex-wrap items-center gap-x-[1.6rem] gap-y-[0.8rem]">
+            <p
+              class={cn(
+                "flex items-center gap-[8px]",
+                pending ? "text-ash" : "text-boulder",
+              )}
+            >
+              {pending && <span aria-hidden="true" class="size-[6px] rounded-full bg-ash" />}
+              {pending ? "Unpublished changes" : "Site up to date"}
+            </p>
+            <form method="post" action="/studio/publish" data-publish-site>
+              <input type="hidden" name="next" value={here} />
+              <button type="submit" class={buttonClass}>
+                <ButtonLabel text="Publish site" />
+              </button>
+            </form>
+            <SignOutButton />
+          </div>
+        )
+      }
       <slot name="actions" />
     </header>
+
+    {user && <StudioNav />}
 
     <slot />
   </main>
   <Toaster />
+  {
+    notice && (
+      <>
+        <div data-flash data-text={notice.text} data-tone={notice.tone} hidden />
+        <noscript>
+          <p role="status" class={cn(paddingHome, "pb-[4.8rem] text-ash")}>{notice.text}</p>
+        </noscript>
+      </>
+    )
+  }
 </BaseLayout>
+
+<script>
+  import { toast } from "../js/studio-toast";
+
+  const flash = document.querySelector<HTMLElement>("[data-flash]");
+  if (flash?.dataset.text) {
+    toast(flash.dataset.text, (flash.dataset.tone as "success" | "info" | "error") ?? "info");
+    const url = new URL(location.href);
+    url.searchParams.delete("notice");
+    history.replaceState(null, "", url);
+  }
+
+  // Publishing starts a Vercel build; a double click would start two.
+  document.querySelector("[data-publish-site]")?.addEventListener("submit", (event) => {
+    const button = (event.currentTarget as HTMLFormElement).querySelector("button");
+    button?.setAttribute("data-loading", "true");
+    button?.setAttribute("aria-busy", "true");
+  });
+</script>

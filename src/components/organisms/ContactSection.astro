@@ -1,22 +1,19 @@
 ---
+import { getProfile, mailtoLink } from "../../lib/site";
 import Line from "../atoms/Line.astro";
 import MarqueeText from "../molecules/MarqueeText.astro";
 import EmailButton from "../atoms/EmailButton.astro";
 
-const CONTACT_EMAIL = "anggawidiarta55@gmail.com";
-const MARQUEE_TEXT =
-  "LET'S TALK — LET'S COLLABORATE — SAY HELLO — WANNA BE STARTING SOMETHING? —";
-const EMAIL_SUBJECT = "Let's work together";
-const EMAIL_BODY = "Hi Angga,\n\nI'd like to talk with you about a role / project:\n\n";
-const EMAIL_LINK = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(EMAIL_SUBJECT)}&body=${encodeURIComponent(EMAIL_BODY)}`;
+const profile = await getProfile();
+const emailLink = mailtoLink(profile);
 ---
 
 <section class="over-tablet:pt-[12rem]">
   <Line position="left" />
 
-  <MarqueeText text={MARQUEE_TEXT} emailLink={EMAIL_LINK} />
+  <MarqueeText text={profile.marquee_text} emailLink={emailLink} />
 
   <Line position="right" />
 
-  <EmailButton email={CONTACT_EMAIL} />
+  <EmailButton email={profile.contact_email} emailLink={emailLink} />
 </section>

@@ -1,0 +1,57 @@
+---
+import type { Field } from "../../lib/studio/content";
+import { desc12, fieldClass, fieldLabel } from "../../utils/classes";
+import { cn } from "../../utils/cn";
+
+interface Props {
+  field: Field;
+  value: unknown;
+  error?: string;
+}
+
+const { field, value, error } = Astro.props;
+const id = `field-${field.name}`;
+const current = value === null || value === undefined ? "" : String(value);
+const describedBy = [field.hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || undefined;
+
+const inputType = field.type === "url" || field.type === "email" ? field.type : "text";
+---
+
+<div class="group/field">
+  <label for={id} class={fieldLabel}>
+    {field.label}
+    {!field.required && <span class="normal-case"> (optional)</span>}
+  </label>
+  {
+    field.type === "textarea" ? (
+      <textarea
+        id={id}
+        name={field.name}
+        rows={field.rows ?? 3}
+        maxlength={field.maxLength}
+        required={field.required}
+        aria-invalid={error ? "true" : undefined}
+        aria-describedby={describedBy}
+        class={cn(fieldClass, "resize-y leading-[1.4]")}
+      >{current}</textarea>
+    ) : (
+      <input
+        id={id}
+        name={field.name}
+        type={inputType}
+        inputmode={field.type === "year" ? "numeric" : undefined}
+        pattern={field.type === "year" ? "[0-9]{4}" : undefined}
+        maxlength={field.maxLength}
+        required={field.required}
+        autocomplete="off"
+        spellcheck={field.type === "url" || field.type === "email" ? "false" : undefined}
+        value={current}
+        aria-invalid={error ? "true" : undefined}
+        aria-describedby={describedBy}
+        class={fieldClass}
+      />
+    )
+  }
+  {field.hint && <p id={`${id}-hint`} class={cn(desc12, "mt-[8px] text-boulder")}>{field.hint}</p>}
+  {error && <p id={`${id}-error`} class={cn(desc12, "mt-[8px] text-ash")}>{error}</p>}
+</div>

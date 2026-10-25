@@ -8,11 +8,11 @@ import ContactSection from "../components/organisms/ContactSection.astro";
 import Navigation from "../components/organisms/Navigation.astro";
 import DesignWork from "../components/templates/DesignWork.astro";
 import ProjectsSection from "../components/templates/ProjectsSection.astro";
+import { getProfile } from "../lib/site";
 import { desc12, desc16, paddingHome, title328 } from "../utils/classes";
 import { cn } from "../utils/cn";
 
-const about =
-  "I'm a fullstack developer based in Lombok, Indonesia, building web products end to end: interface, backend, and the system architecture behind them.";
+const { about } = await getProfile();
 
 const bigTitle = cn(title328, "tracking-[-0.105em]");
 const dash = cn(
