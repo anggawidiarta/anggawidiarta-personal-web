@@ -2,13 +2,13 @@
 import { getImage } from "astro:assets";
 import BaseLayout from "../../layout/BaseLayout.astro";
 import FooterPage from "../../components/FooterPage.astro";
-import ArticleHeader from "../../components/blog/ArticleHeader.astro";
-import PostPager from "../../components/blog/PostPager.astro";
-import ReadingProgress from "../../components/blog/ReadingProgress.astro";
-import TableOfContents from "../../components/blog/TableOfContents.astro";
+import ArticleHeader from "../../components/journal/ArticleHeader.astro";
+import PostPager from "../../components/journal/PostPager.astro";
+import ReadingProgress from "../../components/journal/ReadingProgress.astro";
+import TableOfContents from "../../components/journal/TableOfContents.astro";
 import ContactSection from "../../components/organisms/ContactSection.astro";
 import Navigation from "../../components/organisms/Navigation.astro";
-import { getAdjacent, getPosts, renderPost } from "../../lib/blog";
+import { getAdjacent, getPosts, renderPost } from "../../lib/journal";
 import { paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 
@@ -69,7 +69,7 @@ const jsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
 
-  <main class="blog py-[2rem] [scrollbar-width:none]">
+  <main class="journal py-[2rem] [scrollbar-width:none]">
     <ReadingProgress />
     <Navigation current="post" />
 
@@ -102,5 +102,5 @@ const jsonLd = {
 </BaseLayout>
 
 <script>
-  import "../../js/pages/BlogPost";
+  import "../../js/pages/JournalPost";
 </script>

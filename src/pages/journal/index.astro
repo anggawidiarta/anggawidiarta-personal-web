@@ -2,13 +2,13 @@
 import BaseLayout from "../../layout/BaseLayout.astro";
 import FooterPage from "../../components/FooterPage.astro";
 import ProjectLine from "../../components/atoms/ProjectLine.astro";
-import BlogMasthead from "../../components/blog/BlogMasthead.astro";
-import PostLead from "../../components/blog/PostLead.astro";
-import PostRow from "../../components/blog/PostRow.astro";
-import TagFilter from "../../components/blog/TagFilter.astro";
+import JournalMasthead from "../../components/journal/JournalMasthead.astro";
+import PostLead from "../../components/journal/PostLead.astro";
+import PostRow from "../../components/journal/PostRow.astro";
+import TagFilter from "../../components/journal/TagFilter.astro";
 import ContactSection from "../../components/organisms/ContactSection.astro";
 import Navigation from "../../components/organisms/Navigation.astro";
-import { getPosts, getTags } from "../../lib/blog";
+import { getPosts, getTags } from "../../lib/journal";
 import { desc12, desc16, paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 
@@ -22,10 +22,10 @@ const hasSamples = posts.some((post) => post.data.sample);
   title="Journal — Angga Widiarta"
   description="Notes from a fullstack developer in Lombok, Indonesia: Laravel, Astro, front-end craft and the architecture behind web products."
 >
-  <main class="blog py-[2rem] [scrollbar-width:none]">
-    <Navigation current="blog" />
+  <main class="journal py-[2rem] [scrollbar-width:none]">
+    <Navigation current="journal" />
 
-    <BlogMasthead count={posts.length} hasSamples={hasSamples} />
+    <JournalMasthead count={posts.length} hasSamples={hasSamples} />
 
     {
       lead ? (
@@ -66,5 +66,5 @@ const hasSamples = posts.some((post) => post.data.sample);
 </BaseLayout>
 
 <script>
-  import "../../js/pages/BlogIndex";
+  import "../../js/pages/JournalIndex";
 </script>

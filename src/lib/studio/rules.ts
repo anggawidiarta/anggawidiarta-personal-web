@@ -24,5 +24,7 @@ export const slugify = (text: string) =>
     .slice(0, MAX_SLUG_LENGTH)
     .replace(/-$/, "");
 
+export const MEDIA_BUCKET = "journal-media";
+
 export const mediaUrl = (supabaseUrl: string, path: string) =>
-  `${supabaseUrl}/storage/v1/object/public/blog-media/${path}`;
+  `${supabaseUrl}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;

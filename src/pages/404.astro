@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../layout/BaseLayout.astro";
+import FooterPage from "../components/FooterPage.astro";
+import ButtonLabel from "../components/atoms/ButtonLabel.astro";
+import HeroLetters from "../components/atoms/HeroLetters.astro";
+import ContactSection from "../components/organisms/ContactSection.astro";
+import Navigation from "../components/organisms/Navigation.astro";
+import { buttonClass, desc12, desc16, paddingHome, title328 } from "../utils/classes";
+import { cn } from "../utils/cn";
+
+const bigTitle = cn(title328, "tracking-[-0.105em]");
+---
+
+<BaseLayout
+  title="Page not found — Angga Widiarta"
+  description="This page doesn't exist or has moved."
+  noindex
+>
+  <main class="not-found py-[2rem] [scrollbar-width:none]">
+    <Navigation />
+
+    <section class={cn("mb-[9.6rem]", paddingHome)}>
+      <h1 class="relative leading-[0.9] text-boulder" aria-label="404, page not found">
+        <span class="block overflow-hidden phone:hidden" aria-hidden="true">
+          <span class={cn(bigTitle, "inline-block")} data-digits>
+            <HeroLetters word="404" />
+          </span>
+        </span>
+        <span class="block overflow-hidden over-phone:hidden" aria-hidden="true">
+          <span
+            class={cn(
+              title328,
+              "inline-block tracking-[-0.05em] phone:text-[min(160px,calc((100vw-32px)/1.5))]",
+            )}
+            data-digits>404</span
+          >
+        </span>
+        <span
+          aria-hidden="true"
+          class="not-found__strike pointer-events-none absolute -inset-x-[4rem] top-[44%] h-[0.075em] origin-left bg-boulder text-[32.8rem] phone:-inset-x-[1.6rem] phone:text-[min(160px,calc((100vw-32px)/1.5))]"
+        ></span>
+      </h1>
+
+      <div
+        class={cn(
+          desc16,
+          "not-found__intro mt-[2.4rem] flex max-w-[32.5rem] flex-col gap-[1.6rem] tablet:max-w-[55rem] phone:max-w-[255px] ml-auto",
+        )}
+      >
+        <p class="text-[max(14px,1.6rem)] leading-[1.4] font-medium tracking-wide text-pretty text-ash">
+          Page not found. It may have moved, or the address has a typo.
+        </p>
+        <p
+          data-requested
+          hidden
+          class={cn(desc12, "text-boulder uppercase [word-break:break-all]")}
+        >
+        </p>
+        <div class="flex flex-wrap gap-[0.8rem]">
+          <a href="/" class={buttonClass}>
+            <ButtonLabel text="Back home" />
+          </a>
+          <a href="/journal" class={buttonClass}>
+            <ButtonLabel text="Read the journal" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <ContactSection />
+
+    <FooterPage />
+  </main>
+</BaseLayout>
+
+<script>
+  import "../js/pages/NotFound";
+</script>

@@ -1,14 +1,14 @@
-// The only module that reads the blog collection. Swapping the content source
+// The only module that reads the journal collection. Swapping the content source
 // happens in src/content.config.ts.
 import { getCollection, render, type CollectionEntry } from "astro:content";
 
-export type Post = CollectionEntry<"blog"> & { number: number };
+export type Post = CollectionEntry<"journal"> & { number: number };
 
 const WORDS_PER_MINUTE = 220;
 
 /** Published posts, newest first, each with a stable chronological number (NO.001 = oldest). */
 export async function getPosts(): Promise<Post[]> {
-  const entries = await getCollection("blog");
+  const entries = await getCollection("journal");
   return entries
     .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
     .map((entry, i) => ({ ...entry, number: i + 1 }))

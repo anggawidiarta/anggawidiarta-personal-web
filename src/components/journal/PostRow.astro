@@ -1,5 +1,5 @@
 ---
-import { postNumber, readingTime, slugifyTag, type Post } from "../../lib/blog";
+import { postNumber, readingTime, slugifyTag, type Post } from "../../lib/journal";
 import { desc12 } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 import ProjectLine from "../atoms/ProjectLine.astro";
@@ -25,7 +25,7 @@ const { title, pubDate, tags, sample } = post.data;
 >
   <ProjectLine position={index % 2 === 0 ? "left" : "right"} />
   <a
-    href={`/blog/${post.id}`}
+    href={`/journal/${post.id}`}
     class="group/post grid gap-x-[2.4rem] gap-y-[1.6rem] py-[3.2rem] over-tablet:grid-cols-[10rem_minmax(0,1fr)_max(24rem,190px)] phone:py-[2.4rem]"
   >
     <p

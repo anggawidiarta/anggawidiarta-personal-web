@@ -1,10 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { BUNDLED_PREFIX } from "../design-images";
 import type { Section } from "./content";
-
-export const MEDIA_BUCKET = "blog-media";
-
-export const designImageFolder = (id: string) => `site/design/${id}`;
 
 /** Positions of the whole list, so a move also closes any gaps left by deletes. */
 async function orderedIds(supabase: SupabaseClient, table: string) {
@@ -50,22 +45,7 @@ export async function toggleRow(supabase: SupabaseClient, table: string, id: str
   return error ? null : visible;
 }
 
-export const isStoragePath = (path: unknown): path is string =>
-  typeof path === "string" && path.length > 0 && !path.startsWith(BUNDLED_PREFIX);
-
-/** Best effort: an orphaned image costs storage, not correctness. */
-export async function removeImages(supabase: SupabaseClient, paths: string[]) {
-  if (paths.length) await supabase.storage.from(MEDIA_BUCKET).remove(paths);
-}
-
 export async function deleteRow(supabase: SupabaseClient, section: Section, id: string) {
   const { error } = await supabase.from(section.table).delete().eq("id", id);
-  if (error) return false;
-
-  if (section.image) {
-    const folder = designImageFolder(id);
-    const { data: files } = await supabase.storage.from(MEDIA_BUCKET).list(folder);
-    await removeImages(supabase, (files ?? []).map((file) => `${folder}/${file.name}`));
-  }
-  return true;
+  return !error;
 }

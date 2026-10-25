@@ -1,5 +1,5 @@
 ---
-import { postNumber, readingTime, type Post } from "../../lib/blog";
+import { postNumber, readingTime, type Post } from "../../lib/journal";
 import { desc12, desc16, paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 import ProjectLine from "../atoms/ProjectLine.astro";
@@ -18,7 +18,7 @@ const { title, description, pubDate, tags, sample } = post.data;
 <section class={paddingHome} data-lead>
   <ProjectLine position="right" />
   <a
-    href={`/blog/${post.id}`}
+    href={`/journal/${post.id}`}
     class="group/post block pt-[2.4rem] pb-[6.4rem] phone:pb-[4.8rem]"
   >
     <div

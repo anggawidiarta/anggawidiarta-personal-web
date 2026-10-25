@@ -1,5 +1,5 @@
 ---
-import { postNumber, type Post } from "../../lib/blog";
+import { postNumber, type Post } from "../../lib/journal";
 import { buttonClass, desc12, paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 import ButtonLabel from "../atoms/ButtonLabel.astro";
@@ -26,7 +26,7 @@ const links = [
       <>
         <ProjectLine position={position} />
         <a
-          href={`/blog/${post.id}`}
+          href={`/journal/${post.id}`}
           class="group/post block py-[3.2rem] phone:py-[2.4rem]"
         >
           <p
@@ -48,7 +48,7 @@ const links = [
   }
   <ProjectLine position="left" />
   <div class="pt-[3.2rem]">
-    <a href="/blog" class={buttonClass}>
+    <a href="/journal" class={buttonClass}>
       <ButtonLabel text="All articles" />
     </a>
   </div>

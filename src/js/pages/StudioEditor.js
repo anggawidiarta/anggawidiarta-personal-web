@@ -97,7 +97,7 @@ function init(root) {
     const ok = SLUG.test(value) && value.length <= MAX_SLUG_LENGTH;
     slugError.textContent = ok ? "" : "Use lowercase letters, numbers and single hyphens.";
     field.slug.setAttribute("aria-invalid", ok ? "false" : "true");
-    if (ok && !live()) slugHint.textContent = `Address: /blog/${value}`;
+    if (ok && !live()) slugHint.textContent = `Address: /journal/${value}`;
     return ok;
   }
 

@@ -2,6 +2,7 @@
 import { getCertifications, getExperiences, getProfile } from "../lib/site";
 import { desc12, desc16, paddingHome } from "../utils/classes";
 import { cn } from "../utils/cn";
+import ProjectLine from "./atoms/ProjectLine.astro";
 
 const [experiences, certifications, { interests }] = await Promise.all([
   getExperiences(),
@@ -14,45 +15,53 @@ const row =
   "grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-[2.4rem] border-t-2 border-boulder py-[16px]";
 const primary = cn(desc16, "block text-ash transition-colors duration-200");
 const secondary = cn(desc12, "mt-[4px] block text-boulder uppercase");
-const aside = cn(desc12, "text-right text-boulder uppercase tabular-nums");
 const contentTitle = cn(desc12, "mb-[2.4rem] text-boulder uppercase");
 const contentDesc = cn(
   desc16,
-  "w-full max-w-[95rem] text-pretty leading-[1.45] tracking-[-0.01em] over-tablet:mx-auto"
+  "w-full max-w-[95rem] text-pretty leading-[1.45] tracking-[-0.01em]"
 );
 ---
 
 <section
   class={cn(
     paddingHome,
-    "mx-auto max-w-[113rem] justify-between py-[9.6rem] home__awards over-tablet:flex over-tablet:py-[24rem]"
+    "home__awards mx-auto max-w-[113rem] py-[9.6rem] over-tablet:py-[14rem]"
   )}
 >
-  <div
-    class="mb-[9.6rem] over-tablet:mb-0 over-tablet:w-full over-tablet:max-w-[max(55.5rem,30rem)]"
-  >
-    <h2 class={sectionTitle}>
-      <span>WORK & TEACHING</span><br />
-      <span>EXPERIENCE</span>
-    </h2>
-    <ul class="list-none p-0">
-      {
-        experiences.map(({ role, organization, period }) => (
-          <li class={row} data-fade-in>
-            <span>
-              <span class={primary}>{role}</span>
-              <span class={secondary}>{organization}</span>
-            </span>
-            {period && <span class={aside}>{period}</span>}
-          </li>
-        ))
-      }
-    </ul>
+  <h2 class={sectionTitle}>
+    <span>WORK EXPERIENCE</span>
+  </h2>
+  <ol class="list-none p-0">
+    {
+      experiences.map(({ role, organization, period }, index) => (
+        <li>
+          <ProjectLine position={index % 2 === 0 ? "left" : "right"} />
+          <div class="grid gap-x-[2.4rem] gap-y-[1.2rem] py-[3.2rem] over-tablet:grid-cols-[minmax(0,1fr)_max(24rem,190px)] phone:py-[2.4rem]">
+            <h3 class="overflow-hidden font-bebas text-[max(40px,6.4rem)] leading-[0.95] tracking-[-0.025em] text-balance text-boulder uppercase phone:text-[40px] phone:leading-[1]">
+              <span class="block" data-rise>{role}</span>
+            </h3>
+            <p class="pt-[0.8rem] over-tablet:text-right" data-fade-in>
+              <span class={cn(desc16, "block text-ash")}>{organization}</span>
+              {period && (
+                <span class={cn(desc12, "mt-[4px] block text-boulder uppercase tabular-nums")}>
+                  {period}
+                </span>
+              )}
+            </p>
+          </div>
+        </li>
+      ))
+    }
+    <li aria-hidden="true">
+      <ProjectLine position={experiences.length % 2 === 0 ? "left" : "right"} />
+    </li>
+  </ol>
 
+  <div class="mt-[9.6rem] justify-between over-tablet:flex">
     {
       certifications.length > 0 && (
-        <>
-          <h2 class={cn(sectionTitle, "mt-[6.4rem]")}>
+        <div class="mb-[9.6rem] over-tablet:mb-0 over-tablet:w-full over-tablet:max-w-[max(55.5rem,30rem)]">
+          <h2 class={sectionTitle}>
             <span>CERTIFICATIONS</span>
           </h2>
           <ul class="list-none p-0">
@@ -76,15 +85,20 @@ const contentDesc = cn(
                       class={cn(row, "group/cert")}
                     >
                       {body}
-                      <span
+                      <svg
                         aria-hidden="true"
-                        class={cn(
-                          desc16,
-                          "text-boulder transition-[color,translate] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] fine:group-hover/cert:translate-x-[2px] fine:group-hover/cert:-translate-y-[2px] fine:group-hover/cert:text-gold",
-                        )}
+                        viewBox="0 0 24 24"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="text-boulder transition-[color,translate] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] fine:group-hover/cert:translate-x-[2px] fine:group-hover/cert:-translate-y-[2px] fine:group-hover/cert:text-gold"
                       >
-                        ↗
-                      </span>
+                        <path d="M7 17 17 7M8 7h9v9" />
+                      </svg>
                       <span class="sr-only">(view credential, opens in a new tab)</span>
                     </a>
                   ) : (
@@ -94,19 +108,19 @@ const contentDesc = cn(
               );
             })}
           </ul>
-        </>
+        </div>
+      )
+    }
+
+    {
+      interests && (
+        <div class="over-tablet:w-full over-tablet:max-w-[max(32.5rem,18rem)]">
+          <div data-fade-in>
+            <h2 class={contentTitle}>Interests</h2>
+            <p class={contentDesc}>{interests}</p>
+          </div>
+        </div>
       )
     }
   </div>
-
-  {
-    interests && (
-      <div class="over-tablet:w-full over-tablet:max-w-[max(32.5rem,18rem)]">
-        <div data-fade-in>
-          <h2 class={contentTitle}>Interests</h2>
-          <p class={contentDesc}>{interests}</p>
-        </div>
-      </div>
-    )
-  }
 </section>

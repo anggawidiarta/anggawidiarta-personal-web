@@ -25,7 +25,7 @@ export function postsLoader(): Loader {
   return {
     name: "supabase-posts",
     async load({ store, parseData, renderMarkdown, generateDigest, logger }) {
-      const client = buildClient(logger, "the blog");
+      const client = buildClient(logger, "the Journal");
       if (!client) {
         store.clear();
         return;
@@ -41,7 +41,7 @@ export function postsLoader(): Loader {
         .order("published_at", { ascending: false })
         .returns<PostRow[]>();
 
-      // Fail the build instead of deploying a blog with missing articles.
+      // Fail the build instead of deploying a Journal with missing articles.
       if (error) throw new Error(`Could not load posts from Supabase: ${error.message}`);
 
       store.clear();

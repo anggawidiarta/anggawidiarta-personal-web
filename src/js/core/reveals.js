@@ -28,6 +28,15 @@ export function sectionReveals(scope = document) {
     });
   });
 
+  gsap.utils.toArray("[data-rise]", scope).forEach((el) => {
+    gsap.from(el, {
+      scrollTrigger: { trigger: el, start: "top 90%" },
+      duration: 0.9,
+      yPercent: 110,
+      ease: "power4.out",
+    });
+  });
+
   gsap.utils.toArray("[data-fade-in]", scope).forEach((el) => {
     gsap.from(el, {
       scrollTrigger: { trigger: el },

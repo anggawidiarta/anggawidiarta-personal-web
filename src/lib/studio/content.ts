@@ -20,8 +20,6 @@ export interface Section {
   title: string;
   singular: string;
   fields: Field[];
-  /** Design work carries an uploaded image (and its alt text) next to the plain fields. */
-  image?: boolean;
   summary: (row: Row) => { primary: string; secondary: string };
 }
 
@@ -50,19 +48,6 @@ export const SECTIONS: Section[] = [
       yearField("Optional. Shown under the project number."),
     ],
     summary: (row) => ({ primary: text(row.title), secondary: joined(row.category, row.technology, row.year) }),
-  },
-  {
-    slug: "design",
-    table: "design_works",
-    title: "Design work",
-    singular: "Design piece",
-    image: true,
-    fields: [
-      { name: "title", label: "Title", maxLength: 120, required: true },
-      { name: "kind", label: "Kind", maxLength: 60, required: true, hint: "e.g. Landing page UI/UX" },
-      { name: "url", label: "Link", type: "url", maxLength: 500, required: true },
-    ],
-    summary: (row) => ({ primary: text(row.title), secondary: text(row.kind) }),
   },
   {
     slug: "experience",

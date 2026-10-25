@@ -1,13 +1,12 @@
 import { defineCollection } from "astro:content";
-import { postsLoader } from "./lib/blog-loader";
+import { postsLoader } from "./lib/journal-loader";
 import { tableLoader } from "./lib/site-loader";
-import { mediaUrl } from "./lib/studio/rules";
 import { z } from "astro/zod";
 
 // Articles live in Supabase (written from the Studio) and are loaded at build time
 // by postsLoader, so the public site stays static. No page or component reads this
-// collection directly; everything goes through src/lib/blog.ts.
-const blog = defineCollection({
+// collection directly; everything goes through src/lib/journal.ts.
+const journal = defineCollection({
   loader: postsLoader(),
   schema: () =>
     z.object({
@@ -35,29 +34,6 @@ const projects = defineCollection({
     technology: z.string(),
     url: z.url(),
     year: z.number().int().nullable(),
-  }),
-});
-
-const designWorks = defineCollection({
-  loader: tableLoader(
-    "design_works",
-    "id,position,title,kind,url,image_path,image_alt",
-    (row, supabaseUrl) => {
-      const path = row.image_path as string | null;
-      return {
-        ...row,
-        // Storage paths become public URLs here; "bundled:" paths resolve in src/lib/site.ts.
-        image_path: path && !path.startsWith("bundled:") ? mediaUrl(supabaseUrl, path) : path,
-      };
-    },
-  ),
-  schema: z.object({
-    ...ordered,
-    title: z.string(),
-    kind: z.string(),
-    url: z.url(),
-    image_path: z.string().nullable(),
-    image_alt: z.string().nullable(),
   }),
 });
 
@@ -104,9 +80,8 @@ const settings = defineCollection({
 });
 
 export const collections = {
-  blog,
+  journal,
   projects,
-  designWorks,
   experiences,
   certifications,
   socials,

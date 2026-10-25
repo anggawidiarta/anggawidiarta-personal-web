@@ -1,22 +1,11 @@
 ---
-import { PUBLIC_SUPABASE_URL } from "astro:env/server";
 import ButtonLabel from "../../../components/atoms/ButtonLabel.astro";
 import FormField from "../../../components/studio/FormField.astro";
 import StudioLayout from "../../../layout/StudioLayout.astro";
-import { resolveDesignImage } from "../../../lib/design-images";
 import { findSection, parseFields, withNotice, type FieldErrors } from "../../../lib/studio/content";
-import {
-  MEDIA_BUCKET,
-  deleteRow,
-  designImageFolder,
-  isStoragePath,
-  nextPosition,
-  removeImages,
-} from "../../../lib/studio/content-store";
-import { imagePath, readDesignImage } from "../../../lib/studio/images";
+import { deleteRow, nextPosition } from "../../../lib/studio/content-store";
 import { UUID } from "../../../lib/studio/posts";
-import { IMAGE_ACCEPT, mediaUrl } from "../../../lib/studio/rules";
-import { buttonClass, desc12, desc16, fieldClass, fieldLabel } from "../../../utils/classes";
+import { buttonClass, desc12, desc16 } from "../../../utils/classes";
 import { cn } from "../../../utils/cn";
 
 export const prerender = false;
@@ -57,58 +46,26 @@ if (Astro.request.method === "POST") {
     const parsed = parseFields(section.fields, form);
     values = { ...row, ...parsed.values };
     errors = parsed.errors;
-    const columns: Record<string, unknown> = { ...parsed.data };
 
-    let uploaded: string | null = null;
-    if (section.image) {
-      const image = await readDesignImage(form, (row.image_path as string | null) ?? null);
-      Object.assign(errors, image.errors);
-      values.image_alt = image.alt;
-
-      if (!Object.keys(errors).length && image.file) {
-        const path = imagePath(designImageFolder(id), image.file.type);
-        const { error } = await supabase.storage
-          .from(MEDIA_BUCKET)
-          .upload(path, image.file.bytes, { contentType: image.file.type, upsert: false });
-        if (error) formError = "Couldn't upload the image. Try again.";
-        else uploaded = path;
-      }
-      columns.image_path = uploaded ?? image.kept;
-      columns.image_alt = columns.image_path ? image.alt : null;
-    }
-
-    if (!Object.keys(errors).length && !formError) {
+    if (parsed.data) {
       const write = isNew
         ? supabase
             .from(section.table)
-            .insert({ id, position: await nextPosition(supabase, section.table), ...columns })
-        : supabase.from(section.table).update(columns).eq("id", id);
+            .insert({ id, position: await nextPosition(supabase, section.table), ...parsed.data })
+        : supabase.from(section.table).update(parsed.data).eq("id", id);
       const { data, error } = await write.select("id").maybeSingle();
 
       if (!error && data) {
-        const previous = row.image_path;
-        if (section.image && isStoragePath(previous) && previous !== columns.image_path) {
-          await removeImages(supabase, [previous]);
-        }
         return Astro.redirect(`${withNotice(listPath, isNew ? "added" : "saved")}#row-${id}`, 303);
       }
-      if (uploaded) await removeImages(supabase, [uploaded]);
       formError = "Couldn't save. Try again.";
-    } else if (Object.keys(errors).length) {
-      formError =
-        "Check the highlighted fields." + (section.image ? " If you picked an image, choose it again." : "");
+    } else {
+      formError = "Check the highlighted fields.";
     }
   }
 }
 
 const name = isNew ? `New ${section.singular.toLowerCase()}` : section.summary(row).primary;
-const resolved = resolveDesignImage((row.image_path as string | null) ?? null);
-const imageUrl = !resolved
-  ? ""
-  : typeof resolved === "string"
-    ? mediaUrl(PUBLIC_SUPABASE_URL, resolved)
-    : resolved.src;
-const hint = cn(desc12, "mt-[8px] text-boulder");
 const textAction = cn(
   desc12,
   "cursor-pointer text-boulder uppercase transition-colors duration-200 fine:hover:text-gold",
@@ -132,68 +89,8 @@ const textAction = cn(
       )
     }
 
-    <form
-      method="post"
-      enctype={section.image ? "multipart/form-data" : undefined}
-      class="flex flex-col gap-[3.2rem]"
-      novalidate
-    >
+    <form method="post" class="flex flex-col gap-[3.2rem]" novalidate>
       {section.fields.map((field) => <FormField field={field} value={values[field.name]} error={errors[field.name]} />)}
-
-      {
-        section.image && (
-          <div class="flex flex-col gap-[2.4rem]">
-            <div class="group/field">
-              <label for="image" class={fieldLabel}>Image</label>
-              {imageUrl && (
-                <img src={imageUrl} alt="" class="mb-[1.6rem] aspect-[4/3] w-full max-w-[40rem] object-cover" />
-              )}
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept={IMAGE_ACCEPT}
-                aria-describedby={errors.image ? "image-hint image-error" : "image-hint"}
-                aria-invalid={errors.image ? "true" : undefined}
-                class={cn(
-                  desc12,
-                  "block w-full text-boulder uppercase file:mr-[1.6rem] file:cursor-pointer file:rounded-[45px] file:border-2 file:border-solid file:border-boulder file:bg-transparent file:px-[8px] file:py-[5px] file:font-sauce file:text-[16px] file:text-ash file:uppercase file:transition-colors fine:file:hover:border-gold fine:file:hover:bg-gold fine:file:hover:text-ink",
-                )}
-              />
-              <p id="image-hint" class={hint}>
-                {imageUrl ? "Choose a file to replace it. " : ""}JPEG, PNG, WebP, AVIF or GIF up to 4 MB, shown at 4:3.
-              </p>
-              {errors.image && <p id="image-error" class={cn(desc12, "mt-[8px] text-ash")}>{errors.image}</p>}
-              {imageUrl && (
-                <label class={cn(desc12, "mt-[1.6rem] flex cursor-pointer items-center gap-[8px] text-boulder uppercase")}>
-                  <input
-                    type="checkbox"
-                    name="remove_image"
-                    class="size-[16px] cursor-pointer appearance-none border-2 border-boulder bg-transparent transition-colors checked:border-gold checked:bg-gold"
-                  />
-                  Remove the image
-                </label>
-              )}
-            </div>
-            <div class="group/field">
-              <label for="image_alt" class={fieldLabel}>Image alt text</label>
-              <input
-                id="image_alt"
-                name="image_alt"
-                type="text"
-                maxlength="200"
-                autocomplete="off"
-                value={String(values.image_alt ?? "")}
-                aria-invalid={errors.image_alt ? "true" : undefined}
-                aria-describedby={errors.image_alt ? "image_alt-hint image_alt-error" : "image_alt-hint"}
-                class={fieldClass}
-              />
-              <p id="image_alt-hint" class={hint}>Describe the image for visitors who can't see it. Required with an image.</p>
-              {errors.image_alt && <p id="image_alt-error" class={cn(desc12, "mt-[8px] text-ash")}>{errors.image_alt}</p>}
-            </div>
-          </div>
-        )
-      }
 
       <div class="flex flex-wrap items-center gap-[2.4rem]">
         <button type="submit" name="_action" value="save" class={buttonClass}>

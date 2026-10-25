@@ -13,7 +13,7 @@ export const title328 =
   "font-bebas text-[32.8rem] [word-break:break-word] phone:text-[160px]";
 
 export const title160 =
-  "font-bebas text-[16rem] tracking-[-0.025em] phone:text-[80px] phone:[word-break:break-word]";
+  "font-bebas text-[16rem] tracking-[-0.025em] phone:text-[min(80px,calc((100vw-32px)/5.5))] phone:[word-break:break-word]";
 
 export const buttonClass =
   "group/btn inline-block cursor-pointer rounded-[45px] border-2 border-boulder bg-transparent px-[8px] py-[5px] text-[16px] text-ash uppercase transition-all duration-300 ease-[ease] fine:hover:border-gold fine:hover:bg-gold fine:hover:font-medium fine:hover:text-ink aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[loading=true]:pointer-events-none data-[loading=true]:cursor-progress data-[loading=true]:border-gold data-[loading=true]:text-gold";

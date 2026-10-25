@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { PUBLIC_SUPABASE_URL } from "astro:env/server";
 import { UUID, json } from "../../../lib/studio/posts";
 import { sniffImage } from "../../../lib/studio/images";
-import { IMAGE_EXTENSIONS, MAX_UPLOAD_BYTES, mediaUrl } from "../../../lib/studio/rules";
+import { IMAGE_EXTENSIONS, MAX_UPLOAD_BYTES, MEDIA_BUCKET, mediaUrl } from "../../../lib/studio/rules";
 
 export const prerender = false;
 
@@ -36,7 +36,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const path = `${kind === "cover" ? "covers" : "body"}/${postId}/${crypto.randomUUID()}.${IMAGE_EXTENSIONS[type]}`;
   const { error } = await supabase.storage
-    .from("blog-media")
+    .from(MEDIA_BUCKET)
     .upload(path, bytes, { contentType: type, upsert: false });
   if (error) return json({ error: "Could not upload the image. Try again." }, 500);
 

@@ -4,16 +4,16 @@ import NavButton from "../atoms/NavButton.astro";
 import NavText from "../atoms/NavText.astro";
 
 interface Props {
-  current?: "home" | "blog" | "post";
+  current?: "home" | "journal" | "post";
 }
 
 const { current = "home" } = Astro.props;
 const availability = lines((await getProfile()).availability);
 
 const way = {
-  home: { text: "Blog", href: "/blog", label: "Read the journal" },
-  blog: { text: "Home", href: "/", label: "Back to the home page" },
-  post: { text: "Journal", href: "/blog", label: "Back to the journal" },
+  home: { text: "Journal", href: "/journal", label: "Read the journal" },
+  journal: { text: "Home", href: "/", label: "Back to the home page" },
+  post: { text: "Journal", href: "/journal", label: "Back to the journal" },
 }[current];
 ---
 

@@ -1,8 +1,7 @@
 // The only module that reads the homepage collections (see src/content.config.ts).
 import { getCollection, type CollectionEntry } from "astro:content";
-import { resolveDesignImage } from "./design-images";
 
-type Ordered = "projects" | "designWorks" | "experiences" | "certifications" | "socials";
+type Ordered = "projects" | "experiences" | "certifications" | "socials";
 
 async function ordered<K extends Ordered>(collection: K) {
   const entries: CollectionEntry<K>[] = await getCollection(collection);
@@ -15,13 +14,6 @@ export const getProjects = () => ordered("projects");
 export const getExperiences = () => ordered("experiences");
 export const getCertifications = () => ordered("certifications");
 export const getSocials = () => ordered("socials");
-
-export async function getDesignWorks() {
-  return (await ordered("designWorks")).map((work) => ({
-    ...work,
-    image: resolveDesignImage(work.image_path),
-  }));
-}
 
 export type Profile = CollectionEntry<"settings">["data"];
 

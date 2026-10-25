@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { triggerRebuild } from "../../../../lib/studio/deploy";
 import { UUID, firstIssue, json, postPatch, toColumns } from "../../../../lib/studio/posts";
+import { MEDIA_BUCKET } from "../../../../lib/studio/rules";
 
 export const prerender = false;
 
@@ -73,7 +74,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   if (error) return json({ error: "Could not delete the article." }, 500);
 
   // Best effort: remove the article's uploaded images too.
-  const bucket = supabase.storage.from("blog-media");
+  const bucket = supabase.storage.from(MEDIA_BUCKET);
   for (const folder of [`covers/${id}`, `body/${id}`]) {
     const { data: files } = await bucket.list(folder);
     if (files?.length) await bucket.remove(files.map((file) => `${folder}/${file.name}`));

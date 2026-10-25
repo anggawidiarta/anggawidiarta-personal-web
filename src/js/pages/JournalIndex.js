@@ -33,7 +33,7 @@ function intro() {
       ease: "power4.out",
     })
     .from(
-      ".blog__intro > *",
+      ".journal__intro > *",
       { duration: 0.7, y: 16, opacity: 0, stagger: 0.08, ease: "power3.out" },
       "-=0.5",
     );

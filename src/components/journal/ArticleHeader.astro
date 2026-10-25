@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { postNumber, readingTime, slugifyTag, type Post } from "../../lib/blog";
+import { postNumber, readingTime, slugifyTag, type Post } from "../../lib/journal";
 import { buttonClass, desc12, desc16, paddingHome } from "../../utils/classes";
 import { cn } from "../../utils/cn";
 import { formatDate } from "../../utils/date";
@@ -17,7 +17,7 @@ const { title, description, pubDate, updatedDate, tags, sample, cover, coverAlt 
 <header class={cn(paddingHome, "mb-[9.6rem] phone:mb-[6.4rem]")}>
   <p class={cn(desc12, "mb-[3.2rem] text-boulder uppercase phone:mb-[2.4rem]")}>
     <a
-      href="/blog"
+      href="/journal"
       class="transition-colors duration-300 fine:hover:text-gold"
     >
       Journal
@@ -72,7 +72,7 @@ const { title, description, pubDate, updatedDate, tags, sample, cover, coverAlt 
         {
           tags.map((tag) => (
             <li>
-              <a href={`/blog?tag=${slugifyTag(tag)}`} class={buttonClass}>
+              <a href={`/journal?tag=${slugifyTag(tag)}`} class={buttonClass}>
                 <ButtonLabel text={tag} />
               </a>
             </li>
