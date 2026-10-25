@@ -4,7 +4,7 @@ Builds on [SPEC-cms-auth.md](SPEC-cms-auth.md) (login, allowlist) and [SPEC-cms.
 
 ## Objective
 
-The owner manages everything the homepage lists from `/studio`, without touching code: projects, design work, experience, certifications and contact (email, marquee text, social links). The homepage stays static: it is built from Supabase at build time, exactly like the Journal, and a **Publish site** action in the Studio triggers the Vercel rebuild.
+The owner manages everything the homepage lists from `/studio`, without touching code: projects, experience, certifications and contact (email, marquee text, social links). The homepage stays static: it is built from Supabase at build time, exactly like the Journal, and a **Publish site** action in the Studio triggers the Vercel rebuild.
 
 On day one the homepage must look identical: the migration seeds every table with the content that is hardcoded today.
 
@@ -14,7 +14,7 @@ On day one the homepage must look identical: the migration seeds every table wit
 2. Edits save immediately to the database but reach visitors only on the next rebuild. Studio shows "Unpublished changes" until **Publish site** runs. Any other rebuild (publishing an article, a git push) also ships pending edits; this is accepted, not prevented.
 3. Ordering is manual (a `position` column), changed with Move up / Move down buttons. No drag and drop in this iteration.
 4. Hiding an item (`visible = false`) is the "draft" state; there is no per-item publish workflow.
-5. Design-work images move to the existing `blog-media` bucket under `site/design/<item id>/<uuid>.<ext>` and are optimised at build time by `astro:assets` (the Supabase domain is already allowed).
+5. Design work was dropped from the homepage and the Studio (2026-10-25); `20261025120000_drop_design_works.sql` removes its table.
 6. Studio forms are plain HTML forms posting to their own `/studio/...` page (303 redirect + notice), so they work without JS and stay behind the existing middleware. Astro Actions are **not** used: their `/_actions/*` endpoints sit outside `/studio` and would bypass the admin guard.
 
 ## Data
@@ -24,7 +24,6 @@ All tables: `id uuid pk`, `position int not null`, `visible bool default true`, 
 | Table | Columns | Homepage use |
 | --- | --- | --- |
 | `projects` | `title` (≤160), `category` (≤40), `technology` (≤60), `url` (https), `year` int null | Project rows |
-| `design_works` | `title`, `kind`, `url`, `image_path` null, `image_alt` (required with an image) | Design work grid |
 | `experiences` | `role`, `organization`, `period` text null (e.g. `2023 — Now`) | Experience list |
 | `certifications` | `name`, `issuer` null, `credential_url` null, `year` int null | Certifications list |
 | `social_links` | `label` (≤24), `url` (https) | Footer pills |
@@ -35,17 +34,16 @@ A statement trigger on every content table (and on `site_settings` contact field
 Build: one generic `tableLoader()` in `src/lib/build-client.ts                     → build-time Supabase client, shared with the Journal loader
 src/lib/site-loader.ts                      → build-time loader factory
 src/lib/site.ts                             → the only reader of the site collections
-src/lib/design-images.ts                    → resolves "bundled:" design images
 src/lib/studio/content.ts                   → section config, zod schemas from field config, notices
 src/lib/studio/content-store.ts             → ordering, visibility, delete (+ image cleanup)
-src/lib/studio/images.ts                    → byte sniffing (shared with the Journal upload), design-image form
+src/lib/studio/images.ts                    → byte sniffing (shared with the Journal upload)
 src/components/studio/{StudioNav,FormField}.astro
 src/pages/studio/[section]/{index,[id]}.astro
 src/pages/studio/profile.astro
 src/pages/studio/publish.ts                 → rebuild + stamp published_at (form POST)
 ```
 
-Homepage components (`ProjectsSection`, `DesignWork`, `Certifications`, `ContactSection`, `FooterPage`) swap their hardcoded arrays for `src/lib/site.ts` reads; their markup stays.
+Homepage components (`ProjectsSection`, `Certifications`, `ContactSection`, `FooterPage`) swap their hardcoded arrays for `src/lib/site.ts` reads; their markup stays.
 
 ## Boundaries
 
@@ -80,15 +78,18 @@ Found in the current code and the 2026-10-22 critique. Each is independent; none
 2. All six polish proposals ship with this work. Socials are seeded in the new order (GitHub, LinkedIn, Instagram, iCodeThis).
 3. Rebuild only through **Publish site**.
 
-The three design-work images stay bundled in `src/assets/design/` and are seeded as `bundled:<file>` paths, so they keep build-time optimisation without a manual upload. Uploading a replacement in the Studio switches the item to a Storage path.
 
 ## Verification done (2026-10-25)
 
-- Migration applied to the Blog project; security advisors show nothing new (only the existing leaked-password notice). Policies and triggers checked on all six tables.
+- Migration applied to the Supabase project (named "Blog", which cannot be renamed from the repo); security advisors show nothing new (only the existing leaked-password notice). Policies and triggers checked on all six tables.
 - Production build from Supabase: homepage text and links match the pre-CMS build except the approved polish (numbering, experience layout, "Write an email", social order).
 - Studio exercised end to end over HTTP against the real routes and middleware with an in-memory Supabase stand-in: list, add, validation (https, year, email, alt text, fake image bytes), edit, move, hide/show, two-step delete without JS, image upload/remove, profile, Publish site (deploy hook called once, open-redirect `next` values fall back to /studio), cross-origin POST rejected, UTF-8 round trip.
 - Screenshots at 390 (true device width via CDP), 820 and 1440.
 - Not yet run: a write attempt as `anon` against the live database (declined during the session), and a pass with the real admin session.
+
+## Change: design work removed (2026-10-25)
+
+The Design work section and its Studio section were removed; the Experience section was rebuilt as a ledger to take its place, and a branded 404 page was added. Apply `supabase/migrations/20261025120000_drop_design_works.sql` to drop the unused table (it held only the three seeded rows and no stored images). `20261025130000_rename_blog_media_to_journal_media.sql` renames the empty Storage bucket to `journal-media` to match the code (`MEDIA_BUCKET` in `src/lib/studio/rules.ts`); apply it before uploading cover or body images.
 
 ## Not included
 

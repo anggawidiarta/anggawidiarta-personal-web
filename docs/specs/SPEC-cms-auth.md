@@ -1,4 +1,4 @@
-# Spec: Login + admin shell for the blog CMS
+# Spec: Login + admin shell for the Journal CMS
 
 ## Objective
 

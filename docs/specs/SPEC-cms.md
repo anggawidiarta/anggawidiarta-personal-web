@@ -10,8 +10,8 @@ The owner writes, edits, publishes and deletes Journal articles from `/studio`. 
 
 - `public.posts`: `slug` (unique, `^[a-z0-9]+(-[a-z0-9]+)*$`), `title`, `description` (≤200), `body` (Markdown), `tags text[]`, `cover_path`, `cover_alt`, `status` (`draft` | `published`), `published_at` (required when published), `sample`, timestamps (`updated_at` by trigger).
 - RLS: anon reads only `status = 'published'`; authenticated reads published or, for admins, everything; only `private.is_admin()` can insert, update, delete.
-- Storage bucket `blog-media` (public read by URL, no anon listing): jpeg, png, webp, avif, gif up to 4 MB; only admins write. Paths: `covers/<post id>/<uuid>.<ext>`, `body/<post id>/<uuid>.<ext>`.
-- The public build reads published rows through `src/lib/blog-loader.ts` (publishable key, so RLS applies). A missing key or a Supabase error fails a production build instead of deploying an empty blog.
+- Storage bucket `journal-media` (public read by URL, no anon listing): jpeg, png, webp, avif, gif up to 4 MB; only admins write. Paths: `covers/<post id>/<uuid>.<ext>`, `body/<post id>/<uuid>.<ext>`.
+- The public build reads published rows through `src/lib/journal-loader.ts` (publishable key, so RLS applies). A missing key or a Supabase error fails a production build instead of deploying an empty blog.
 
 ## Studio API (all under `/studio/api`, admin only, JSON)
 

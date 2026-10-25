@@ -30,9 +30,9 @@ Confirmed wording: the hero reads "FULL —— STACK / DEVELOPER" ("FULL — / S
 
 ## Capabilities and Constraints
 
-- Single-page Astro site (`src/pages/index.astro`) with sections: hero, project list, design work, experience and certifications, contact, footer.
-- **Journal** (`/blog`, `/blog/[slug]`): a native blog, static for now. Articles are written in the Studio and stored in Supabase, then read through `src/lib/blog.ts` at build time. It ends in the same contact marquee and footer. The five imported sample articles are drafts (`sample: true`); publish or replace them before promoting the Journal.
-- **Studio** (`/studio/login`, `/studio`, `/studio/posts/[id]`): a private, server-rendered CMS behind Supabase Auth (email and password, single admin on the `admins` allowlist). Articles live in the `posts` table; the public Journal is built from published rows at build time, and publishing triggers a Vercel Deploy Hook rebuild. The Studio also manages all homepage content (projects, design work, experience, certifications, social links, About, availability, Interests and contact), stored in Supabase and read through `src/lib/site.ts` at build time; those edits go live only through **Publish site** (see `docs/specs/SPEC-site-content.md`). It is an Operate surface, not linked from any public page, and always `noindex`, `no-store` and free of analytics. The rest of the site stays static.
+- Single-page Astro site (`src/pages/index.astro`) with sections: hero, project list, experience (a ledger) with certifications and interests, contact, footer. `src/pages/404.astro` is the not-found page.
+- **Journal** (`/journal`, `/journal/[slug]`): a native journal, static for now. Articles are written in the Studio and stored in Supabase, then read through `src/lib/journal.ts` at build time. It ends in the same contact marquee and footer. The five imported sample articles are drafts (`sample: true`); publish or replace them before promoting the Journal.
+- **Studio** (`/studio/login`, `/studio`, `/studio/posts/[id]`): a private, server-rendered CMS behind Supabase Auth (email and password, single admin on the `admins` allowlist). Articles live in the `posts` table; the public Journal is built from published rows at build time, and publishing triggers a Vercel Deploy Hook rebuild. The Studio also manages all homepage content (projects, experience, certifications, social links, About, availability, Interests and contact), stored in Supabase and read through `src/lib/site.ts` at build time; those edits go live only through **Publish site** (see `docs/specs/SPEC-site-content.md`). It is an Operate surface, not linked from any public page, and always `noindex`, `no-store` and free of analytics. The rest of the site stays static.
 - Stack: Astro 7 and Tailwind 4, with no UI framework runtime. Motion uses GSAP and Locomotive Scroll plus CSS, and respects `prefers-reduced-motion`.
 - **English only.** No localized version is planned.
 
@@ -45,7 +45,7 @@ Confirmed wording: the hero reads "FULL —— STACK / DEVELOPER" ("FULL — / S
 
 - **Experience** (Studio → Experience): Fullstack Web Developer at CV Mataram Medika; Software Developer at PT Oxindo Solution; Frontend Developer at Inside Lombok; Fullstack Web Developer at Jalan Digital; Fullstack Web Developer at the Immigration Office of Mataram; Assistant Lecturer at the University of Mataram.
 - **Certifications**: Solid Programming Principles; Specialized Google Analytics Data; AI-900; DP-900; PL-900.
-- **Projects** (Studio → Projects, Design work): Inside UMKM (Next.js and Laravel), Absence App (CodeIgniter), SPA booking system (Laravel), Inventory system (Laravel), a machine-learning project, plus UI/design pieces: Toko Sepatu, Trip In Lombok, and a Figma motorcycle concept. Live links are in the Studio.
+- **Projects** (Studio → Projects): Inside UMKM (Next.js and Laravel), Absence App (CodeIgniter), SPA booking system (Laravel), Inventory system (Laravel), a machine-learning project, Live links are in the Studio.
 - **Case studies:** Angga says real case-study material exists. It is not in the repo yet, so ask for it before writing any case-study content. Never invent metrics, client quotes, testimonials or outcomes.
 
 ## Product Principles

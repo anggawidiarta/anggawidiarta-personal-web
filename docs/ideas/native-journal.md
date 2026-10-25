@@ -1,4 +1,4 @@
-# Native blog ("The Journal")
+# The Journal
 
 ## Problem statement
 
@@ -6,7 +6,7 @@ How might the portfolio host Angga's writing as proof of fullstack range, withou
 
 ## Recommended direction
 
-A blog inside the same Astro site, designed as the "Night Press" printed as a journal: a monumental masthead, a lead story, and ruled rows (the same grammar as the project list). Reading pages keep a calm 68ch column; the world lives in the frame. Data is Markdown behind a single helper module so the source can change to a CMS or database later.
+A journal inside the same Astro site, designed as the "Night Press" printed as a journal: a monumental masthead, a lead story, and ruled rows (the same grammar as the project list). Reading pages keep a calm 68ch column; the world lives in the frame. Data is Markdown behind a single helper module so the source can change to a CMS or database later.
 
 ## Key assumptions to validate
 

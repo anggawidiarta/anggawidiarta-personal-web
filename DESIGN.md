@@ -167,7 +167,7 @@ Flat. The page has no shadows, gradients or glass. Depth comes from scale (the d
 
 ## Shapes
 
-Two shapes only. **Pills** (45px radius, 2px Boulder outline) for every button and link chip. **Hairlines** (2px Boulder rules, drawn from one edge on scroll) for structure. There are no other containers: lists and the design-work grid are items divided by 2px top borders, not boxes.
+Two shapes only. **Pills** (45px radius, 2px Boulder outline) for every button and link chip. **Hairlines** (2px Boulder rules, drawn from one edge on scroll) for structure. There are no other containers: lists are items divided by 2px top borders, not boxes.
 
 ## Components
 
@@ -177,30 +177,35 @@ Two shapes only. **Pills** (45px radius, 2px Boulder outline) for every button a
 - **Resting:** transparent fill, Ash text.
 - **Hover (fine pointers):** fill and outline become Gold, text becomes Ink at weight 500, and the label rolls up to a duplicate with an exponential ease-out (`cubic-bezier(0.25, 1, 0.5, 1)`, 300ms). Nothing in the system bounces or overshoots.
 - **Focus:** 2px Gold outline, 3px offset (global `:focus-visible`).
-- **Variants:** all links and buttons share this one style: nav Blog and Contact, "View site" and "View code", footer socials.
+- **Variants:** all links and buttons share this one style: nav Journal and Contact, "View site" and "View code", footer socials.
 
 ### Navigation strip
 
-Four groups across the top: name, role and year, availability, then Blog and Contact pills. Labels are 12px uppercase Boulder. On phones the groups stack in the right column and the line breaks are removed.
+Four groups across the top: name, role and year, availability, then Journal and Contact pills. Labels are 12px uppercase Boulder. On phones the groups stack in the right column and the line breaks are removed.
 
 ### Project rows
 
-A Boulder 2px rule drawn in from alternating sides, a right-aligned 12px index (`01 / 08`, with the year beneath when set) beside the category and technology label, then the Headline-size title. The title is a link on every pointer; touch screens also keep the outlined "View site" / "View code" pill at every width. On a fine pointer, hovering the row slides a Gold copy of the title up through it (275ms ease); the label lightens from Boulder to Ash. Titles drift horizontally against scroll.
+A Boulder 2px rule drawn in from alternating sides, a right-aligned 12px index (`01 / 08`, with the year beneath when set) beside the category and technology label, then the Headline-size title. The title is a link on every pointer; touch screens also keep the outlined "View site" / "View code" pill at every width. On a fine pointer, hovering the row slides a Gold copy of the title up through it (275ms ease); the label lightens from Boulder to Ash. Titles drift horizontally against scroll. On phones the title size follows the viewport (`min(80px, (100vw − 32px) / 5.5)`) so the longest word never breaks mid-word.
 
 ### List rows (Experience and Certifications)
 
-Each row under a 2px Boulder top border with 16px vertical padding: the role or certificate name in Body Ash, the organization or issuer and year beneath in a 12px uppercase Boulder label, and an optional period right-aligned in 12px tabular figures. A certification with a credential link becomes a link row with a Boulder ↗ that turns Gold, with the name, on hover. Rows rise 20px and fade in once as they enter view (0.9s).
+Each row under a 2px Boulder top border with 16px vertical padding: the role or certificate name in Body Ash, the organization or issuer and year beneath in a 12px uppercase Boulder label, and an optional period right-aligned in 12px tabular figures. A certification with a credential link becomes a link row with a drawn Boulder arrow (stroke 2, round) that turns Gold, with the name, on hover. Rows rise 20px and fade in once as they enter view (0.9s).
 
 ### Contact block
 
 A full-width marquee of Headline-size Boulder text linking to a prefilled `mailto:`; hovering rolls a Gold copy up through it and pauses the scroll. Beneath it, the email address (Title role) is a copy button; on hover or focus a small outlined "Click to copy" pill appears, and after a click it shows "Copied" for two seconds, on touch devices too. Below it, a standard "Write an email" pill opens the same prefilled `mailto:` on every device. There is no sound.
 
-### Design work grid
-Three items in a row (stacked on phones), each a plain link under a 2px Boulder rule: a 4:3 thumbnail, the title in Body (Ash, turning Gold on hover) and a 12px uppercase Boulder kind label. Thumbnails sit desaturated and dimmed at rest and return to full tone on hover (fine pointers only). It is a list, not a set of cards: no border, radius, shadow or tilt.
+### Experience ledger
+
+A "Work experience" 12px label, then ruled rows in the Journal's ledger pattern: each row opens with a 2px Boulder rule drawn in from alternating sides, then the role in Bebas `max(40px, 6.4rem)` (40px on phones), uppercase Boulder, and a right-aligned employer in Body Ash with the optional period beneath in 12px tabular figures. Rows are not links, so there is no Gold. On scroll each rule draws in and the role rises out of a mask (0.9s, exponential ease-out); the employer fades up. Certifications and Interests sit beneath as small reading lists (see List rows).
+
+### Not found (404)
+
+The Display word "404" in Boulder with the hero's dash drawn through it: a 2px-system hairline the weight of the hero dash, left to right, striking out the zero. Beside it, at the right like the hero's About, one line of Ash copy, the requested path as a 12px uppercase Boulder label (set by script, hidden without it), and two pills: Back home and Read the journal. The navigation, contact marquee and footer stay, so contact is still one step away. On load the digits rise from a mask, then the strike draws and the copy rises; all of it is off under `prefers-reduced-motion`. The page is `noindex`.
 
 ## Journal
 
-The blog (`/blog`, `/blog/[slug]`) is a Read surface inside the same world: the frame (masthead, titles, rules, pills) stays Night Press, the reading column stays calm.
+The Journal (`/journal`, `/journal/[slug]`) is a Read surface inside the same world: the frame (masthead, titles, rules, pills) stays Night Press, the reading column stays calm.
 
 - **Index (ledger):** a Display "JOURNAL" masthead, topic pills, the newest article as a lead (Headline-size title, 65ch excerpt), then ruled rows: number, title in Bebas `max(40px, 8rem)` (40px on phones) with the gold slide-up swap on hover, and a right-aligned 12px meta block. Rows and lines reuse the project-row rules and drawing motion.
 - **Topic pills:** the standard pill; the selected pill (`aria-pressed`) takes the Gold fill, since it is an interactive state. Filtering reorders with a short Flip glide and respects reduced motion.
@@ -225,7 +230,7 @@ The private CMS (`/studio/*`) is an Operate surface in the same world: precision
 - **Sign in:** "Studio" in Headline size, one line of context, two fields, the standard pill. Errors say what to do (wrong credentials, wait, try later) and stay generic about which accounts exist. Show/Hide password and the Caps Lock hint appear only when JS runs.
 - **Article list:** the same ruled rows as the project list: title in Open Sauce (not Bebas, since this is a working list), status as text ("Draft", "Published"), date right-aligned. Hover turns the title Gold on fine pointers.
 - **Editor:** a sticky bar with the save state ("Saved", "Saving…", "Unsaved changes", errors with Retry) and the primary action; fields on the left, a live preview on the right in the article's own type (Bebas title, `.prose-press` body). Below 1100px the preview is a Write/Preview toggle whose selected state is Gold, like the topic pills. The Markdown textarea uses the system monospace stack, as code does elsewhere.
-- **Section nav:** under the header, a ruled row of 12px uppercase links (Journal, Projects, Design work, Experience, Certifications, Social links, Profile & contact); the current one is Ash with a 2px Ash underline, hover is Gold. It scrolls sideways on phones. The header carries the publish state ("Unpublished changes" in Ash with a small dot, or "Site up to date" in Boulder) and the **Publish site** pill.
+- **Section nav:** under the header, a ruled row of 12px uppercase links (Journal, Projects, Experience, Certifications, Social links, Profile & contact); the current one is Ash with a 2px Ash underline, hover is Gold. It scrolls sideways on phones. The header carries the publish state ("Unpublished changes" in Ash with a small dot, or "Site up to date" in Boulder) and the **Publish site** pill.
 - **Content lists:** the article-list rows with the item in Open Sauce, a 12px meta line, and row actions as 12px text buttons (↑, ↓, Hide/Show); a hidden item drops to Boulder with a "Hidden" label. Forms reuse the field style; homepage edits never rebuild on their own.
 - **Destructive action:** Delete is plain text; the first click turns it into "Confirm delete" for four seconds. There is no modal.
 - **Never** in the Studio: Gold as a status colour, toasts, spinners over content, or colour as the only signal of state.
