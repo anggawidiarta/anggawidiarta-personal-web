@@ -30,8 +30,7 @@
 
   --animate-marquee: marquee 25s linear infinite;
   --animate-word-in: wordIn 0.6s ease-out backwards;
-  --animate-infinite-arrow: infiniteArrow 1s cubic-bezier(0.25, 1, 0.5, 1)
-    infinite;
+  --animate-infinite-arrow: infiniteArrow 1s cubic-bezier(0.25, 1, 0.5, 1) infinite;
   --animate-toast-in: toastIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 
   @keyframes toastIn {

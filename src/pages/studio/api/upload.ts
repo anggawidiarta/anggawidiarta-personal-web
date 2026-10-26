@@ -1,8 +1,14 @@
 import type { APIRoute } from "astro";
 import { PUBLIC_SUPABASE_URL } from "astro:env/server";
 import { UUID, json } from "../../../lib/studio/posts";
+import { formText } from "../../../lib/studio/content";
 import { sniffImage } from "../../../lib/studio/images";
-import { IMAGE_EXTENSIONS, MAX_UPLOAD_BYTES, MEDIA_BUCKET, mediaUrl } from "../../../lib/studio/rules";
+import {
+  IMAGE_EXTENSIONS,
+  MAX_UPLOAD_BYTES,
+  MEDIA_BUCKET,
+  mediaUrl,
+} from "../../../lib/studio/rules";
 
 export const prerender = false;
 
@@ -16,7 +22,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const file = form.get("file");
   const kind = form.get("kind");
-  const postId = String(form.get("postId") ?? "");
+  const postId = formText(form.get("postId"));
 
   if (!(file instanceof File)) return json({ error: "Choose an image to upload." }, 400);
   if (kind !== "cover" && kind !== "body") return json({ error: "Invalid upload." }, 400);

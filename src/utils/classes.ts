@@ -3,14 +3,12 @@ export const paddingHome = "px-[4rem] phone:px-[1.6rem]";
 export const desc12 = "font-sauce text-[12px] leading-[1.3]";
 
 // Reading roles never drop below the pixel floor; above 1440px they keep growing with the rem.
-export const desc16 =
-  "font-sauce text-[max(16px,1.6rem)] font-normal leading-[1.3]";
+export const desc16 = "font-sauce text-[max(16px,1.6rem)] font-normal leading-[1.3]";
 
 export const desc32 =
   "font-sauce text-[max(24px,3.2rem)] leading-[1.3] tracking-[-0.025em] phone:text-[32px]";
 
-export const title328 =
-  "font-bebas text-[32.8rem] [word-break:break-word] phone:text-[160px]";
+export const title328 = "font-bebas text-[32.8rem] [word-break:break-word] phone:text-[160px]";
 
 export const title160 =
   "font-bebas text-[16rem] tracking-[-0.025em] phone:text-[min(80px,calc((100vw-32px)/5.5))] phone:[word-break:break-word]";

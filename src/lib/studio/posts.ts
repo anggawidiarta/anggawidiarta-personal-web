@@ -4,8 +4,7 @@ import { MAX_SLUG_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, SLUG } from "./rules";
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // Only paths the upload endpoint produces: <covers|body>/<post id>/<file id>.<ext>
-const COVER_PATH =
-  /^(covers|body)\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(jpg|png|webp|avif|gif)$/;
+const COVER_PATH = /^(covers|body)\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(jpg|png|webp|avif|gif)$/;
 
 /** A draft's placeholder slug, replaced from the title until the author edits it. */
 export const draftSlug = () => `untitled-${crypto.randomUUID().slice(0, 6)}`;

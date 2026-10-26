@@ -15,14 +15,14 @@ The owner writes, edits, publishes and deletes Journal articles from `/studio`. 
 
 ## Studio API (all under `/studio/api`, admin only, JSON)
 
-| Request | Behaviour |
-| --- | --- |
-| `PATCH posts/[id]` | Partial save, strict schema. Drafts save freely (autosave). A published article needs `live: true`, otherwise 409. Slug clash 409. Published + `live` triggers a rebuild. |
-| `DELETE posts/[id]` | Deletes the row and its images; rebuilds if it was published. |
-| `POST posts/[id]/publish` | Requires title, description, content, a tag and (with a cover) alt text; else 422. Keeps an existing `published_at`. Rebuilds. |
-| `POST posts/[id]/unpublish` | Back to draft; rebuilds. |
-| `POST upload` | `multipart/form-data` (`file`, `kind` cover|body, `postId`). Format is detected from the bytes, not the declared type. 4 MB limit. |
-| `POST /studio/posts/new` | Creates an empty draft and redirects to the editor (works without JS). |
+| Request                     | Behaviour                                                                                                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PATCH posts/[id]`          | Partial save, strict schema. Drafts save freely (autosave). A published article needs `live: true`, otherwise 409. Slug clash 409. Published + `live` triggers a rebuild. |
+| `DELETE posts/[id]`         | Deletes the row and its images; rebuilds if it was published.                                                                                                             |
+| `POST posts/[id]/publish`   | Requires title, description, content, a tag and (with a cover) alt text; else 422. Keeps an existing `published_at`. Rebuilds.                                            |
+| `POST posts/[id]/unpublish` | Back to draft; rebuilds.                                                                                                                                                  |
+| `POST upload`               | `multipart/form-data` (`file`, `kind` cover                                                                                                                               | body, `postId`). Format is detected from the bytes, not the declared type. 4 MB limit. |
+| `POST /studio/posts/new`    | Creates an empty draft and redirects to the editor (works without JS).                                                                                                    |
 
 Without a session the API answers 401 JSON; any non-GET request must carry a matching `Origin` (403 otherwise). Rebuild results are `triggered`, `skipped` (no hook configured) or `failed` and are shown to the author.
 

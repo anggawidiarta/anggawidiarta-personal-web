@@ -24,7 +24,8 @@ interface PostRow {
 export function postsLoader(): Loader {
   return {
     name: "supabase-posts",
-    async load({ store, parseData, renderMarkdown, generateDigest, logger }) {
+    async load(context) {
+      const { store, logger } = context;
       const client = buildClient(logger, "the Journal");
       if (!client) {
         store.clear();
@@ -39,7 +40,7 @@ export function postsLoader(): Loader {
         )
         .eq("status", "published")
         .order("published_at", { ascending: false })
-        .returns<PostRow[]>();
+        .overrideTypes<PostRow[], { merge: false }>();
 
       // Fail the build instead of deploying a Journal with missing articles.
       if (error) throw new Error(`Could not load posts from Supabase: ${error.message}`);
@@ -49,7 +50,7 @@ export function postsLoader(): Loader {
         const published = new Date(row.published_at);
         const updated = new Date(row.updated_at);
 
-        const parsed = await parseData({
+        const parsed = await context.parseData({
           id: row.slug,
           data: {
             title: row.title,
@@ -68,8 +69,8 @@ export function postsLoader(): Loader {
           id: row.slug,
           data: parsed,
           body: row.body,
-          rendered: await renderMarkdown(row.body),
-          digest: generateDigest(row as unknown as Record<string, unknown>),
+          rendered: await context.renderMarkdown(row.body),
+          digest: context.generateDigest(row as unknown as Record<string, unknown>),
         });
       }
       logger.info(`Loaded ${data.length} published post(s) from Supabase.`);

@@ -44,4 +44,7 @@ export function readingTime(body = ""): number {
 export const postNumber = (n: number) => `NO.${String(n).padStart(3, "0")}`;
 
 export const slugifyTag = (tag: string) =>
-  tag.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  tag
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");

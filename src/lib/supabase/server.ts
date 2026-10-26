@@ -1,10 +1,7 @@
 import { createServerClient, parseCookieHeader } from "@supabase/ssr";
 import { createClient as createBareClient } from "@supabase/supabase-js";
 import type { APIContext } from "astro";
-import {
-  PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-  PUBLIC_SUPABASE_URL,
-} from "astro:env/server";
+import { PUBLIC_SUPABASE_PUBLISHABLE_KEY, PUBLIC_SUPABASE_URL } from "astro:env/server";
 
 /**
  * Supabase client bound to one request. Sessions live in httpOnly cookies:
@@ -16,9 +13,10 @@ export function createClient({ request, cookies }: Pick<APIContext, "request" | 
   return createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
     cookies: {
       getAll() {
-        return parseCookieHeader(request.headers.get("Cookie") ?? "").map(
-          ({ name, value }) => ({ name, value: value ?? "" }),
-        );
+        return parseCookieHeader(request.headers.get("Cookie") ?? "").map(({ name, value }) => ({
+          name,
+          value: value ?? "",
+        }));
       },
       setAll(cookiesToSet) {
         for (const { name, value, options } of cookiesToSet) {

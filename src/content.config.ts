@@ -15,7 +15,7 @@ const journal = defineCollection({
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).min(1),
-      cover: z.string().url().optional(),
+      cover: z.url().optional(),
       coverAlt: z.string().optional(),
       // Placeholder content written to exercise the layout.
       sample: z.boolean().default(false),

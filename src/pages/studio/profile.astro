@@ -18,7 +18,7 @@ const { data: settings, error: loadError } = await supabase
   .eq("id", 1)
   .maybeSingle<Record<string, string>>();
 
-let values: Record<string, unknown> = { ...(settings ?? {}) };
+let values: Record<string, unknown> = { ...settings };
 let errors: FieldErrors = {};
 let formError = loadError || !settings ? "Couldn't load the profile. Refresh to try again." : "";
 

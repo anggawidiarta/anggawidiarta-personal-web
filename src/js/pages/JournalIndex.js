@@ -78,8 +78,7 @@ function setTag(tag, { animate = true, updateUrl = true } = {}) {
   activeTag = tag;
 
   if (status) {
-    const count =
-      tag === "all" ? rows.length : rows.filter((el) => shows(el, tag)).length;
+    const count = tag === "all" ? rows.length : rows.filter((el) => shows(el, tag)).length;
     const label = buttons.find((b) => b.dataset.tagFilter === tag)?.dataset.label;
     status.textContent =
       tag === "all"
@@ -133,9 +132,7 @@ function setTag(tag, { animate = true, updateUrl = true } = {}) {
 }
 
 buttons.forEach((button) => {
-  button.addEventListener("click", () =>
-    setTag(button.dataset.tagFilter, { animate: true }),
-  );
+  button.addEventListener("click", () => setTag(button.dataset.tagFilter, { animate: true }));
 });
 
 const initialTag = new URLSearchParams(window.location.search).get("tag");

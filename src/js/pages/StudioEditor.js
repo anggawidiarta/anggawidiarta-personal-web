@@ -95,7 +95,9 @@ function init(root) {
   function validateSlug() {
     const value = field.slug.value;
     const ok = SLUG.test(value) && value.length <= MAX_SLUG_LENGTH;
-    slugError.textContent = ok ? "" : "Use lowercase letters, numbers and single hyphens.";
+    slugError.textContent = ok
+      ? ""
+      : "Use lowercase letters, numbers and single hyphens.";
     field.slug.setAttribute("aria-invalid", ok ? "false" : "true");
     if (ok && !live()) slugHint.textContent = `Address: /journal/${value}`;
     return ok;
@@ -146,7 +148,9 @@ function init(root) {
       const response = await fetch(`/studio/api/posts/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(liveUpdate ? { ...collect(), live: true } : collect()),
+        body: JSON.stringify(
+          liveUpdate ? { ...collect(), live: true } : collect(),
+        ),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -179,14 +183,19 @@ function init(root) {
   }
 
   async function upload(file, kind) {
-    if (file.size > MAX_UPLOAD_BYTES) throw new Error("Images can be up to 4 MB. Resize it and try again.");
+    if (file.size > MAX_UPLOAD_BYTES)
+      throw new Error("Images can be up to 4 MB. Resize it and try again.");
     const form = new FormData();
     form.append("file", file);
     form.append("kind", kind);
     form.append("postId", id);
-    const response = await fetch("/studio/api/upload", { method: "POST", body: form });
+    const response = await fetch("/studio/api/upload", {
+      method: "POST",
+      body: form,
+    });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || "Couldn't upload the image.");
+    if (!response.ok)
+      throw new Error(data.error || "Couldn't upload the image.");
     return data;
   }
 
@@ -218,16 +227,20 @@ function init(root) {
     }
   }
 
-  const imagesFrom = (list) => [...(list ?? [])].filter((file) => file.type.startsWith("image/"));
+  const imagesFrom = (list) =>
+    [...(list ?? [])].filter((file) => file.type.startsWith("image/"));
 
   field.body.addEventListener("paste", (event) => {
     const files = imagesFrom(event.clipboardData?.files);
     if (!files.length) return;
     event.preventDefault();
-    insertImages(files);
+    void insertImages(files);
   });
   field.body.addEventListener("dragover", (event) => {
-    if (imagesFrom(event.dataTransfer?.files).length || event.dataTransfer?.types.includes("Files")) {
+    if (
+      imagesFrom(event.dataTransfer?.files).length ||
+      event.dataTransfer?.types.includes("Files")
+    ) {
       event.preventDefault();
     }
   });
@@ -235,10 +248,10 @@ function init(root) {
     const files = imagesFrom(event.dataTransfer?.files);
     if (!files.length) return;
     event.preventDefault();
-    insertImages(files);
+    void insertImages(files);
   });
   bodyFile.addEventListener("change", () => {
-    insertImages(imagesFrom(bodyFile.files));
+    void insertImages(imagesFrom(bodyFile.files));
     bodyFile.value = "";
   });
 
@@ -246,9 +259,12 @@ function init(root) {
     coverPreview.hidden = !url;
     if (url) coverPreview.src = url;
     $('[data-action="cover-remove"]').hidden = !url;
-    $('[data-action="cover-upload"]').querySelectorAll("span span").forEach((el) => {
-      if (!el.children.length) el.textContent = url ? "Replace" : "Upload cover";
-    });
+    $('[data-action="cover-upload"]')
+      .querySelectorAll("span span")
+      .forEach((el) => {
+        if (!el.children.length)
+          el.textContent = url ? "Replace" : "Upload cover";
+      });
   }
 
   coverFile.addEventListener("change", async () => {
@@ -295,7 +311,11 @@ function init(root) {
   // Save when leaving a field so an edit never waits on the timer.
   root.addEventListener("focusout", (event) => {
     if (live() || !dirty()) return;
-    if (event.target instanceof HTMLElement && event.target.matches("[data-field]")) save();
+    if (
+      event.target instanceof HTMLElement &&
+      event.target.matches("[data-field]")
+    )
+      void save();
   });
 
   async function post(url) {
@@ -314,15 +334,23 @@ function init(root) {
   const actions = {
     async publish() {
       const saved = await save();
-      if (!saved.ok) return fail(lastError || "Couldn't save your changes, so nothing was published.");
+      if (!saved.ok)
+        return fail(
+          lastError || "Couldn't save your changes, so nothing was published.",
+        );
       const { ok, data } = await post(`/studio/api/posts/${id}/publish`);
       if (!ok) return fail(data.error || "Couldn't publish. Try again.");
       go(`/studio/posts/${id}?notice=published-${data.rebuild}`);
     },
     async "update-live"() {
       const saved = await save({ liveUpdate: true });
-      if (!saved.ok) return fail(lastError || saved.data?.error || "Couldn't update the live article.");
-      go(`/studio/posts/${id}?notice=updated-${saved.data?.rebuild ?? "skipped"}`);
+      if (!saved.ok)
+        return fail(
+          lastError || saved.data?.error || "Couldn't update the live article.",
+        );
+      go(
+        `/studio/posts/${id}?notice=updated-${saved.data?.rebuild ?? "skipped"}`,
+      );
     },
     async unpublish() {
       const { ok, data } = await post(`/studio/api/posts/${id}/unpublish`);
@@ -330,7 +358,10 @@ function init(root) {
       // It is a draft now, so pending edits save like any draft (no second rebuild).
       root.dataset.status = "draft";
       const saved = await save();
-      if (!saved.ok) return fail("Unpublished, but your last edits did not save. Retry saving.");
+      if (!saved.ok)
+        return fail(
+          "Unpublished, but your last edits did not save. Retry saving.",
+        );
       go(`/studio/posts/${id}?notice=unpublished-${data.rebuild}`);
     },
     "cover-upload": () => coverFile.click(),
@@ -355,7 +386,9 @@ function init(root) {
     }
     clearTimeout(deleteTimer);
     deleteButton.disabled = true;
-    const response = await fetch(`/studio/api/posts/${id}`, { method: "DELETE" });
+    const response = await fetch(`/studio/api/posts/${id}`, {
+      method: "DELETE",
+    });
     if (response.ok) {
       savedRevision = revision;
       location.href = "/studio?notice=deleted";
@@ -372,12 +405,20 @@ function init(root) {
     if (noticeEl.textContent.startsWith("Click Confirm delete")) showNotice("");
   }
 
-  const BUSY_LABEL = { publish: "Publishing", "update-live": "Updating", unpublish: "Unpublishing" };
+  const BUSY_LABEL = {
+    publish: "Publishing",
+    "update-live": "Updating",
+    unpublish: "Unpublishing",
+  };
   let busy = false;
 
   function setBusy(button, on) {
     const peers = root.querySelectorAll("[data-action]");
-    peers.forEach((el) => (on ? el.setAttribute("aria-disabled", "true") : el.removeAttribute("aria-disabled")));
+    peers.forEach((el) =>
+      on
+        ? el.setAttribute("aria-disabled", "true")
+        : el.removeAttribute("aria-disabled"),
+    );
     const label = BUSY_LABEL[button.dataset.action];
     if (!label) return;
     if (on) {
@@ -394,7 +435,10 @@ function init(root) {
   }
 
   root.addEventListener("click", async (event) => {
-    const target = event.target instanceof Element ? event.target.closest("[data-action]") : null;
+    const target =
+      event.target instanceof Element
+        ? event.target.closest("[data-action]")
+        : null;
     if (!target || target === deleteButton) return;
     const run = actions[target.dataset.action];
     if (!run || busy) return;
@@ -415,9 +459,11 @@ function init(root) {
   root.querySelectorAll("[data-view-toggle]").forEach((button) => {
     button.addEventListener("click", () => {
       root.dataset.view = button.dataset.viewToggle;
-      root.querySelectorAll("[data-view-toggle]").forEach((other) =>
-        other.setAttribute("aria-pressed", String(other === button)),
-      );
+      root
+        .querySelectorAll("[data-view-toggle]")
+        .forEach((other) =>
+          other.setAttribute("aria-pressed", String(other === button)),
+        );
     });
   });
 
@@ -425,8 +471,11 @@ function init(root) {
   document.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
       event.preventDefault();
-      if (live()) showNotice("This article is live. Use Update live to save your changes.");
-      else save();
+      if (live())
+        showNotice(
+          "This article is live. Use Update live to save your changes.",
+        );
+      else void save();
     }
   });
 

@@ -1,14 +1,13 @@
 ---
-import { buttonClass, desc16, desc32 } from "../../utils/classes";
+import { desc16, desc32 } from "../../utils/classes";
 import { cn } from "../../utils/cn";
-import ButtonLabel from "./ButtonLabel.astro";
 
 interface Props {
   email: string;
   emailLink: string;
 }
 
-const { email, emailLink } = Astro.props;
+const { email } = Astro.props;
 ---
 
 <div
@@ -17,7 +16,7 @@ const { email, emailLink } = Astro.props;
   <button
     class={cn(
       desc32,
-      "email peer/email mb-[1.6rem] cursor-pointer border-0 bg-transparent p-0 font-medium text-ash tablet:text-left fine:hover:text-gold"
+      "email peer/email mb-[1.6rem] cursor-pointer border-0 bg-transparent p-0 font-medium text-ash tablet:text-left fine:hover:text-gold",
     )}
   >
     {email}
@@ -25,7 +24,7 @@ const { email, emailLink } = Astro.props;
   <div
     class={cn(
       desc16,
-      "to-copy hidden fine:block fine:translate-y-full fine:opacity-0 fine:transition-[opacity,translate] fine:duration-300 fine:peer-hover/email:translate-y-0 fine:peer-hover/email:opacity-100 fine:peer-focus-visible/email:translate-y-0 fine:peer-focus-visible/email:opacity-100 data-[copied]:block data-[copied]:translate-y-0 data-[copied]:opacity-100"
+      "to-copy hidden fine:block fine:translate-y-full fine:opacity-0 fine:transition-[opacity,translate] fine:duration-300 fine:peer-hover/email:translate-y-0 fine:peer-hover/email:opacity-100 fine:peer-focus-visible/email:translate-y-0 fine:peer-focus-visible/email:opacity-100 data-[copied]:block data-[copied]:translate-y-0 data-[copied]:opacity-100",
     )}
     role="status"
   >

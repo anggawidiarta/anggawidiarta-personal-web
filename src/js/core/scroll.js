@@ -4,9 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const reduceMotion = window.matchMedia(
-  "(prefers-reduced-motion: reduce)",
-).matches;
+export const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // locomotive-scroll v5 only supports vertical parallax, so the horizontal
 // `data-parallax-x` effect is reproduced here.

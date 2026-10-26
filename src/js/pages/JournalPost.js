@@ -23,7 +23,7 @@ function intro() {
 
   // The title is split into masked lines once the display face is ready,
   // so line breaks are measured with the real glyphs.
-  document.fonts.ready.then(() => {
+  void document.fonts.ready.then(() => {
     SplitText.create(".article__title", {
       type: "lines",
       mask: "lines",

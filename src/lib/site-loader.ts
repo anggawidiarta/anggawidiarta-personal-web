@@ -14,7 +14,8 @@ export function tableLoader(
 ): Loader {
   return {
     name: `supabase-${table}`,
-    async load({ store, parseData, generateDigest, logger }) {
+    async load(context) {
+      const { store, logger } = context;
       const client = buildClient(logger, `the homepage (${table})`);
       store.clear();
       if (!client) return;
@@ -26,7 +27,11 @@ export function tableLoader(
       for (const row of data as unknown as Row[]) {
         const id = String(row.id);
         const mapped = map(row, client.url);
-        store.set({ id, data: await parseData({ id, data: mapped }), digest: generateDigest(mapped) });
+        store.set({
+          id,
+          data: await context.parseData({ id, data: mapped }),
+          digest: context.generateDigest(mapped),
+        });
       }
     },
   };

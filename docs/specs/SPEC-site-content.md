@@ -21,26 +21,27 @@ On day one the homepage must look identical: the migration seeds every table wit
 
 All tables: `id uuid pk`, `position int not null`, `visible bool default true`, `created_at`, `updated_at` (trigger). RLS: anon and authenticated read only `visible = true`; admins read and write everything.
 
-| Table | Columns | Homepage use |
-| --- | --- | --- |
-| `projects` | `title` (≤160), `category` (≤40), `technology` (≤60), `url` (https), `year` int null | Project rows |
-| `experiences` | `role`, `organization`, `period` text null (e.g. `2023 — Now`) | Experience list |
-| `certifications` | `name`, `issuer` null, `credential_url` null, `year` int null | Certifications list |
-| `social_links` | `label` (≤24), `url` (https) | Footer pills |
-| `site_settings` | single row (`id = 1` check): `contact_email`, `email_subject`, `email_body`, `marquee_text`, `about`, `availability`, `interests`, `content_changed_at`, `published_at` | Hero About, nav availability, Interests, contact block, publish state |
+| Table            | Columns                                                                                                                                                                 | Homepage use                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `projects`       | `title` (≤160), `category` (≤40), `technology` (≤60), `url` (https), `year` int null                                                                                    | Project rows                                                          |
+| `experiences`    | `role`, `organization`, `period` text null (e.g. `2023 — Now`)                                                                                                          | Experience list                                                       |
+| `certifications` | `name`, `issuer` null, `credential_url` null, `year` int null                                                                                                           | Certifications list                                                   |
+| `social_links`   | `label` (≤24), `url` (https)                                                                                                                                            | Footer pills                                                          |
+| `site_settings`  | single row (`id = 1` check): `contact_email`, `email_subject`, `email_body`, `marquee_text`, `about`, `availability`, `interests`, `content_changed_at`, `published_at` | Hero About, nav availability, Interests, contact block, publish state |
 
 A statement trigger on every content table (and on `site_settings` contact fields) sets `content_changed_at = now()`, so deletes count as changes too. "Unpublished changes" = `content_changed_at > published_at`.
 
-Build: one generic `tableLoader()` in `src/lib/build-client.ts                     → build-time Supabase client, shared with the Journal loader
-src/lib/site-loader.ts                      → build-time loader factory
-src/lib/site.ts                             → the only reader of the site collections
-src/lib/studio/content.ts                   → section config, zod schemas from field config, notices
-src/lib/studio/content-store.ts             → ordering, visibility, delete (+ image cleanup)
-src/lib/studio/images.ts                    → byte sniffing (shared with the Journal upload)
+Build: one generic `tableLoader()` in `src/lib/build-client.ts → build-time Supabase client, shared with the Journal loader
+src/lib/site-loader.ts → build-time loader factory
+src/lib/site.ts → the only reader of the site collections
+src/lib/studio/content.ts → section config, zod schemas from field config, notices
+src/lib/studio/content-store.ts → ordering, visibility, delete (+ image cleanup)
+src/lib/studio/images.ts → byte sniffing (shared with the Journal upload)
 src/components/studio/{StudioNav,FormField}.astro
 src/pages/studio/[section]/{index,[id]}.astro
 src/pages/studio/profile.astro
-src/pages/studio/publish.ts                 → rebuild + stamp published_at (form POST)
+src/pages/studio/publish.ts → rebuild + stamp published_at (form POST)
+
 ```
 
 Homepage components (`ProjectsSection`, `Certifications`, `ContactSection`, `FooterPage`) swap their hardcoded arrays for `src/lib/site.ts` reads; their markup stays.
@@ -94,3 +95,4 @@ The Design work section and its Studio section were removed; the Experience sect
 ## Not included
 
 Drag-and-drop ordering, revision history, scheduled publishing, case-study pages per project, multiple admins, live deploy status.
+```

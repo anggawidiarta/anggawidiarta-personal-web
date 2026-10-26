@@ -8,7 +8,8 @@ const cacheControl = "public, s-maxage=15, stale-while-revalidate=45";
 
 export const GET: APIRoute = async () => {
   const track = await getNowPlaying();
-  if (!track) return new Response(null, { status: 204, headers: { "Cache-Control": cacheControl } });
+  if (!track)
+    return new Response(null, { status: 204, headers: { "Cache-Control": cacheControl } });
 
   return new Response(JSON.stringify(track), {
     headers: { "Content-Type": "application/json", "Cache-Control": cacheControl },
