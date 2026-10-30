@@ -181,7 +181,7 @@ Two shapes only. **Pills** (45px radius, 2px Boulder outline) for every button a
 
 ### Logo
 
-The "Lumbung" monogram: an A stacked over a W, drawn from a Sasak *lumbung*, the rice barn of Lombok. The barn's tall curved roof is the A, its floor beam is the crossbar, and the cross-braced stilts beneath are the W. Strokes are flat-cut like Bebas. In the nav (`LogoMark.astro`) it is Boulder at rest; on hover of the home link the roof and stilts lighten to Ash and the beam turns Gold. The favicon and app icons (`public/favicon.svg` and the PNGs) are Ash with a Gold beam on Ink, the one place Gold sits at rest, because they live outside the page; the OG image (`public/og-image.png`) uses the same mark. `public/logo.svg` and `public/logo-mark.svg` are the standalone files.
+The "Lumbung" monogram: an A stacked over a W, drawn from a Sasak *lumbung*, the rice barn of Lombok. The barn's tall curved roof is solid, with the A (counter, crossbar and the gap between its legs) cut out of it; the roof rests on the floor beam, and the braced stilts beneath are the W. Strokes are flat-cut like Bebas. In the nav (`LogoMark.astro`) it is Boulder at rest; on hover of the home link the roof and stilts lighten to Ash and the beam turns Gold. The favicon and app icons (`public/favicon.svg` and the PNGs) are Ash with a Gold beam on Ink, the one place Gold sits at rest, because they live outside the page; the OG image (`public/og-image.png`) uses the same mark. `public/logo.svg` and `public/logo-mark.svg` are the standalone files.
 
 ### Navigation strip
 
