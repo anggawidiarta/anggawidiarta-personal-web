@@ -179,9 +179,13 @@ Two shapes only. **Pills** (45px radius, 2px Boulder outline) for every button a
 - **Focus:** 2px Gold outline, 3px offset (global `:focus-visible`).
 - **Variants:** all links and buttons share this one style: nav Journal and Contact, "View site" and "View code", footer socials.
 
+### Logo
+
+The "Lumbung" monogram: an A stacked over a W, drawn from a Sasak *lumbung*, the rice barn of Lombok. The barn's tall curved roof is the A, its floor beam is the crossbar, and the cross-braced stilts beneath are the W. Strokes are flat-cut like Bebas. In the nav (`LogoMark.astro`) it is Boulder at rest; on hover of the home link the roof and stilts lighten to Ash and the beam turns Gold. The favicon and app icons (`public/favicon.svg` and the PNGs) are Ash with a Gold beam on Ink, the one place Gold sits at rest, because they live outside the page; the OG image (`public/og-image.png`) uses the same mark. `public/logo.svg` and `public/logo-mark.svg` are the standalone files.
+
 ### Navigation strip
 
-Four groups across the top: name, role and year, availability, then Journal and Contact pills. Labels are 12px uppercase Boulder. On phones the groups stack in the right column and the line breaks are removed.
+Four groups across the top: the logo and name, role and year, availability, then Journal and Contact pills. Labels are 12px uppercase Boulder. On phones the groups stack in the right column and the line breaks are removed.
 
 ### Project rows
 
